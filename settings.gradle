@@ -1,1 +1,1 @@
-include ':sdk', ':example'
+include ':mpcomponents', ':example', ':mpservices', ':mpcheckout'

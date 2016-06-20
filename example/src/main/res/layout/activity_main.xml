@@ -39,64 +39,6 @@
             android:text="@string/title_activity_step1"
             android:onClick="runStep1"
             style="@style/mpsdk_button_normal"/>
-
-        <com.mercadopago.views.MPButton
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mpsdk_button_height"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="@string/title_activity_step2"
-            android:onClick="runStep2"
-            style="@style/mpsdk_button_normal" />
-
-        <com.mercadopago.views.MPButton
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mpsdk_button_height"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="@string/title_activity_step3"
-            android:onClick="runStep3"
-            style="@style/mpsdk_button_normal"/>
-        <com.mercadopago.views.MPButton
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mpsdk_button_height"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="@string/title_activity_step4"
-            android:onClick="runStep4"
-            style="@style/mpsdk_button_normal"/>
-        <com.mercadopago.views.MPButton
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mpsdk_button_height"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="@string/title_activity_step5"
-            android:onClick="runStep5"
-            style="@style/mpsdk_button_normal"/>
-        <com.mercadopago.views.MPButton
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mpsdk_button_height"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="@string/title_activity_step6"
-            android:onClick="runStep6"
-            style="@style/mpsdk_button_normal"/>
-        <com.mercadopago.views.MPButton
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mpsdk_button_height"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="Flavor 2"
-            android:onClick="runStepF2"
-            style="@style/mpsdk_button_normal"/>
-        <com.mercadopago.views.MPButton
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mpsdk_button_height"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="Nuevo TC"
-            android:onClick="runStep7"
-            style="@style/mpsdk_button_normal"/>
     </LinearLayout>
 
 </ScrollView>
