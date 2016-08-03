@@ -61,31 +61,31 @@
                      <h2>Changes in...</h2>
                      <ul>
                        <li>
-                         <a href="migration-v1.html#vault">VaultActivity</a>
+                         <a href="upgrade-v1.html#vault">VaultActivity</a>
                        </li>
                        <li>
-                         <a href="migration-v1.html#payment-methods">PaymentMethodsActivity</a>
+                         <a href="upgrade-v1.html#payment-methods">PaymentMethodsActivity</a>
                        </li>
                        <li>
-                         <a href="migration-v1.html#issuers">IssuersActivity</a>
+                         <a href="upgrade-v1.html#issuers">IssuersActivity</a>
                        </li>
                        <li>
-                         <a href="migration-v1.html#installments">InstallmentsActivity</a>
+                         <a href="upgrade-v1.html#installments">InstallmentsActivity</a>
                        </li>
                        <li>
-                         <a href="migration-v1.html#new-card">NewCardActivity</a>
+                         <a href="upgrade-v1.html#new-card">NewCardActivity</a>
                        </li>
                        <li>
-                         <a href="migration-v1.html#congrats">CongratsActivity</a>
+                         <a href="upgrade-v1.html#congrats">CongratsActivity</a>
                        </li>
                        <li>
-                         <a href="migration-v1.html#customer-cards">CustomerCardsActivity</a>
+                         <a href="upgrade-v1.html#customer-cards">CustomerCardsActivity</a>
                        </li>
                        <li>
-                         <a href="migration-v1.html#api-calls">MercadoPago API Calls</a>
+                         <a href="upgrade-v1.html#api-calls">MercadoPago API Calls</a>
                        </li>
                        <li>
-                         <a href="migration-v1.html#util">MercadoPagoUtil</a>
+                         <a href="upgrade-v1.html#util">MercadoPagoUtil</a>
                        </li>
                      </ul>
 
@@ -245,17 +245,17 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
               <div class="desc">
                    <h3>CongratsActivity</h3>
                    <p>
-                      The only change: now it requires public key.
+                      CongratsActivity now resolves approved payments only. Change it for PaymentResultActivity:
                    </p>
               </div>
             <pre class="snippet">
               <code id="migration_vault" class="line-numbers language-java">
 new MercadoPago.StartActivityBuilder()
-        .setActivity(activity)
-        .setPublicKey(publicKey)
-        .setPayment(payment)
-        .setPaymentMethod(paymentMethod)
-        .startCongratsActivity();
+            .setPublicKey(publicKey)
+            .setActivity(activity)
+            .setPayment(payment)
+            .setPaymentMethod(paymentMethod)
+            .startPaymentResultActivity();
                  </code>
 
                  <button class="copy-button">
