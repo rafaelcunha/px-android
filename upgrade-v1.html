@@ -26,7 +26,7 @@
             </div>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                <ul class="nav navbar-nav navbar-right" style="color: white;">
-                  <li><a class="getting-started-nav nav-link" href="migration-doc.html">Migration</a></li>
+                  <li><a class="getting-started-nav nav-link" href="migration-doc.html">Upgrade from 0.9.x</a></li>
                   <li><a class="docs-nav nav-link" href="index.html">Nuestro Checkout</a></li>
                   <li><a class="docs-nav nav-link" href="checkout_custom.html">Tu checkout</a></li>
                   <li><a class="nav-link" href="https://www.mercadopago.com.ar/developers/es/community/forum/">Foro de desarrolladores</a></li>
@@ -47,7 +47,7 @@
                <p class="sub-heading">
                   ¿Already using our SDK's?
                   <br />
-                  If you update to the 1.x series, you'll need to make some changes to mantain your 0.x series integration.
+                  If you update to the 1.x series, you'll need to make some changes to mantain your 0.9.x series integration.
                   <br />
                   Please, if you have any doubts or find any not-listed incompatibility, contact us at: <b>sarasa@mercadolibre.com</b>
                   <br />
@@ -301,7 +301,7 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
                     A generic example:
               </div>
               <br>
-              <p> 0.x series: </p>
+              <p> 0.9.x series: </p>
             <pre class="snippet">
               <code id="migration_vault" class="line-numbers language-java">
 callback = new ErrorHandlingCallAdapter.MyCallback&lt;T&gt;() {
@@ -373,7 +373,7 @@ mercadoPago.getPaymentMethods(new Callback&lt;List&lt;PaymentMethod&gt;&gt;() {
               <div class="desc">
                  <h3>MercadoPagoUtil</h3>
                   <p>Minor changes:</p>
-                   0.x series: MercadoPagoUtil.isCardPaymentType(String paymentType)
+                   0.9.x series: MercadoPagoUtil.isCardPaymentType(String paymentType)
                    <br>
                    1.x series: MercadoPagoUtil.isCard(String paymentType)
               </div>
