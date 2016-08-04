@@ -49,7 +49,7 @@
                   <br />
                   If you update to the 1.x series, you'll need to make some changes to mantain your 0.9.x series integration.
                   <br />
-                  Please, if you have any doubts or find any not-listed incompatibility, contact us at: <b>sarasa@mercadolibre.com</b>
+                  Please, if you have any problems or find any not-listed incompatibility, <a href = "https://github.com/mercadopago/px-android/issues">open an issue in our Github repository</a>
                   <br />
                </p>
                <br />
@@ -185,7 +185,7 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
                   <div class="desc">
                      <h3>InstallmentsActivity</h3>
                      <p>
-                       In addition to the list of payer costs, it needs the Amount and the the Site.
+                       In addition to the list of payer costs, it needs the Amount and the Site.
                      </p>
                   </div>
                <div>
@@ -373,9 +373,27 @@ mercadoPago.getPaymentMethods(new Callback&lt;List&lt;PaymentMethod&gt;&gt;() {
               <div class="desc">
                  <h3>MercadoPagoUtil</h3>
                   <p>Minor changes:</p>
-                   0.9.x series: MercadoPagoUtil.isCardPaymentType(String paymentType)
+                   0.9.x series:
+                   <pre class="snippet">
+                      <code id="migration_installments" class="line-numbers language-java">
+ MercadoPagoUtil.isCardPaymentType(String paymentType);
+                      </code>
+
+                      <button class="copy-button">
+                         <img src="./img/clippy.svg" width="13" alt="Copy to clipboard">
+                     </button>
+                   </pre>
                    <br>
-                   1.x series: MercadoPagoUtil.isCard(String paymentType)
+                   1.x series:
+                   <pre class="snippet">
+                      <code id="migration_installments" class="line-numbers language-java">
+MercadoPagoUtil.isCard(String paymentType);
+                      </code>
+
+                      <button class="copy-button">
+                         <img src="./img/clippy.svg" width="13" alt="Copy to clipboard">
+                     </button>
+                   </pre>
               </div>
             </div>
          </div>
