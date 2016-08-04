@@ -316,7 +316,7 @@ mercadoPago.getIdentificationTypes(new Callback&lt;List&lt;IdentificationType&gt
                         <code class="line-numbers language-java">
 /* Medio de pago seleccionado por el usuario.
 *  Va a serte útil para las validaciones de datos. */
-PaymentMethod paymentMethod = JsonUtil.getInstance().fromJson(data.getStringExtra("paymentMethod"), PaymentMethod.class);   
+PaymentMethod paymentMethod = JsonUtil.getInstance().fromJson(data.getStringExtra("paymentMethod"), PaymentMethod.class);
 
 /* Crea un CardToken con los datos ingresados por tu usuario.
 *  Este es un ejemplo con datos de prueba */
@@ -477,9 +477,10 @@ MercadoPago mercadoPago = new MercadoPago.Builder()
    .setPublicKey("TEST-ad365c37-8012-4014-84f5-6c895b3f8e0a")
    .build();
 
-mercadoPago.getInstructions(paymentId, paymentTypeId, new Callback&lt;Instruction&gt;() {
+mercadoPago.getPaymentResult(paymentId, paymentTypeId, new Callback&lt;PaymentResult&gt;() {
    @Override
-   public void success(Instruction instruction) {
+   public void success(PaymentResult paymentResult) {
+      Instruction instruction = paymentResult.getInstructions().get(0);
       // Listo, aquí ya tienes las instrucciones para
       // contarle a tu usuario cómo finalizar el pago.
       showInstructions(instruction);
