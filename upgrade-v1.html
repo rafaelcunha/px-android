@@ -43,11 +43,11 @@
       <div class="container content-container" style="margin-top: -300px;">
          <div id="getting-started">
             <div class="text-center">
-               <h2>1.x MercadoPago SDK series migration</h2>
+               <h2>1.x MercadoPago SDK upgrade</h2>
                <p class="sub-heading">
                   ¿Already using our SDK's?
                   <br />
-                  If you update to the 1.x series, you'll need to make some changes to mantain your 0.9.x series integration.
+                  If you update to 1.x, you'll need to make some changes to mantain your 0.9.x integration.
                   <br />
                   Please, if you have any problems or find any not-listed incompatibility, <a href = "https://github.com/mercadopago/px-android/issues">open an issue in our Github repository</a>
                   <br />
@@ -121,7 +121,7 @@ new MercadoPago.StartActivityBuilder()
                   <div class="desc">
                      <h3>PaymentMethodsActivity</h3>
                      <p>
-                       In 1.x series when an error occurs, its result is a MPException (Which may include an ApiException instance).
+                       In 1.x when an error occurs, its result is a MPException (Which may include an ApiException instance).
                      </p>
                   </div>
                <div>
@@ -267,7 +267,7 @@ new MercadoPago.StartActivityBuilder()
               <div class="desc">
                    <h3>CustomerCardsActivity</h3>
                    <p>
-                      In 1.x series, it returns a "Card" object:
+                      In 1.x, it returns a "Card" object:
                    </p>
               </div>
             <pre class="snippet">
@@ -295,13 +295,13 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
               <div class="desc">
                    <h3>MercadoPago API calls</h3>
                    <p>
-                      1.x series introduces a custom Callback from MercadoPago instead of returning the Retrofit "Call" object.
+                      1.x introduces a custom Callback from MercadoPago instead of returning the Retrofit "Call" object.
                    </p>
                    <br>
                     A generic example:
               </div>
               <br>
-              <p> 0.9.x series: </p>
+              <p> 0.9.x: </p>
             <pre class="snippet">
               <code id="migration_vault" class="line-numbers language-java">
 callback = new ErrorHandlingCallAdapter.MyCallback&lt;T&gt;() {
@@ -325,7 +325,7 @@ call.enqueue(callback);
                 </button>
               </pre>
               <br>
-              <p> 1.x series: </p>
+              <p> 1.x: </p>
               <pre class="snippet">
                 <code id="migration_vault" class="line-numbers language-java">
 //Heads up! Callback from package com.mercadopago.callbacks
@@ -373,7 +373,7 @@ mercadoPago.getPaymentMethods(new Callback&lt;List&lt;PaymentMethod&gt;&gt;() {
               <div class="desc">
                  <h3>MercadoPagoUtil</h3>
                   <p>Minor changes:</p>
-                   0.9.x series:
+                   0.9.x:
                    <pre class="snippet">
                       <code id="migration_installments" class="line-numbers language-java">
  MercadoPagoUtil.isCardPaymentType(String paymentType);
@@ -384,7 +384,7 @@ mercadoPago.getPaymentMethods(new Callback&lt;List&lt;PaymentMethod&gt;&gt;() {
                      </button>
                    </pre>
                    <br>
-                   1.x series:
+                   1.x:
                    <pre class="snippet">
                       <code id="migration_installments" class="line-numbers language-java">
 MercadoPagoUtil.isCard(String paymentType);
