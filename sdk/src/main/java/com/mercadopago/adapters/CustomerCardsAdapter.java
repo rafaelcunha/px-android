@@ -44,7 +44,9 @@ public class CustomerCardsAdapter extends RecyclerView.Adapter<CustomerCardsAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mPaymentMethodCardRow.drawPaymentMethod();
-        holder.mPaymentMethodCardRow.showSeparator();
+        if (position != mData.size() - 1) {
+            holder.mPaymentMethodCardRow.showSeparator();
+        }
     }
 
     @Override

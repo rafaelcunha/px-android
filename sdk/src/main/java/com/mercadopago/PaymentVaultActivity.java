@@ -6,15 +6,23 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.mercadopago.adapters.CustomerCardsAdapter;
 import com.mercadopago.adapters.PaymentMethodSearchItemAdapter;
 import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.callbacks.OnSelectedCallback;
 import com.mercadopago.core.MercadoPago;
+import com.mercadopago.core.MerchantServer;
+import com.mercadopago.decorations.DividerItemDecoration;
 import com.mercadopago.model.ApiException;
+import com.mercadopago.model.Card;
+import com.mercadopago.model.Customer;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PayerCost;
 import com.mercadopago.model.PaymentMethod;
@@ -35,6 +43,8 @@ import com.mercadopago.views.MPTextView;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static android.text.TextUtils.isEmpty;
+
 public class PaymentVaultActivity extends MercadoPagoActivity {
 
     // Local vars
@@ -48,11 +58,14 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
 
     // Controls
     protected RecyclerView mSearchItemsRecyclerView;
+    protected LinearLayout mSavedCardsContainer;
+    protected RecyclerView mSavedCardsRecyclerView;
     protected AppBarLayout mAppBar;
     protected MPTextView mActivityTitle;
 
     // Current values
     protected PaymentMethodSearch mPaymentMethodSearch;
+    protected List<Card> mSavedCards;
 
     // Activity parameters
     protected String mMerchantPublicKey;
@@ -128,6 +141,8 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
     @Override
     protected void initializeControls() {
         initializeGroupRecyclerView();
+        initializeSavedCardsRecyclerView();
+        mSavedCardsContainer = (LinearLayout) findViewById(R.id.mpsdkSavedCardsContainer);
         mActivityTitle = (MPTextView) findViewById(R.id.mpsdkTitle);
         mAppBar = (AppBarLayout) findViewById(R.id.mpsdkAppBar);
         initializeToolbar();
@@ -200,6 +215,13 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
         mSearchItemsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
+    protected void initializeSavedCardsRecyclerView() {
+        mSavedCardsRecyclerView = (RecyclerView) findViewById(R.id.mpsdkSavedCards);
+        mSavedCardsRecyclerView.setHasFixedSize(true);
+        mSavedCardsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        mSavedCardsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
     private void initPaymentMethodSearch() {
         String initialTitle = getString(R.string.mpsdk_title_activity_payment_vault);
         setActivityTitle(initialTitle);
@@ -255,13 +277,59 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
     }
 
     protected void setSearchLayout() {
-        if (!isUniqueSelectionAvailable()) {
-            populateSearchList(mPaymentMethodSearch.getGroups());
-            showRegularLayout();
+        if (isMerchantServerInfoAvailable()) {
+            getCustomerAsync();
         } else {
+            showAvailablePaymentMethods();
+        }
+    }
+
+    private void getCustomerAsync() {
+        showProgress();
+        MerchantServer.getCustomer(this, mMerchantBaseUrl, mMerchantGetCustomerUri, mMerchantAccessToken, new Callback<Customer>() {
+            @Override
+            public void success(Customer customer) {
+                mSavedCards = customer.getCards();
+                showAvailablePaymentMethods();
+            }
+
+            @Override
+            public void failure(ApiException apiException) {
+                if (isActivityActive()) {
+                    ApiUtil.showApiExceptionError(getActivity(), apiException);
+                    setFailureRecovery(new FailureRecovery() {
+                        @Override
+                        public void recover() {
+                            getCustomerAsync();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void showAvailablePaymentMethods() {
+        //TODO acá no debería seleccionar si es único -> reglas
+        if (savedCardsAvailable()) {
+            mSavedCardsContainer.setVisibility(View.VISIBLE);
+            List<Card> cardsOffered = mSavedCards.size() > 1 ? mSavedCards.subList(0, 2) : mSavedCards;
+            populateSavedCardsList(cardsOffered);
+        }
+        if (isUniqueSelectionAvailable()) {
             PaymentMethodSearchItem uniqueItem = mPaymentMethodSearch.getGroups().get(0);
             selectItem(uniqueItem);
+        } else {
+            populateSearchList(mPaymentMethodSearch.getGroups());
         }
+        showRegularLayout();
+    }
+
+    private boolean savedCardsAvailable() {
+        return mSavedCards != null && !mSavedCards.isEmpty();
+    }
+
+    private boolean isMerchantServerInfoAvailable() {
+        return !isEmpty(mMerchantBaseUrl) && !isEmpty(mMerchantGetCustomerUri) && !isEmpty(mMerchantAccessToken);
     }
 
     private boolean isUniqueSelectionAvailable() {
@@ -271,6 +339,20 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
     protected void populateSearchList(List<PaymentMethodSearchItem> items) {
         PaymentMethodSearchItemAdapter groupsAdapter = new PaymentMethodSearchItemAdapter(this, items, getPaymentMethodSearchItemSelectionCallback(), mDecorationPreference);
         mSearchItemsRecyclerView.setAdapter(groupsAdapter);
+    }
+
+    private void populateSavedCardsList(List<Card> savedCards) {
+        CustomerCardsAdapter customerCardsAdapter = new CustomerCardsAdapter(this, savedCards, new OnSelectedCallback<Card>() {
+            @Override
+            public void onSelected(Card card) {
+                startNextStepForCard(card);
+            }
+        });
+        mSavedCardsRecyclerView.setAdapter(customerCardsAdapter);
+    }
+
+    private void startNextStepForCard(Card card) {
+        //TODO
     }
 
     protected OnSelectedCallback<PaymentMethodSearchItem> getPaymentMethodSearchItemSelectionCallback() {

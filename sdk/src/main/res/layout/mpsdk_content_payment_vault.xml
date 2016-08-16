@@ -20,20 +20,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <View android:layout_width="match_parent" android:layout_height="0dp" android:focusable="true" android:focusableInTouchMode="true"><requestFocus/></View>
-            <com.mercadopago.views.MPTextView
-                android:id="@+id/mpsdkGroupsLabel"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/mpsdkSavedCardsContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/mpsdk_payment_method_groups_label"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:visibility="gone"/>
+                android:orientation="vertical"
+                android:layout_marginBottom="20dp"
+                android:visibility="gone">
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/mpsdkSavedCards"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:listSelector="@android:color/transparent"
+                    android:divider="@null"/>
+                <View
+                    android:layout_below="@id/mpsdkSavedCards"
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="@drawable/mpsdk_drop_shadow"/>
+            </LinearLayout>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/mpsdkGroupsList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/mpsdkGroupsLabel"
+                android:layout_below="@+id/mpsdkSavedCardsContainer"
                 android:listSelector="@android:color/transparent"
                 android:divider="@null"/>
             <View
