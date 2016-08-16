@@ -56,6 +56,9 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
 
     // Activity parameters
     protected String mMerchantPublicKey;
+    protected String mMerchantBaseUrl;
+    protected String mMerchantGetCustomerUri;
+    protected String mMerchantAccessToken;
     protected BigDecimal mAmount;
     protected boolean mShowBankDeals;
     protected boolean mCardGuessingEnabled;
@@ -70,6 +73,9 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
     @Override
     protected void getActivityParameters() {
         mMerchantPublicKey = getIntent().getStringExtra("merchantPublicKey");
+        mMerchantBaseUrl = this.getIntent().getStringExtra("merchantBaseUrl");
+        mMerchantGetCustomerUri = this.getIntent().getStringExtra("merchantGetCustomerUri");
+        mMerchantAccessToken = this.getIntent().getStringExtra("merchantAccessToken");
 
         if (getIntent().getStringExtra("paymentPreference") != null) {
             mPaymentPreference = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("paymentPreference"), PaymentPreference.class);

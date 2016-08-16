@@ -284,12 +284,15 @@ public class MercadoPago {
         activity.startActivityForResult(bankDealsIntent, BANK_DEALS_REQUEST_CODE);
     }
 
-    private static void startCheckoutActivity(Activity activity, String merchantPublicKey, String checkoutPreferenceId, Boolean showBankDeals, DecorationPreference decorationPreference) {
+    private static void startCheckoutActivity(Activity activity, String merchantPublicKey, String merchantBaseUrl, String merchantGetCustomerUri, String merchantAccessToken, String checkoutPreferenceId, Boolean showBankDeals, DecorationPreference decorationPreference) {
 
         Intent checkoutIntent = new Intent(activity, CheckoutActivity.class);
         checkoutIntent.putExtra("merchantPublicKey", merchantPublicKey);
         checkoutIntent.putExtra("checkoutPreferenceId", checkoutPreferenceId);
         checkoutIntent.putExtra("showBankDeals", showBankDeals);
+        checkoutIntent.putExtra("merchantBaseUrl", merchantBaseUrl);
+        checkoutIntent.putExtra("merchantGetCustomerUri", merchantGetCustomerUri);
+        checkoutIntent.putExtra("merchantAccessToken", merchantAccessToken);
         checkoutIntent.putExtra("decorationPreference", JsonUtil.getInstance().toJson(decorationPreference));
         activity.startActivityForResult(checkoutIntent, CHECKOUT_REQUEST_CODE);
     }
@@ -481,6 +484,9 @@ public class MercadoPago {
         vaultIntent.putExtra("site", JsonUtil.getInstance().toJson(site));
         vaultIntent.putExtra("installmentsEnabled", installmentsEnabled);
         vaultIntent.putExtra("showBankDeals", showBankDeals);
+        vaultIntent.putExtra("merchantBaseUrl", merchantBaseUrl);
+        vaultIntent.putExtra("merchantGetCustomerUri", merchantGetCustomerUri);
+        vaultIntent.putExtra("merchantAccessToken", merchantAccessToken);
         vaultIntent.putExtra("paymentMethodSearch", JsonUtil.getInstance().toJson(paymentMethodSearch));
         vaultIntent.putExtra("paymentPreference", JsonUtil.getInstance().toJson(paymentPreference));
         vaultIntent.putExtra("decorationPreference", JsonUtil.getInstance().toJson(decorationPreference));
@@ -787,7 +793,7 @@ public class MercadoPago {
             if (this.mKeyType == null) throw new IllegalStateException("key type is null");
 
             if (this.mKeyType.equals(KEY_TYPE_PUBLIC)) {
-                MercadoPago.startCheckoutActivity(this.mActivity, this.mKey,
+                MercadoPago.startCheckoutActivity(this.mActivity, this.mKey, this.mMerchantBaseUrl, this.mMerchantGetCustomerUri, this.mMerchantAccessToken,
                         this.mCheckoutPreferenceId, this.mShowBankDeals, this.mDecorationPreference);
             } else {
                 throw new RuntimeException("Unsupported key type for this method");

@@ -55,6 +55,9 @@ public class CheckoutActivity extends MercadoPagoActivity {
     protected CheckoutPreference mCheckoutPreference;
     protected Boolean mShowBankDeals;
     protected String mMerchantPublicKey;
+    protected String mMerchantBaseUrl;
+    protected String mMerchantGetCustomerUri;
+    protected String mMerchantAccessToken;
 
     //Local vars
     protected MercadoPago mMercadoPago;
@@ -96,6 +99,9 @@ public class CheckoutActivity extends MercadoPagoActivity {
     @Override
     protected void getActivityParameters() {
         mMerchantPublicKey = getIntent().getStringExtra("merchantPublicKey");
+        mMerchantBaseUrl = this.getIntent().getStringExtra("merchantBaseUrl");
+        mMerchantGetCustomerUri = this.getIntent().getStringExtra("merchantGetCustomerUri");
+        mMerchantAccessToken = this.getIntent().getStringExtra("merchantAccessToken");
         mCheckoutPreferenceId = this.getIntent().getStringExtra("checkoutPreferenceId");
         mShowBankDeals = this.getIntent().getBooleanExtra("showBankDeals", true);
     }
