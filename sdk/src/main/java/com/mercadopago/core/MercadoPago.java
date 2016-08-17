@@ -405,7 +405,7 @@ public class MercadoPago {
     private static void startGuessingCardActivity(Activity activity, String key, Boolean requireSecurityCode,
                                                   Boolean requireIssuer, Boolean showBankDeals,
                                                   PaymentPreference paymentPreference, DecorationPreference decorationPreference,
-                                                  Token token, List<PaymentMethod> paymentMethodList) {
+                                                  Token token, List<PaymentMethod> paymentMethodList, Card card) {
 
         Intent guessingCardIntent = new Intent(activity, GuessingCardActivity.class);
         guessingCardIntent.putExtra("publicKey", key);
@@ -419,6 +419,7 @@ public class MercadoPago {
         if (showBankDeals != null) {
             guessingCardIntent.putExtra("showBankDeals", showBankDeals);
         }
+
         guessingCardIntent.putExtra("showBankDeals", showBankDeals);
 
         guessingCardIntent.putExtra("paymentPreference", JsonUtil.getInstance().toJson(paymentPreference));
@@ -429,12 +430,14 @@ public class MercadoPago {
 
         guessingCardIntent.putExtra("decorationPreference", JsonUtil.getInstance().toJson(decorationPreference));
 
+        guessingCardIntent.putExtra("card", JsonUtil.getInstance().toJson(card));
+
         activity.startActivityForResult(guessingCardIntent, GUESSING_CARD_REQUEST_CODE);
     }
 
     private static void startCardVaultActivity(Activity activity, String key, BigDecimal amount, Site site, Boolean installmentsEnabled,
                                                PaymentPreference paymentPreference, DecorationPreference decorationPreference,
-                                               Token token, List<PaymentMethod> paymentMethodList) {
+                                               Token token, List<PaymentMethod> paymentMethodList, Card card) {
 
         Intent cardVaultIntent = new Intent(activity, CardVaultActivity.class);
         cardVaultIntent.putExtra("publicKey", key);
@@ -454,6 +457,8 @@ public class MercadoPago {
         cardVaultIntent.putExtra("paymentMethodList", JsonUtil.getInstance().toJson(paymentMethodList));
 
         cardVaultIntent.putExtra("decorationPreference", JsonUtil.getInstance().toJson(decorationPreference));
+
+        cardVaultIntent.putExtra("card", JsonUtil.getInstance().toJson(card));
 
         activity.startActivityForResult(cardVaultIntent, CARD_VAULT_REQUEST_CODE);
     }
@@ -613,6 +618,7 @@ public class MercadoPago {
         private Boolean mInstallmentsEnabled;
         private List<String> mSupportedPaymentTypes;
         private List<BankDeal> mBankDeals;
+        private Card mCard;
 
         public StartActivityBuilder() {
 
@@ -762,6 +768,11 @@ public class MercadoPago {
 
         public StartActivityBuilder setDecorationPreference(DecorationPreference decorationPreference) {
             this.mDecorationPreference = decorationPreference;
+            return this;
+        }
+
+        public StartActivityBuilder setCard(Card card) {
+            this.mCard = card;
             return this;
         }
 
@@ -935,7 +946,7 @@ public class MercadoPago {
             if (this.mKeyType == null) throw new IllegalStateException("key type is null");
             MercadoPago.startGuessingCardActivity(this.mActivity, this.mKey, this.mRequireSecurityCode,
                     this.mRequireIssuer, this.mShowBankDeals, this.mPaymentPreference, this.mDecorationPreference,
-                    this.mToken, this.mPaymentMethodList);
+                    this.mToken, this.mPaymentMethodList, this.mCard);
         }
 
         public void startCardVaultActivity() {
@@ -946,7 +957,7 @@ public class MercadoPago {
                 if (this.mSite == null) throw new IllegalStateException("site is null");
             }
             MercadoPago.startCardVaultActivity(this.mActivity, this.mKey, this.mAmount, this.mSite, this.mInstallmentsEnabled,
-                    this.mPaymentPreference, this.mDecorationPreference, this.mToken, this.mPaymentMethodList);
+                    this.mPaymentPreference, this.mDecorationPreference, this.mToken, this.mPaymentMethodList, this.mCard);
         }
 
         public void startPaymentMethodsActivity() {

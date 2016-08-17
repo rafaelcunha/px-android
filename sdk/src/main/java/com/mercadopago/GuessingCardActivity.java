@@ -41,6 +41,7 @@ import com.mercadopago.fragments.CardFrontFragment;
 import com.mercadopago.fragments.CardIdentificationFragment;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.BankDeal;
+import com.mercadopago.model.Card;
 import com.mercadopago.model.CardNumber;
 import com.mercadopago.model.CardToken;
 import com.mercadopago.model.Cardholder;
@@ -49,6 +50,7 @@ import com.mercadopago.model.IdentificationType;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.PaymentPreference;
+import com.mercadopago.model.SavedCardToken;
 import com.mercadopago.model.SecurityCode;
 import com.mercadopago.model.Setting;
 import com.mercadopago.model.Token;
@@ -70,6 +72,7 @@ public class GuessingCardActivity extends FrontCardActivity {
     // Activity parameters
     protected String mPublicKey;
     protected List<PaymentMethod> mPaymentMethodList;
+    private Card mCard;
 
     // Input controls
     private MPTextView mToolbarButton;
@@ -217,14 +220,23 @@ public class GuessingCardActivity extends FrontCardActivity {
     @Override
     protected void onValidStart() {
         initializeToolbar();
-        setListeners();
-        openKeyboard(mCardNumberEditText);
-        mCurrentEditingEditText = CardInterface.CARD_NUMBER_INPUT;
 
         mMercadoPago = new MercadoPago.Builder()
                 .setContext(getActivity())
                 .setPublicKey(mPublicKey)
                 .build();
+
+        if(mCard == null) {
+            startNewCardFom();
+        } else {
+            startSecurityCodeForm();
+        }
+    }
+
+    private void startNewCardFom() {
+        setListeners();
+        openKeyboard(mCardNumberEditText);
+        mCurrentEditingEditText = CardInterface.CARD_NUMBER_INPUT;
 
         getBankDealsAsync();
 
@@ -232,6 +244,59 @@ public class GuessingCardActivity extends FrontCardActivity {
             getPaymentMethodsAsync();
         } else {
             startGuessingForm();
+        }
+    }
+
+    private void startSecurityCodeForm() {
+        mCardNumberInput.setVisibility(View.GONE);
+        mCardholderNameInput.setVisibility(View.GONE);
+        mCardIdNumberInput.setVisibility(View.GONE);
+        mIdentificationTypeContainer.setVisibility(View.GONE);
+        mIdentificationNumberContainer.setVisibility(View.GONE);
+        mSecurityCodeEditView.setVisibility(View.VISIBLE);
+
+        mCurrentPaymentMethod = mCard.getPaymentMethod();
+        mSecurityCodeLocation = mCard.getSecurityCode().getCardLocation();
+
+        mCardSecurityCodeEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(CardInterface.CARD_SIDE_BACK.equals(mCard.getSecurityCode().getCardLocation())) {
+                    checkFlipCardToBack(false);
+                }
+            }
+        });
+
+        setInputMaxLength(mCardSecurityCodeEditText, mCard.getSecurityCode().getLength());
+        mCardSecurityCodeEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    onSavedCardSecurityCodeAdded();
+                    return true;
+                }
+                return false;
+            }
+        });
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        mNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSavedCardSecurityCodeAdded();
+            }
+        });
+    }
+
+    private void onSavedCardSecurityCodeAdded() {
+        String securityCode = mCardSecurityCodeEditText.getText().toString();
+        if(securityCode.length() == mCard.getSecurityCode().getLength()) {
+            SavedCardToken savedCardToken = new SavedCardToken(mCard.getId(), securityCode);
+            createToken(savedCardToken);
         }
     }
 
@@ -350,6 +415,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         mPublicKey = this.getIntent().getStringExtra("publicKey");
         mPaymentPreference = JsonUtil.getInstance().fromJson(this.getIntent().getStringExtra("paymentPreference"), PaymentPreference.class);
         mToken = JsonUtil.getInstance().fromJson(this.getIntent().getStringExtra("token"), Token.class);
+        mCard = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("card"), Card.class);
 
         try {
             Type listType = new TypeToken<List<PaymentMethod>>() {
@@ -762,7 +828,6 @@ public class GuessingCardActivity extends FrontCardActivity {
                         clearCardImage();
                         clearSecurityCodeFront();
                     }
-
                 }));
     }
 
@@ -1475,18 +1540,11 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     private void createToken() {
-        LayoutUtil.hideKeyboard(this);
-        mInputContainer.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.VISIBLE);
-        mBackButton.setVisibility(View.GONE);
-        mNextButton.setVisibility(View.GONE);
+        showProgress();
         mMercadoPago.createToken(mCardToken, new Callback<Token>() {
             @Override
             public void success(Token token) {
-                if (isActivityActive()) {
-                    mToken = token;
-                    checkStartIssuersActivity();
-                }
+                resolveTokenCreation(token);
             }
 
             @Override
@@ -1502,6 +1560,44 @@ public class GuessingCardActivity extends FrontCardActivity {
                 }
             }
         });
+    }
+
+    private void createToken(final SavedCardToken savedCardToken) {
+        showProgress();
+        mMercadoPago.createToken(savedCardToken, new Callback<Token>() {
+            @Override
+            public void success(Token token) {
+                resolveTokenCreation(token);
+            }
+
+            @Override
+            public void failure(ApiException apiException) {
+                if (isActivityActive()) {
+                    setFailureRecovery(new FailureRecovery() {
+                        @Override
+                        public void recover() {
+                            createToken(savedCardToken);
+                        }
+                    });
+                    ApiUtil.showApiExceptionError(getActivity(), apiException);
+                }
+            }
+        });
+    }
+
+    private void resolveTokenCreation(Token token) {
+        if (isActivityActive()) {
+            mToken = token;
+            checkStartIssuersActivity();
+        }
+    }
+
+    private void showProgress() {
+        LayoutUtil.hideKeyboard(this);
+        mInputContainer.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
+        mBackButton.setVisibility(View.GONE);
+        mNextButton.setVisibility(View.GONE);
     }
 
     private boolean validateCardNumber(boolean requestFocus) {
@@ -1613,8 +1709,8 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     public void checkStartIssuersActivity() {
-        mMercadoPago.getIssuers(mCurrentPaymentMethod.getId(), mPaymentMethodGuessingController.getSavedBin(),
-                new Callback<List<Issuer>>() {
+        String bin = mCard == null ? mPaymentMethodGuessingController.getSavedBin() : mCard.getFirstSixDigits();
+        mMercadoPago.getIssuers(mCurrentPaymentMethod.getId(), bin, new Callback<List<Issuer>>() {
                     @Override
                     public void success(List<Issuer> issuers) {
                         if (isActivityActive()) {

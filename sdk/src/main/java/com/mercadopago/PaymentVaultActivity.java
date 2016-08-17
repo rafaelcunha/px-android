@@ -17,6 +17,7 @@ import com.mercadopago.adapters.PaymentMethodSearchItemAdapter;
 import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.callbacks.OnSelectedCallback;
+import com.mercadopago.constants.Sites;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.core.MerchantServer;
 import com.mercadopago.decorations.DividerItemDecoration;
@@ -312,7 +313,7 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
         //TODO acá no debería seleccionar si es único -> reglas
         if (savedCardsAvailable()) {
             mSavedCardsContainer.setVisibility(View.VISIBLE);
-            List<Card> cardsOffered = mSavedCards.size() > 1 ? mSavedCards.subList(0, 2) : mSavedCards;
+            List<Card> cardsOffered = mSavedCards.size() > 2 ? mSavedCards.subList(0, 3) : mSavedCards;
             populateSavedCardsList(cardsOffered);
         }
         if (isUniqueSelectionAvailable()) {
@@ -345,6 +346,7 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
         CustomerCardsAdapter customerCardsAdapter = new CustomerCardsAdapter(this, savedCards, new OnSelectedCallback<Card>() {
             @Override
             public void onSelected(Card card) {
+                card.setPaymentMethod(mPaymentMethodSearch.getPaymentMethodById(card.getPaymentMethod().getId()));
                 startNextStepForCard(card);
             }
         });
@@ -352,7 +354,14 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
     }
 
     private void startNextStepForCard(Card card) {
-        //TODO
+        new MercadoPago.StartActivityBuilder()
+                .setActivity(this)
+                .setPublicKey(mMerchantPublicKey)
+                .setAmount(mAmount)
+                .setSite(mSite)
+                .setCard(card)
+                .setInstallmentsEnabled(mInstallmentsEnabled)
+                .startCardVaultActivity();
     }
 
     protected OnSelectedCallback<PaymentMethodSearchItem> getPaymentMethodSearchItemSelectionCallback() {

@@ -13,6 +13,7 @@ import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.constants.PaymentTypes;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.model.ApiException;
+import com.mercadopago.model.Card;
 import com.mercadopago.model.IdentificationType;
 import com.mercadopago.model.Installment;
 import com.mercadopago.model.Issuer;
@@ -41,6 +42,7 @@ public class CardVaultActivity extends ShowCardActivity {
     protected List<PaymentMethod> mPaymentMethodList;
     protected Site mSite;
     protected Boolean mInstallmentsEnabled;
+    protected Card mCard;
 
     @Override
     protected void initializeControls() {
@@ -95,6 +97,7 @@ public class CardVaultActivity extends ShowCardActivity {
         mInstallmentsEnabled = getIntent().getBooleanExtra("installmentsEnabled", false);
         mPublicKey = getIntent().getStringExtra("publicKey");
         mSite = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("site"), Site.class);
+        mCard = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("card"), Card.class);
         mSecurityCodeLocation = CardInterface.CARD_SIDE_BACK;
 
         String amount = getIntent().getStringExtra("amount");
@@ -154,6 +157,7 @@ public class CardVaultActivity extends ShowCardActivity {
                         .setPaymentPreference(mPaymentPreference)
                         .setSupportedPaymentMethods(mPaymentMethodList)
                         .setDecorationPreference(mDecorationPreference)
+                        .setCard(mCard)
                         .startGuessingCardActivity();
                 overridePendingTransition(R.anim.mpsdk_slide_right_to_left_in, R.anim.mpsdk_slide_right_to_left_out);
             }
@@ -199,6 +203,10 @@ public class CardVaultActivity extends ShowCardActivity {
             mToken = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
             mSelectedIssuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
             if (mToken != null && mCurrentPaymentMethod != null) {
+                if(mToken.getFirstSixDigits() == null) {
+                    mToken.setFirstSixDigits(mCard.getFirstSixDigits());
+                    mToken.setLastFourDigits(mCard.getLastFourDigits());
+                }
                 mBin = mToken.getFirstSixDigits();
                 mCardholder = mToken.getCardholder();
                 List<Setting> settings = mCurrentPaymentMethod.getSettings();
