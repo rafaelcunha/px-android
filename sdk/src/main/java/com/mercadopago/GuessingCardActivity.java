@@ -257,12 +257,25 @@ public class GuessingCardActivity extends FrontCardActivity {
 
         mCurrentPaymentMethod = mCard.getPaymentMethod();
         mSecurityCodeLocation = mCard.getSecurityCode().getCardLocation();
-
+        setSecurityCodeTextWatcher();
         mCardSecurityCodeEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(CardInterface.CARD_SIDE_BACK.equals(mCard.getSecurityCode().getCardLocation())) {
-                    checkFlipCardToBack(false);
+                if(hasFocus) {
+                    mExpiryMonth = String.valueOf(mCard.getExpirationMonth());
+                    mExpiryYear = String.valueOf(mCard.getExpirationYear());
+                    mCardHolderName = " ";
+
+                    Setting setting = Setting.getSettingByBin(mCard.getPaymentMethod().getSettings(), mCard.getFirstSixDigits());
+                    mCardNumberLength = setting == null ? CARD_NUMBER_MAX_LENGTH : setting.getCardNumber().getLength();
+
+                    mCardNumber = getCardNumberHidden();
+                    mCardNumberLength = mCardNumber.length();
+                    mFrontFragment.populateViews();
+                    if (CardInterface.CARD_SIDE_BACK.equals(mCard.getSecurityCode().getCardLocation())) {
+                        setSecurityCodeSettings(mCard.getSecurityCode());
+                        checkFlipCardToBack(false);
+                    }
                 }
             }
         });
@@ -272,7 +285,7 @@ public class GuessingCardActivity extends FrontCardActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    onSavedCardSecurityCodeAdded();
+                    onSavedCardSecurityCodeInput();
                     return true;
                 }
                 return false;
@@ -287,16 +300,29 @@ public class GuessingCardActivity extends FrontCardActivity {
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onSavedCardSecurityCodeAdded();
+                onSavedCardSecurityCodeInput();
             }
         });
     }
 
-    private void onSavedCardSecurityCodeAdded() {
+    private String getCardNumberHidden() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < mCardNumberLength - ShowCardActivity.LAST_DIGITS_LENGTH; i++) {
+            sb.append("X");
+        }
+        sb.append(mCard.getLastFourDigits());
+        return sb.toString();
+    }
+
+    private void onSavedCardSecurityCodeInput() {
         String securityCode = mCardSecurityCodeEditText.getText().toString();
-        if(securityCode.length() == mCard.getSecurityCode().getLength()) {
-            SavedCardToken savedCardToken = new SavedCardToken(mCard.getId(), securityCode);
+        SavedCardToken savedCardToken = new SavedCardToken(mCard.getId(), securityCode);
+        try {
+            savedCardToken.validateSecurityCode(this, mCard);
             createToken(savedCardToken);
+
+        } catch (Exception e) {
+            setErrorView(e.getMessage());
         }
     }
 
@@ -967,6 +993,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         String bin = mPaymentMethodGuessingController.getSavedBin();
         List<Setting> settings = mCurrentPaymentMethod.getSettings();
         Setting setting = Setting.getSettingByBin(settings, bin);
+
         if (setting == null) {
             ApiUtil.showApiExceptionError(getActivity(), null);
             return;
@@ -980,14 +1007,18 @@ public class GuessingCardActivity extends FrontCardActivity {
 
         if (mCurrentPaymentMethod.isSecurityCodeRequired(bin)) {
             SecurityCode securityCode = setting.getSecurityCode();
-            setSecurityCodeRestrictions(true, securityCode);
-            setSecurityCodeViewRestrictions(securityCode);
-            showSecurityCodeView();
+            setSecurityCodeSettings(securityCode);
         } else {
             mSecurityCode = "";
             setSecurityCodeRestrictions(false, null);
             hideSecurityCodeView();
         }
+    }
+
+    private void setSecurityCodeSettings(SecurityCode securityCode) {
+        setSecurityCodeRestrictions(true, securityCode);
+        setSecurityCodeViewRestrictions(securityCode);
+        showSecurityCodeView();
     }
 
     public void manageAdditionalInfoNeeded() {
@@ -1280,49 +1311,51 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     private void setCardSecurityCodeFocusListener() {
-        mCardSecurityCodeEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (isNextKey(actionId, event)) {
-                    validateCurrentEditText();
+        if (mCard == null) {
+            mCardSecurityCodeEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (isNextKey(actionId, event)) {
+                        validateCurrentEditText();
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            mCardSecurityCodeEditText.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    int action = MotionEventCompat.getActionMasked(event);
+                    if (action == MotionEvent.ACTION_DOWN) {
+                        openKeyboard(mCardSecurityCodeEditText);
+                    }
                     return true;
                 }
-                return false;
-            }
-        });
-        mCardSecurityCodeEditText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = MotionEventCompat.getActionMasked(event);
-                if (action == MotionEvent.ACTION_DOWN) {
-                    openKeyboard(mCardSecurityCodeEditText);
-                }
-                return true;
-            }
-        });
-        mCardSecurityCodeEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!validateExpiryDate(true)) {
-                    return;
-                }
-                mFrontFragment.setFontColor();
-                if (hasFocus &&
-                        (mCurrentEditingEditText.equals(CARD_EXPIRYDATE_INPUT) ||
-                        mCurrentEditingEditText.equals(CARD_IDENTIFICATION_INPUT) ||
-                        mCurrentEditingEditText.equals(CARD_SECURITYCODE_INPUT))) {
-                    MPTracker.getInstance().trackScreen("CARD_SECURITY_CODE", 2, mPublicKey, BuildConfig.VERSION_NAME, getActivity());
-                    enableBackInputButton();
-                    openKeyboard(mCardSecurityCodeEditText);
-                    mCurrentEditingEditText = CARD_SECURITYCODE_INPUT;
-                    if (mSecurityCodeLocation == null || mSecurityCodeLocation.equals(CardInterface.CARD_SIDE_BACK)) {
-                        checkFlipCardToBack(true);
-                    } else {
-                        checkFlipCardToFront(true);
+            });
+            mCardSecurityCodeEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!validateExpiryDate(true)) {
+                        return;
+                    }
+                    mFrontFragment.setFontColor();
+                    if (hasFocus &&
+                            (mCurrentEditingEditText.equals(CARD_EXPIRYDATE_INPUT) ||
+                                    mCurrentEditingEditText.equals(CARD_IDENTIFICATION_INPUT) ||
+                                    mCurrentEditingEditText.equals(CARD_SECURITYCODE_INPUT))) {
+                        MPTracker.getInstance().trackScreen("CARD_SECURITY_CODE", 2, mPublicKey, BuildConfig.VERSION_NAME, getActivity());
+                        enableBackInputButton();
+                        openKeyboard(mCardSecurityCodeEditText);
+                        mCurrentEditingEditText = CARD_SECURITYCODE_INPUT;
+                        if (mSecurityCodeLocation == null || mSecurityCodeLocation.equals(CardInterface.CARD_SIDE_BACK)) {
+                            checkFlipCardToBack(true);
+                        } else {
+                            checkFlipCardToFront(true);
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void setCardIdentificationFocusListener() {

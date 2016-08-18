@@ -1,6 +1,7 @@
 package com.mercadopago;
 
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -56,7 +57,7 @@ public abstract class ShowCardActivity extends FrontCardActivity {
     }
 
     protected Boolean isCardInfoAvailable() {
-        return mToken != null && mCurrentPaymentMethod != null;
+        return mToken != null && !TextUtils.isEmpty(mToken.getFirstSixDigits()) & mCurrentPaymentMethod != null;
     }
 
     private void setCardInfo() {
@@ -123,13 +124,21 @@ public abstract class ShowCardActivity extends FrontCardActivity {
     }
 
     protected void initializeCard() {
-        if (mCurrentPaymentMethod == null || mToken == null || mCardholder == null) {
+        if (mCurrentPaymentMethod == null || mToken == null) {
             return;
         }
         saveCardNumber(getCardNumberHidden());
-        saveCardName(mCardholder.getName());
-        saveCardExpiryMonth(String.valueOf(mToken.getExpirationMonth()));
-        saveCardExpiryYear(String.valueOf(mToken.getExpirationYear()).substring(2, 4));
+        if(mCardholder != null) {
+            saveCardName(mCardholder.getName());
+        }
+        if(mToken.getExpirationMonth() != null) {
+            saveCardExpiryMonth(String.valueOf(mToken.getExpirationMonth()));
+        }
+
+        if(mToken.getExpirationMonth() != null) {
+            saveCardExpiryYear(String.valueOf(mToken.getExpirationYear()).substring(2, 4));
+        }
+
         if (mCurrentPaymentMethod.isSecurityCodeRequired(mBin)
                 && mSecurityCodeLocation.equals(CARD_SIDE_FRONT)) {
             saveCardSecurityCode(getSecurityCodeHidden());
@@ -151,8 +160,7 @@ public abstract class ShowCardActivity extends FrontCardActivity {
 
     private String getCardNumberHidden() {
         StringBuilder sb = new StringBuilder();
-        int length = mToken.getCardNumberLength();
-        for (int i = 0; i < length - LAST_DIGITS_LENGTH; i++) {
+        for (int i = 0; i < mCardNumberLength - LAST_DIGITS_LENGTH; i++) {
             sb.append("X");
         }
         sb.append(mToken.getLastFourDigits());

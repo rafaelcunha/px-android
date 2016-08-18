@@ -203,7 +203,11 @@ public class CardVaultActivity extends ShowCardActivity {
             mToken = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
             mSelectedIssuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
             if (mToken != null && mCurrentPaymentMethod != null) {
-                if(mToken.getFirstSixDigits() == null) {
+                if(mCard != null) {
+                    //TODO review
+                    mToken.setCardholder(mCard.getCardHolder());
+                    mToken.setExpirationYear(mCard.getExpirationYear());
+                    mToken.setExpirationMonth(mCard.getExpirationMonth());
                     mToken.setFirstSixDigits(mCard.getFirstSixDigits());
                     mToken.setLastFourDigits(mCard.getLastFourDigits());
                 }

@@ -6,18 +6,15 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mercadopago.adapters.CustomerCardsAdapter;
 import com.mercadopago.adapters.PaymentMethodSearchItemAdapter;
 import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.callbacks.OnSelectedCallback;
-import com.mercadopago.constants.Sites;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.core.MerchantServer;
 import com.mercadopago.decorations.DividerItemDecoration;
@@ -219,7 +216,6 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
     protected void initializeSavedCardsRecyclerView() {
         mSavedCardsRecyclerView = (RecyclerView) findViewById(R.id.mpsdkSavedCards);
         mSavedCardsRecyclerView.setHasFixedSize(true);
-        mSavedCardsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         mSavedCardsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
