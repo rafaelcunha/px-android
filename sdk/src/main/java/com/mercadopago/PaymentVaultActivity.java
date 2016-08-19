@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mercadopago.adapters.CustomerCardsAdapter;
 import com.mercadopago.adapters.PaymentMethodSearchItemAdapter;
 import com.mercadopago.callbacks.Callback;
@@ -17,7 +19,6 @@ import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.callbacks.OnSelectedCallback;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.core.MerchantServer;
-import com.mercadopago.decorations.DividerItemDecoration;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
 import com.mercadopago.model.Customer;
@@ -38,6 +39,7 @@ import com.mercadopago.util.LayoutUtil;
 import com.mercadopago.util.MercadoPagoUtil;
 import com.mercadopago.views.MPTextView;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -112,6 +114,14 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
 
         if (this.getIntent().getStringExtra("paymentMethodSearch") != null) {
             mPaymentMethodSearch = JsonUtil.getInstance().fromJson(this.getIntent().getStringExtra("paymentMethodSearch"), PaymentMethodSearch.class);
+        }
+        try {
+            Gson gson = new Gson();
+            Type listType = new TypeToken<List<Card>>() {
+            }.getType();
+            mSavedCards = gson.fromJson(this.getIntent().getStringExtra("cards"), listType);
+        } catch (Exception ex) {
+            mSavedCards= null;
         }
     }
 
@@ -274,7 +284,8 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
     }
 
     protected void setSearchLayout() {
-        if (isMerchantServerInfoAvailable()) {
+
+        if (!savedCardsAvailable() && isMerchantServerInfoAvailable()) {
             getCustomerAsync();
         } else {
             showAvailablePaymentMethods();
@@ -312,6 +323,7 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
             List<Card> cardsOffered = mSavedCards.size() > 2 ? mSavedCards.subList(0, 3) : mSavedCards;
             populateSavedCardsList(cardsOffered);
         }
+
         if (isUniqueSelectionAvailable()) {
             PaymentMethodSearchItem uniqueItem = mPaymentMethodSearch.getGroups().get(0);
             selectItem(uniqueItem);

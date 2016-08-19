@@ -478,7 +478,7 @@ public class MercadoPago {
     private static void startPaymentVaultActivity(Activity activity, String merchantPublicKey, String merchantBaseUrl,
                                                   String merchantGetCustomerUri, String merchantAccessToken, BigDecimal amount,
                                                   Site site, Boolean installmentsEnabled, Boolean showBankDeals, PaymentPreference paymentPreference,
-                                                  DecorationPreference decorationPreference, PaymentMethodSearch paymentMethodSearch) {
+                                                  DecorationPreference decorationPreference, PaymentMethodSearch paymentMethodSearch, List<Card> cards) {
 
         Intent vaultIntent = new Intent(activity, PaymentVaultActivity.class);
         vaultIntent.putExtra("merchantPublicKey", merchantPublicKey);
@@ -494,6 +494,8 @@ public class MercadoPago {
         vaultIntent.putExtra("merchantAccessToken", merchantAccessToken);
         vaultIntent.putExtra("paymentMethodSearch", JsonUtil.getInstance().toJson(paymentMethodSearch));
         vaultIntent.putExtra("paymentPreference", JsonUtil.getInstance().toJson(paymentPreference));
+        Gson gson = new Gson();
+        vaultIntent.putExtra("cards", gson.toJson(cards));
         vaultIntent.putExtra("decorationPreference", JsonUtil.getInstance().toJson(decorationPreference));
 
         activity.startActivityForResult(vaultIntent, PAYMENT_VAULT_REQUEST_CODE);
@@ -986,7 +988,7 @@ public class MercadoPago {
                 MercadoPago.startPaymentVaultActivity(this.mActivity, this.mKey, this.mMerchantBaseUrl,
                         this.mMerchantGetCustomerUri, this.mMerchantAccessToken,
                         this.mAmount, this.mSite, this.mInstallmentsEnabled, this.mShowBankDeals,
-                        this.mPaymentPreference, this.mDecorationPreference, this.mPaymentMethodSearch);
+                        this.mPaymentPreference, this.mDecorationPreference, this.mPaymentMethodSearch, this.mCards);
             } else {
                 throw new RuntimeException("Unsupported key type for this method");
             }

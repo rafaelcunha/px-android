@@ -13,12 +13,15 @@ import android.widget.TextView;
 import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.core.MercadoPago;
+import com.mercadopago.core.MerchantServer;
 import com.mercadopago.exceptions.CheckoutPreferenceException;
 import com.mercadopago.exceptions.ExceptionHandler;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.fragments.ShoppingCartFragment;
 import com.mercadopago.model.ApiException;
+import com.mercadopago.model.Card;
 import com.mercadopago.model.CheckoutPreference;
+import com.mercadopago.model.Customer;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.Item;
 import com.mercadopago.model.PayerCost;
@@ -45,6 +48,7 @@ import com.mercadopago.views.MPTextView;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -90,6 +94,7 @@ public class CheckoutActivity extends MercadoPagoActivity {
     protected RelativeLayout mPayerCostLayout;
     protected Boolean mBackPressedOnce;
     protected Snackbar mSnackbar;
+    protected List<Card> mSavedCards;
 
     @Override
     protected void setContentView() {
@@ -272,7 +277,9 @@ public class CheckoutActivity extends MercadoPagoActivity {
             @Override
             public void success(PaymentMethodSearch paymentMethodSearch) {
                 mPaymentMethodSearch = paymentMethodSearch;
-                if (isActivityActive()) {
+                if(isMerchantServerInfoAvailable()) {
+                    getCustomerAsync();
+                } else if (isActivityActive()) {
                     startPaymentVaultActivity();
                 }
             }
@@ -292,6 +299,34 @@ public class CheckoutActivity extends MercadoPagoActivity {
         });
     }
 
+    private boolean isMerchantServerInfoAvailable() {
+        return !isEmpty(mMerchantBaseUrl) && !isEmpty(mMerchantGetCustomerUri) && !isEmpty(mMerchantAccessToken);
+    }
+
+    private void getCustomerAsync() {
+        showProgress();
+        MerchantServer.getCustomer(this, mMerchantBaseUrl, mMerchantGetCustomerUri, mMerchantAccessToken, new Callback<Customer>() {
+            @Override
+            public void success(Customer customer) {
+                mSavedCards = customer.getCards();
+                startPaymentVaultActivity();
+            }
+
+            @Override
+            public void failure(ApiException apiException) {
+                if (isActivityActive()) {
+                    ApiUtil.showApiExceptionError(getActivity(), apiException);
+                    setFailureRecovery(new FailureRecovery() {
+                        @Override
+                        public void recover() {
+                            getCustomerAsync();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     protected void startPaymentVaultActivity() {
         new MercadoPago.StartActivityBuilder()
                 .setActivity(this)
@@ -304,6 +339,7 @@ public class CheckoutActivity extends MercadoPagoActivity {
                 .setPaymentMethodSearch(mPaymentMethodSearch)
                 .setPaymentPreference(mCheckoutPreference.getPaymentPreference())
                 .setDecorationPreference(mDecorationPreference)
+                .setCards(mSavedCards)
                 .startPaymentVaultActivity();
     }
 
