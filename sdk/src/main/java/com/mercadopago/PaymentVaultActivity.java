@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -57,11 +56,12 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
     protected Boolean mInstallmentsEnabled;
 
     // Controls
+    protected MPTextView mActivityTitle;
+    protected View mSearchItemsContainer;
     protected RecyclerView mSearchItemsRecyclerView;
-    protected LinearLayout mSavedCardsContainer;
+    protected View mSavedCardsContainer;
     protected RecyclerView mSavedCardsRecyclerView;
     protected AppBarLayout mAppBar;
-    protected MPTextView mActivityTitle;
 
     // Current values
     protected PaymentMethodSearch mPaymentMethodSearch;
@@ -150,7 +150,8 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
     protected void initializeControls() {
         initializeGroupRecyclerView();
         initializeSavedCardsRecyclerView();
-        mSavedCardsContainer = (LinearLayout) findViewById(R.id.mpsdkSavedCardsContainer);
+        mSearchItemsContainer = findViewById(R.id.mpsdkSearchItemsContainer);
+        mSavedCardsContainer = findViewById(R.id.mpsdkSavedCardsContainer);
         mActivityTitle = (MPTextView) findViewById(R.id.mpsdkTitle);
         mAppBar = (AppBarLayout) findViewById(R.id.mpsdkAppBar);
         initializeToolbar();
@@ -230,14 +231,17 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
     }
 
     private void initPaymentMethodSearch() {
-        String initialTitle = getString(R.string.mpsdk_title_activity_payment_vault);
-        setActivityTitle(initialTitle);
-
+        setInitialTitle();
         if (mPaymentMethodSearch != null) {
-            setSearchLayout();
+            onPaymentMethodSearchSet();
         } else {
             getPaymentMethodSearch();
         }
+    }
+
+    private void setInitialTitle() {
+        String initialTitle = getString(R.string.mpsdk_title_activity_payment_vault);
+        setActivityTitle(initialTitle);
     }
 
     protected void setActivityTitle(String title) {
@@ -260,7 +264,7 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
             public void success(PaymentMethodSearch paymentMethodSearch) {
                 if (isActivityActive()) {
                     mPaymentMethodSearch = paymentMethodSearch;
-                    setSearchLayout();
+                    onPaymentMethodSearchSet();
                 }
             }
 
@@ -279,12 +283,11 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
         });
     }
 
-    protected void setSearchLayout() {
-
+    private void onPaymentMethodSearchSet() {
         if (!savedCardsAvailable() && isMerchantServerInfoAvailable()) {
             getCustomerAsync();
         } else {
-            showAvailablePaymentMethods();
+            resolveAvailablePaymentMethods();
         }
     }
 
@@ -294,7 +297,7 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
             @Override
             public void success(Customer customer) {
                 mSavedCards = customer.getCards();
-                showAvailablePaymentMethods();
+                resolveAvailablePaymentMethods();
             }
 
             @Override
@@ -312,25 +315,38 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
         });
     }
 
-    private void showAvailablePaymentMethods() {
-        //TODO acá no debería seleccionar si es único -> reglas
+    private void resolveAvailablePaymentMethods() {
 
         if (noPaymentMethodsAvailable()) {
             showEmptyPaymentMethodsError();
         } else if (isOnlyUniqueSearchSelectionAvailable()) {
-            PaymentMethodSearchItem uniqueItem = mPaymentMethodSearch.getGroups().get(0);
-            selectItem(uniqueItem);
+            selectItem(mPaymentMethodSearch.getGroups().get(0));
         } else if (isOnlyUniqueSavedCardAvailable()) {
             selectCard(mSavedCards.get(0));
         } else {
-            populateSearchList(mPaymentMethodSearch.getGroups());
-            if (savedCardsAvailable()) {
-                mSavedCardsContainer.setVisibility(View.VISIBLE);
-                List<Card> cardsOffered = mSavedCards.size() > 2 ? mSavedCards.subList(0, 3) : mSavedCards;
-                populateSavedCardsList(cardsOffered);
-            }
+            showAvailableOptions();
+        }
+    }
+
+    private void showAvailableOptions() {
+        if(searchItemsAvailable()) {
+            showSearchItems();
+        }
+        if (savedCardsAvailable()) {
+            showSavedCards();
         }
         showRegularLayout();
+    }
+
+    private void showSavedCards() {
+        mSavedCardsContainer.setVisibility(View.VISIBLE);
+        List<Card> cardsOffered = mSavedCards.size() > 2 ? mSavedCards.subList(0, 3) : mSavedCards;
+        populateSavedCardsList(cardsOffered);
+    }
+
+    private void showSearchItems() {
+        mSearchItemsContainer.setVisibility(View.VISIBLE);
+        populateSearchList(mPaymentMethodSearch.getGroups());
     }
 
     private boolean noPaymentMethodsAvailable() {
@@ -340,6 +356,10 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
 
     private boolean savedCardsAvailable() {
         return mSavedCards != null && !mSavedCards.isEmpty();
+    }
+
+    private boolean searchItemsAvailable() {
+        return mPaymentMethodSearch != null && mPaymentMethodSearch.getGroups() != null && !mPaymentMethodSearch.getGroups().isEmpty();
     }
 
     private boolean isMerchantServerInfoAvailable() {
@@ -370,7 +390,6 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
     }
 
     private void selectCard(Card card) {
-        //TODO remove
         card.setPaymentMethod(mPaymentMethodSearch.getPaymentMethodById(card.getPaymentMethod().getId()));
         startNextStepForCard(card);
     }
@@ -518,7 +537,9 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
             finishWithCardResult();
         } else {
             MPTracker.getInstance().trackEvent("PAYMENT_VAULT", "CANCELED", 2, mMerchantPublicKey, mSite.getId(), BuildConfig.VERSION_NAME, this);
-            if (isOnlyUniqueSearchSelectionAvailable() || ((data != null) && (data.getStringExtra("mpException") != null))) {
+            if (isOnlyUniqueSearchSelectionAvailable()
+                    || isOnlyUniqueSavedCardAvailable()
+                    || ((data != null) && (data.getStringExtra("mpException") != null))) {
                 setResult(Activity.RESULT_CANCELED, data);
                 this.finish();
             } else {

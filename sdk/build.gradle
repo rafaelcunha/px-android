@@ -39,11 +39,6 @@ android {
             versionNameSuffix " Debug"
             debuggable true
         }
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.txt'
-        }
     }
     dexOptions {
         // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
