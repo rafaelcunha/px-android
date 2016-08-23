@@ -103,10 +103,12 @@ public class PaymentMethodSearch {
 
     public PaymentMethod getPaymentMethodById(String id) {
         PaymentMethod foundPaymentMethod = null;
-        for (PaymentMethod paymentMethod : paymentMethods) {
-            if (paymentMethod.getId().equals(id)) {
-                foundPaymentMethod = paymentMethod;
-                break;
+        if(paymentMethods != null) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                if (paymentMethod.getId().equals(id)) {
+                    foundPaymentMethod = paymentMethod;
+                    break;
+                }
             }
         }
         return foundPaymentMethod;

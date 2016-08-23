@@ -308,7 +308,7 @@ public class CheckoutActivity extends MercadoPagoActivity {
         MerchantServer.getCustomer(this, mMerchantBaseUrl, mMerchantGetCustomerUri, mMerchantAccessToken, new Callback<Customer>() {
             @Override
             public void success(Customer customer) {
-                mSavedCards = customer.getCards();
+                mSavedCards = mCheckoutPreference.getPaymentPreference() == null ? customer.getCards() : mCheckoutPreference.getPaymentPreference().getValidCards(customer.getCards());
                 startPaymentVaultActivity();
             }
 
@@ -546,6 +546,7 @@ public class CheckoutActivity extends MercadoPagoActivity {
     }
 
     private boolean isUniquePaymentMethod() {
+        //TODO add cards
         return mPaymentMethodSearch != null && mPaymentMethodSearch.getGroups().size() == 1
                 && mPaymentMethodSearch.getGroups().get(0).isPaymentMethod();
     }

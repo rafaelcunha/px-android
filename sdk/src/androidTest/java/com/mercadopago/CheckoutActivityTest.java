@@ -18,9 +18,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.CheckoutPreference;
+import com.mercadopago.model.Customer;
 import com.mercadopago.model.DecorationPreference;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.Item;
@@ -38,6 +40,7 @@ import com.mercadopago.util.JsonUtil;
 import com.mercadopago.utils.ViewUtils;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -55,6 +58,7 @@ import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.intent.Intents.times;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -63,6 +67,7 @@ import static com.mercadopago.utils.ActivityResultUtil.getActivityResult;
 import static com.mercadopago.utils.CustomMatchers.withAnyChildImage;
 import static com.mercadopago.utils.CustomMatchers.withAnyChildText;
 import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -1279,6 +1284,30 @@ public class CheckoutActivityTest {
         intended(hasComponent(PaymentVaultActivity.class.getName()), times(2));
     }
 
+    // CUSTOMER CARDS
+
+    @Test
+    public void ifMerchantServerInfoAddedGetCustomerCards() {
+        CheckoutPreference preference = StaticMock.getCheckoutPreference();
+        mFakeAPI.addResponseToQueue(preference, 200, "");
+
+        String paymentMethodSearchJson = StaticMock.getCompletePaymentMethodSearchAsJson();
+        mFakeAPI.addResponseToQueue(paymentMethodSearchJson, 200, "");
+
+        Customer customer = StaticMock.getCustomer();
+        mFakeAPI.addResponseToQueue(customer, 200, "");
+
+        validStartIntent.putExtra("merchantBaseUrl", "http://www.api.merchant.com");
+        validStartIntent.putExtra("merchantGetCustomerUri", "/get_customer");
+        validStartIntent.putExtra("merchantAccessToken", "mla-cards");
+
+        mTestRule.launchActivity(validStartIntent);
+
+        Gson gson = new Gson();
+        String cardsJson = gson.toJson(mTestRule.getActivity().mSavedCards);
+        intended(allOf(hasComponent(PaymentVaultActivity.class.getName()), hasExtra("cards", cardsJson)));
+    }
+
     // RECOVERY TESTS
 
     @Test
@@ -1309,6 +1338,28 @@ public class CheckoutActivityTest {
         onView(withId(R.id.mpsdkErrorRetry)).perform(click());
 
         assertTrue(mTestRule.getActivity().mPaymentMethodSearch != null);
+    }
+
+    @Test
+    public void afterSavedCardsGetFromAPIFailsWithRecoverableErrorAndRetrySelectedRetryAPICall() {
+        CheckoutPreference checkoutPreference = StaticMock.getCheckoutPreference();
+        String paymentMethodSearchJson = StaticMock.getCompletePaymentMethodSearchAsJson();
+        Customer customer = StaticMock.getCustomer();
+
+        validStartIntent.putExtra("merchantBaseUrl", "http://www.api.merchant.com");
+        validStartIntent.putExtra("merchantGetCustomerUri", "/get_customer");
+        validStartIntent.putExtra("merchantAccessToken", "mla-cards");
+
+        mFakeAPI.addResponseToQueue(checkoutPreference, 200, "");
+        mFakeAPI.addResponseToQueue(paymentMethodSearchJson, 200, "");
+        mFakeAPI.addResponseToQueue("", 400, "");
+        mFakeAPI.addResponseToQueue(customer, 200, "");
+
+        mTestRule.launchActivity(validStartIntent);
+
+        onView(withId(R.id.mpsdkErrorRetry)).perform(click());
+
+        assertTrue(mTestRule.getActivity().mSavedCards != null);
     }
 
     // DECORATION TESTS

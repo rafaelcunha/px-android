@@ -204,7 +204,6 @@ public class CardVaultActivity extends ShowCardActivity {
             mSelectedIssuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
             if (mToken != null && mCurrentPaymentMethod != null) {
                 if(mCard != null) {
-                    //TODO review
                     mToken.setCardholder(mCard.getCardHolder());
                     mToken.setExpirationYear(mCard.getExpirationYear());
                     mToken.setExpirationMonth(mCard.getExpirationMonth());
