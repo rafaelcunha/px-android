@@ -38,6 +38,7 @@ import com.mercadopago.core.MercadoPago;
 import com.mercadopago.fragments.CardBackFragment;
 import com.mercadopago.fragments.CardFrontFragment;
 import com.mercadopago.fragments.CardIdentificationFragment;
+import com.mercadopago.fragments.InputFragment;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.BankDeal;
 import com.mercadopago.model.CardNumber;
@@ -79,7 +80,7 @@ public class GuessingCardActivity extends FrontCardActivity {
     private MPEditText mCardIdentificationNumberEditText;
     private MPTextView mErrorTextView;
     private LinearLayout mSecurityCodeEditView;
-    private LinearLayout mInputContainer;
+//    private LinearLayout mInputContainer;
     private Spinner mIdentificationTypeSpinner;
     private LinearLayout mIdentificationTypeContainer;
     private LinearLayout mIdentificationNumberContainer;
@@ -97,12 +98,13 @@ public class GuessingCardActivity extends FrontCardActivity {
     private LinearLayout mCardIdNumberInput;
     private View mFrontView;
     private View mBackView;
+    private View mInputView;
 
     //Card container
     private CardFrontFragment mFrontFragment;
     private CardBackFragment mBackFragment;
     private CardIdentificationFragment mCardIdentificationFragment;
-
+    private InputFragment mInputFragment;
 
     // Local vars
     private MercadoPago mMercadoPago;
@@ -271,6 +273,9 @@ public class GuessingCardActivity extends FrontCardActivity {
         if (mCardIdentificationFragment == null) {
             mCardIdentificationFragment = new CardIdentificationFragment();
         }
+        if (mInputFragment == null) {
+            mInputFragment = (InputFragment) getSupportFragmentManager().findFragmentById( R.id.inputFragment);
+        }
         if (savedInstanceState == null) {
             initializeFrontFragment();
             initializeBackFragment();
@@ -313,7 +318,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         mCardSecurityCodeEditText = (MPEditText) findViewById(R.id.mpsdkCardSecurityCode);
         mCardIdentificationNumberEditText = (MPEditText) findViewById(R.id.mpsdkCardIdentificationNumber);
         mSecurityCodeEditView = (LinearLayout) findViewById(R.id.mpsdkCardSecurityCodeContainer);
-        mInputContainer = (LinearLayout) findViewById(R.id.mpsdkNewCardInputContainer);
+//        mInputContainer = (LinearLayout) findViewById(R.id.mpsdkNewCardInputContainer);
         mIdentificationTypeSpinner = (Spinner) findViewById(R.id.mpsdkCardIdentificationType);
         mIdentificationTypeContainer = (LinearLayout) findViewById(R.id.mpsdkCardIdentificationTypeContainer);
         mIdentificationNumberContainer = (LinearLayout) findViewById(R.id.mpsdkCardIdentificationNumberContainer);
@@ -1434,7 +1439,7 @@ public class GuessingCardActivity extends FrontCardActivity {
 
     private void createToken() {
         LayoutUtil.hideKeyboard(this);
-        mInputContainer.setVisibility(View.GONE);
+//        mInputContainer.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
         mBackButton.setVisibility(View.GONE);
         mNextButton.setVisibility(View.GONE);

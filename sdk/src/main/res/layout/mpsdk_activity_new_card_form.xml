@@ -50,7 +50,15 @@
                     android:orientation="vertical"
                     android:background="@color/mpsdk_white"
                     android:visibility="visible">
-                    <include layout="@layout/mpsdk_new_card_input"/>
+                    <!--<include layout="@layout/mpsdk_new_card_input"/>-->
+                    <fragment
+                        android:id="@+id/inputFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="5dp"
+                        class="com.mercadopago.fragments.InputFragment"
+                        tools:layout="@layout/mpsdk_new_card_input">
+                    </fragment>
                 </LinearLayout>
 
             </FrameLayout>

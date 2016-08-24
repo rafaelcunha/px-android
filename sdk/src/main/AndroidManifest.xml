@@ -42,7 +42,7 @@
             android:theme="@style/Theme.ProcessMercadoPagoTheme.NoActionbar" />
         <activity
             android:name=".GuessingCardActivity"
-            android:screenOrientation="behind"
+            android:screenOrientation="unspecified"
             android:theme="@style/Theme.ProcessMercadoPagoTheme.NoActionbar"
             android:windowSoftInputMode="adjustResize" />
         <activity
