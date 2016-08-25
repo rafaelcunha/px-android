@@ -1325,9 +1325,9 @@ public class GuessingCardActivity extends FrontCardActivity {
     private void setCardSecurityCodeListeners() {
 
         if (savedCardSet()) {
-            setCompleteFormSecurityCodeListeners();
-        } else {
             setOnlySecurityCodeListeners();
+        } else {
+            setCompleteFormSecurityCodeListeners();
         }
 
         mCardSecurityCodeEditText.setOnTouchListener(new View.OnTouchListener() {
@@ -1762,12 +1762,12 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     public void checkStartIssuersActivity() {
-        if(savedCardSet() && mCard.getIssuer() != null) {
+        if (savedCardSet() && mCard.getIssuer() != null) {
             mSelectedIssuer = mCard.getIssuer();
             mIssuerFound = true;
             finishWithResult();
         } else {
-            String bin = savedCardSet() ? mPaymentMethodGuessingController.getSavedBin() : mCard.getFirstSixDigits();
+            String bin = savedCardSet() ? mCard.getFirstSixDigits() : mPaymentMethodGuessingController.getSavedBin();
             mMercadoPago.getIssuers(mCurrentPaymentMethod.getId(), bin, new Callback<List<Issuer>>() {
                 @Override
                 public void success(List<Issuer> issuers) {
@@ -1857,6 +1857,10 @@ public class GuessingCardActivity extends FrontCardActivity {
         }
     }
 
+    private boolean savedCardSet() {
+        return mCard != null;
+    }
+
     private static class CardNumberTextWatcher implements TextWatcher {
 
         private PaymentMethodGuessingController mController;
@@ -1891,9 +1895,5 @@ public class GuessingCardActivity extends FrontCardActivity {
                 mCallback.onPaymentMethodListSet(list);
             }
         }
-    }
-
-    private boolean savedCardSet() {
-        return mCard != null;
     }
 }

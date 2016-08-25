@@ -43,6 +43,7 @@ public abstract class MercadoPagoActivity extends AppCompatActivity {
     }
 
     protected void onBeforeCreation() {
+        //Perform actions
     }
 
     private void setActivity() {

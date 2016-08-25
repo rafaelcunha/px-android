@@ -40,12 +40,14 @@ import com.mercadopago.views.MPTextView;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
 
 public class PaymentVaultActivity extends MercadoPagoActivity {
 
+    private static final int MAX_SAVED_CARDS = 3;
     // Local vars
     protected MercadoPago mMercadoPago;
     protected PaymentMethod mSelectedPaymentMethod;
@@ -115,7 +117,7 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
             }.getType();
             mSavedCards = gson.fromJson(this.getIntent().getStringExtra("cards"), listType);
         } catch (Exception ex) {
-            mSavedCards = null;
+            mSavedCards = new ArrayList<>();
         }
     }
 
@@ -334,7 +336,7 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
 
     private void showSavedCards() {
         mSavedCardsContainer.setVisibility(View.VISIBLE);
-        List<Card> cardsOffered = mSavedCards.size() > 2 ? mSavedCards.subList(0, 3) : mSavedCards;
+        List<Card> cardsOffered = mSavedCards.size() >= MAX_SAVED_CARDS ? mSavedCards.subList(0, MAX_SAVED_CARDS) : mSavedCards;
         populateSavedCardsList(cardsOffered);
     }
 
@@ -534,7 +536,7 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
             MPTracker.getInstance().trackEvent("PAYMENT_VAULT", "CANCELED", 2, mMerchantPublicKey, mSite.getId(), BuildConfig.VERSION_NAME, this);
             if (isOnlyUniqueSearchSelectionAvailable()
                     || isOnlyUniqueSavedCardAvailable()
-                    || ((data != null) && (data.getStringExtra("mpException") != null))) {
+                    || (data != null) && (data.getStringExtra("mpException") != null)) {
                 setResult(Activity.RESULT_CANCELED, data);
                 this.finish();
             } else {

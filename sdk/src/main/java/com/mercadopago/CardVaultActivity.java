@@ -35,14 +35,14 @@ import java.util.List;
 
 public class CardVaultActivity extends ShowCardActivity {
 
-    private View mCardBackground;
-
     protected PayerCost mPayerCost;
     protected PaymentPreference mPaymentPreference;
     protected List<PaymentMethod> mPaymentMethodList;
     protected Site mSite;
     protected Boolean mInstallmentsEnabled;
     protected Card mCard;
+
+    private View mCardBackground;
 
     @Override
     protected void initializeControls() {
@@ -203,7 +203,7 @@ public class CardVaultActivity extends ShowCardActivity {
             mToken = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
             mSelectedIssuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
             if (mToken != null && mCurrentPaymentMethod != null) {
-                if(savedCardSet()) {
+                if (savedCardSet()) {
                     completeTokenData(mToken, mCard);
                 }
                 mBin = mToken.getFirstSixDigits();

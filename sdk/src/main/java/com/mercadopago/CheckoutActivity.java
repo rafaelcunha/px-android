@@ -57,7 +57,6 @@ public class CheckoutActivity extends MercadoPagoActivity {
     //Parameters
     protected String mCheckoutPreferenceId;
     protected CheckoutPreference mCheckoutPreference;
-    protected Boolean mShowBankDeals;
     protected String mMerchantPublicKey;
     protected String mMerchantBaseUrl;
     protected String mMerchantGetCustomerUri;
@@ -108,7 +107,6 @@ public class CheckoutActivity extends MercadoPagoActivity {
         mMerchantGetCustomerUri = this.getIntent().getStringExtra("merchantGetCustomerUri");
         mMerchantAccessToken = this.getIntent().getStringExtra("merchantAccessToken");
         mCheckoutPreferenceId = this.getIntent().getStringExtra("checkoutPreferenceId");
-        mShowBankDeals = this.getIntent().getBooleanExtra("showBankDeals", true);
     }
 
     @Override
@@ -277,7 +275,7 @@ public class CheckoutActivity extends MercadoPagoActivity {
             @Override
             public void success(PaymentMethodSearch paymentMethodSearch) {
                 mPaymentMethodSearch = paymentMethodSearch;
-                if(isMerchantServerInfoAvailable()) {
+                if (isMerchantServerInfoAvailable()) {
                     getCustomerAsync();
                 } else if (isActivityActive()) {
                     startPaymentVaultActivity();
@@ -535,9 +533,9 @@ public class CheckoutActivity extends MercadoPagoActivity {
 
     private void drawTermsAndConditionsText() {
         StringBuilder termsAndConditionsText = new StringBuilder();
-        termsAndConditionsText.append(getString(R.string.mpsdk_text_terms_and_conditions_start) + " ");
-        termsAndConditionsText.append("<font color='#0066CC'>" + getString(R.string.mpsdk_text_terms_and_conditions_linked) + "</font>");
-        termsAndConditionsText.append(" " + getString(R.string.mpsdk_text_terms_and_conditions_end));
+        termsAndConditionsText.append(getString(R.string.mpsdk_text_terms_and_conditions_start)).append(" ");
+        termsAndConditionsText.append("<font color='#0066CC'>").append(getString(R.string.mpsdk_text_terms_and_conditions_linked)).append("</font>");
+        termsAndConditionsText.append(" ").append(getString(R.string.mpsdk_text_terms_and_conditions_end));
         mTermsAndConditionsTextView.setText(Html.fromHtml(termsAndConditionsText.toString()));
     }
 

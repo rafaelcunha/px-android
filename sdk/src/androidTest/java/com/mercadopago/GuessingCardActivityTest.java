@@ -1821,6 +1821,33 @@ public class GuessingCardActivityTest {
         assertTrue(tokenJson.equals(result.getExtras().getString("token")));
     }
 
+    @Test
+    public void ifSecurityCodeInputIsNotValidShowError() {
+        Card card = StaticMock.getCard();
+        validStartIntent.putExtra("card", JsonUtil.getInstance().toJson(card));
+
+        mTestRule.launchActivity(validStartIntent);
+
+        onView(withId(R.id.mpsdkCardSecurityCodeContainer)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkCardSecurityCode)).perform(typeText(StaticMock.DUMMY_SECURITY_CODE.substring(0, 1)));
+        onView(withId(R.id.mpsdkNextButton)).perform(click());
+
+        checkSecurityCodeIsInvalid("11", onView(withId(R.id.mpsdkNextButton)));
+    }
+
+    @Test
+    public void ifCardSetAndUserPressesBackButtonFinishActivityWithCancelResult() {
+        Card card = StaticMock.getCard();
+        validStartIntent.putExtra("card", JsonUtil.getInstance().toJson(card));
+
+        mTestRule.launchActivity(validStartIntent);
+
+        onView(withId(R.id.mpsdkBackButton)).perform(click());
+
+        ActivityResultUtil.assertFinishCalledWithResult(mTestRule.getActivity(), Activity.RESULT_CANCELED);
+
+    }
+
     private void addIdentificationTypesCall() {
         String identificationTypes = StaticMock.getIdentificationTypeList();
         mFakeAPI.addResponseToQueue(identificationTypes, 200, "");

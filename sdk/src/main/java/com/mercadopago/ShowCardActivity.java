@@ -128,10 +128,10 @@ public abstract class ShowCardActivity extends FrontCardActivity {
             return;
         }
         saveCardNumber(getCardNumberHidden());
-        if (mCardholder != null) {
-            saveCardName(mCardholder.getName());
-        } else {
+        if (mCardholder == null) {
             saveCardName("");
+        } else {
+            saveCardName(mCardholder.getName());
         }
         if (mToken.getExpirationMonth() != null) {
             saveCardExpiryMonth(String.valueOf(mToken.getExpirationMonth()));
