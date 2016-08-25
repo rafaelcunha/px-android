@@ -203,19 +203,16 @@ public class CardVaultActivity extends ShowCardActivity {
             mToken = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
             mSelectedIssuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
             if (mToken != null && mCurrentPaymentMethod != null) {
-                if(mCard != null) {
-                    mToken.setCardholder(mCard.getCardHolder());
-                    mToken.setExpirationYear(mCard.getExpirationYear());
-                    mToken.setExpirationMonth(mCard.getExpirationMonth());
-                    mToken.setFirstSixDigits(mCard.getFirstSixDigits());
-                    mToken.setLastFourDigits(mCard.getLastFourDigits());
+                if(savedCardSet()) {
+                    completeTokenData(mToken, mCard);
                 }
                 mBin = mToken.getFirstSixDigits();
                 mCardholder = mToken.getCardholder();
                 List<Setting> settings = mCurrentPaymentMethod.getSettings();
                 Setting setting = Setting.getSettingByBin(settings, mBin);
-                mSecurityCodeLocation = setting.getSecurityCode().getCardLocation();
-                mCardNumberLength = setting.getCardNumber().getLength();
+
+                mSecurityCodeLocation = mCard == null ? setting.getSecurityCode().getCardLocation() : mCard.getSecurityCode().getCardLocation();
+                mCardNumberLength = mCard == null ? setting.getCardNumber().getLength() : CARD_NUMBER_MAX_LENGTH;
             }
             initializeCard();
             if (mCurrentPaymentMethod != null) {
@@ -240,6 +237,18 @@ public class CardVaultActivity extends ShowCardActivity {
             setResult(RESULT_CANCELED, data);
             finish();
         }
+    }
+
+    private boolean savedCardSet() {
+        return mCard != null;
+    }
+
+    private void completeTokenData(Token token, Card card) {
+        token.setCardholder(card.getCardHolder());
+        token.setExpirationYear(card.getExpirationYear());
+        token.setExpirationMonth(card.getExpirationMonth());
+        token.setFirstSixDigits(card.getFirstSixDigits());
+        token.setLastFourDigits(card.getLastFourDigits());
     }
 
     public void checkStartInstallmentsActivity() {

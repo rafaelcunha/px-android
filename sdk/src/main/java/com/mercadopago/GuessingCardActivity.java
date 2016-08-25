@@ -227,9 +227,9 @@ public class GuessingCardActivity extends FrontCardActivity {
                 .build();
 
         if (savedCardSet()) {
-            startNewCardFom();
-        } else {
             startSecurityCodeForm();
+        } else {
+            startNewCardFom();
         }
     }
 
@@ -1762,36 +1762,42 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     public void checkStartIssuersActivity() {
-        String bin = savedCardSet() ? mPaymentMethodGuessingController.getSavedBin() : mCard.getFirstSixDigits();
-        mMercadoPago.getIssuers(mCurrentPaymentMethod.getId(), bin, new Callback<List<Issuer>>() {
-            @Override
-            public void success(List<Issuer> issuers) {
-                if (isActivityActive()) {
-                    if (issuers.isEmpty()) {
-                        ErrorUtil.startErrorActivity(getActivity(), getString(R.string.mpsdk_standard_error_message), "issuers call is empty at GuessingCardActivity", false);
-                    } else if (issuers.size() == 1) {
-                        mSelectedIssuer = issuers.get(0);
-                        mIssuerFound = true;
-                        finishWithResult();
-                    } else {
-                        startIssuersActivity(issuers);
+        if(savedCardSet() && mCard.getIssuer() != null) {
+            mSelectedIssuer = mCard.getIssuer();
+            mIssuerFound = true;
+            finishWithResult();
+        } else {
+            String bin = savedCardSet() ? mPaymentMethodGuessingController.getSavedBin() : mCard.getFirstSixDigits();
+            mMercadoPago.getIssuers(mCurrentPaymentMethod.getId(), bin, new Callback<List<Issuer>>() {
+                @Override
+                public void success(List<Issuer> issuers) {
+                    if (isActivityActive()) {
+                        if (issuers.isEmpty()) {
+                            ErrorUtil.startErrorActivity(getActivity(), getString(R.string.mpsdk_standard_error_message), "issuers call is empty at GuessingCardActivity", false);
+                        } else if (issuers.size() == 1) {
+                            mSelectedIssuer = issuers.get(0);
+                            mIssuerFound = true;
+                            finishWithResult();
+                        } else {
+                            startIssuersActivity(issuers);
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void failure(ApiException apiException) {
-                if (isActivityActive()) {
-                    setFailureRecovery(new FailureRecovery() {
-                        @Override
-                        public void recover() {
-                            checkStartIssuersActivity();
-                        }
-                    });
-                    ApiUtil.showApiExceptionError(getActivity(), apiException);
+                @Override
+                public void failure(ApiException apiException) {
+                    if (isActivityActive()) {
+                        setFailureRecovery(new FailureRecovery() {
+                            @Override
+                            public void recover() {
+                                checkStartIssuersActivity();
+                            }
+                        });
+                        ApiUtil.showApiExceptionError(getActivity(), apiException);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void setIssuerDefaultAnimation() {
@@ -1888,6 +1894,6 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     private boolean savedCardSet() {
-        return mCard == null;
+        return mCard != null;
     }
 }

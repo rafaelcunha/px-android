@@ -398,6 +398,8 @@ public class PaymentVaultActivity extends MercadoPagoActivity {
                 .setAmount(mAmount)
                 .setSite(mSite)
                 .setCard(card)
+                .setDecorationPreference(mDecorationPreference)
+                .setPaymentPreference(mPaymentPreference)
                 .setInstallmentsEnabled(mInstallmentsEnabled)
                 .startCardVaultActivity();
     }

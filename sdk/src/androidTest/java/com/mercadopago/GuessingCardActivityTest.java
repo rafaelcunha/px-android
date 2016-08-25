@@ -14,6 +14,7 @@ import android.widget.ImageView;
 
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.model.BankDeal;
+import com.mercadopago.model.Card;
 import com.mercadopago.model.DecorationPreference;
 import com.mercadopago.model.DummyCard;
 import com.mercadopago.model.DummyIdentificationType;
@@ -1784,6 +1785,41 @@ public class GuessingCardActivityTest {
         identificationNumberIsCurrentEditText();
     }
 
+    //CUSTOMER CARDS
+
+    @Test
+    public void ifCardReceivedShowOnlySecurityCode() {
+        Card card = StaticMock.getCard();
+        validStartIntent.putExtra("card", JsonUtil.getInstance().toJson(card));
+        mTestRule.launchActivity(validStartIntent);
+
+        onView(withId(R.id.mpsdkCardSecurityCodeContainer)).check(matches(isDisplayed()));
+
+        onView(withId(R.id.mpsdkCardNumberInput)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.mpsdkCardholderNameInput)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.mpsdkExpiryDateInput)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.mpsdkCardPaymentMethodSelectionContainer)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.mpsdkCardIdentificationTypeContainer)).check(matches(not(isDisplayed())));
+    }
+
+    @Test
+    public void ifSecurityCodeInputIsValidCreateTokenAndFinishActivity() {
+        Card card = StaticMock.getCard();
+        validStartIntent.putExtra("card", JsonUtil.getInstance().toJson(card));
+
+        Token mockedToken = StaticMock.getToken();
+        mFakeAPI.addResponseToQueue(JsonUtil.getInstance().toJson(mockedToken), 200, "");
+
+        mTestRule.launchActivity(validStartIntent);
+
+        onView(withId(R.id.mpsdkCardSecurityCodeContainer)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkCardSecurityCode)).perform(typeText(StaticMock.DUMMY_SECURITY_CODE));
+        onView(withId(R.id.mpsdkNextButton)).perform(click());
+
+        ActivityResult result = ActivityResultUtil.getActivityResult(mTestRule.getActivity());
+        String tokenJson = JsonUtil.getInstance().toJson(mockedToken);
+        assertTrue(tokenJson.equals(result.getExtras().getString("token")));
+    }
 
     private void addIdentificationTypesCall() {
         String identificationTypes = StaticMock.getIdentificationTypeList();
