@@ -44,9 +44,9 @@ public class ExamplesUtils {
     // DUMMY_MERCHANT_PUBLIC_KEY_CO = "aa371283-ad00-4d5d-af5d-ed9f58e139f1";
 
     // * Merchant server vars
-    public static final String DUMMY_MERCHANT_BASE_URL = "http://private-4d9654-mercadopagoexamples.apiary-mock.com";
-    public static final String DUMMY_MERCHANT_GET_CUSTOMER_URI = "/get_customer";
-    public static final String DUMMY_MERCHANT_CREATE_PAYMENT_URI = "/create_payment";
+    public static final String DUMMY_MERCHANT_BASE_URL = "https://www.mercadopago.com";
+    public static final String DUMMY_MERCHANT_GET_CUSTOMER_URI = "/checkout/examples/getCustomer";
+    public static final String DUMMY_MERCHANT_CREATE_PAYMENT_URI = "/checkout/examples/doPayment";
     //public static final String DUMMY_MERCHANT_GET_DISCOUNT_URI = "/checkout/examples/getDiscounts";
 
     // * Merchant access token

@@ -544,9 +544,9 @@ public class CheckoutActivity extends MercadoPagoActivity {
     }
 
     private boolean isUniquePaymentMethod() {
-        //TODO add cards
         return mPaymentMethodSearch != null && mPaymentMethodSearch.getGroups().size() == 1
-                && mPaymentMethodSearch.getGroups().get(0).isPaymentMethod();
+                && mPaymentMethodSearch.getGroups().get(0).isPaymentMethod()
+                && (mSavedCards == null || mSavedCards.isEmpty());
     }
 
     protected void createPayment() {
