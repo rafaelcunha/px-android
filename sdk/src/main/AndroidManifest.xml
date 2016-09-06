@@ -46,6 +46,11 @@
             android:theme="@style/Theme.ProcessMercadoPagoTheme.NoActionbar"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".GuessingFormActivity"
+            android:screenOrientation="behind"
+            android:theme="@style/Theme.ProcessMercadoPagoTheme.NoActionbar"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".PaymentVaultActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.ProcessMercadoPagoTheme.NoActionbar" />
