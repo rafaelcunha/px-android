@@ -5,11 +5,25 @@ package com.mercadopago.fragments;
  */
 public interface InputsFragmentView {
 
-    void showCardNumberFocusState();
+    void showCardNumberFocusStateNormalStrategy();
 
-    void showCardholderNameFocusState();
+    void showCardholderNameFocusStateNormalStrategy();
 
-    void showSecurityCodeFocusState();
+    void showExpiryDateFocusStateNormalStrategy();
+
+    void showSecurityCodeFocusStateNormalStrategy();
+
+    void showSecurityCodeFocusStateSecurityCodeOnlyStrategy();
+
+    void showIdentificationNumberFocusStateNormalStrategy();
+
+    void showCardNumberFocusStateIdNotRequiredStrategy();
+
+    void showCardholderNameFocusStateIdNotRequiredStrategy();
+
+    void showExpiryDateFocusStateIdNotRequiredStrategy();
+
+    void showSecurityCodeFocusStateIdNotRequiredStrategy();
 
     void showOnlySecurityCodeStrategyViews();
 }

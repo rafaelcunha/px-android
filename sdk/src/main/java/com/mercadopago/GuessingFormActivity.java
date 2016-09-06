@@ -62,7 +62,7 @@ public class GuessingFormActivity extends MercadoPagoActivity implements Guessin
     @Override
     protected void onValidStart() {
         //TODO: analizar que estrategia seguir segun los parametros de entrada
-        mInputsFragment.setFlowStrategy(InputsPresenter.SECURITY_CODE_ONLY_STRATEGY);
+        mInputsFragment.setFlowStrategy(InputsPresenter.ID_NOT_REQUIRED_STRATEGY);
         mInputsFragment.showCurrentFocusInput();
 //        initializeToolbar();
 //        setListeners();
