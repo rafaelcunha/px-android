@@ -275,7 +275,7 @@ public class GuessingCardActivity extends FrontCardActivity {
                 if (hasFocus) {
                     mExpiryMonth = String.valueOf(mCard.getExpirationMonth());
                     mExpiryYear = String.valueOf(mCard.getExpirationYear());
-                    mCardHolderName = " ";
+                    mCardHolderName = "";
 
                     Setting setting = Setting.getSettingByBin(mCurrentPaymentMethod.getSettings(), mCard.getFirstSixDigits());
                     mCardNumberLength = setting == null ? CARD_NUMBER_MAX_LENGTH : setting.getCardNumber().getLength();
@@ -330,12 +330,12 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     private String getCardNumberHidden() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder maskStringBuilder = new StringBuilder();
         for (int i = 0; i < mCardNumberLength - ShowCardActivity.LAST_DIGITS_LENGTH; i++) {
-            sb.append("X");
+            maskStringBuilder.append("X");
         }
-        sb.append(mCard.getLastFourDigits());
-        return sb.toString();
+        maskStringBuilder.append(mCard.getLastFourDigits());
+        return maskStringBuilder.toString();
     }
 
     @Override
