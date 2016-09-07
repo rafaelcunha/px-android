@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
@@ -25,15 +26,17 @@ public class InputsFragment extends Fragment implements InputsFragmentView {
     private MPEditText mCardNumberEditText;
     private MPEditText mCardHolderNameEditText;
     private MPEditText mCardExpiryDateEditText;
-    private MPEditText mSecurityCodeEditText;
+    private MPEditText mCardSecurityCodeEditText;
     private MPEditText mCardIdentificationNumberEditText;
     private Spinner mCardIdentificationTypeSpinner;
+    private Spinner mCardPaymentTypeSpinner;
 
     //Inputs views
     private LinearLayout mCardNumberInput;
     private LinearLayout mCardholderNameInput;
     private LinearLayout mCardExpiryDateInput;
-    private LinearLayout mSecurityCodeInput;
+    private LinearLayout mCardSecurityCodeInput;
+    private LinearLayout mCardPaymentTypeInput;
     private LinearLayout mCardIdNumberInput;
     private LinearLayout mCardIdTypeInput;
 
@@ -68,17 +71,29 @@ public class InputsFragment extends Fragment implements InputsFragmentView {
             mCardNumberEditText = (MPEditText) getView().findViewById(R.id.mpsdkCardNumber);
             mCardHolderNameEditText = (MPEditText) getView().findViewById(R.id.mpsdkCardholderName);
             mCardExpiryDateEditText = (MPEditText) getView().findViewById(R.id.mpsdkCardExpiryDate);
-            mSecurityCodeEditText = (MPEditText) getView().findViewById(R.id.mpsdkCardSecurityCode);
+            mCardSecurityCodeEditText = (MPEditText) getView().findViewById(R.id.mpsdkCardSecurityCode);
             mCardIdentificationNumberEditText = (MPEditText) getView().findViewById(R.id.mpsdkCardIdentificationNumber);
             mCardIdentificationTypeSpinner = (Spinner) getView().findViewById(R.id.mpsdkCardIdentificationType);
+            mCardPaymentTypeSpinner = (Spinner) getView().findViewById(R.id.mpsdkCardPaymentTypeSelector);
+
+
+            //TODO sacar
+
+            String[] arraySpinner = new String[] {
+                    "credito", "debito"
+            };
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_spinner_item, arraySpinner);
+            mCardPaymentTypeSpinner.setAdapter(adapter);
 
             //Inputs views
             mCardNumberInput = (LinearLayout) getView().findViewById(R.id.mpsdkCardNumberInput);
             mCardholderNameInput = (LinearLayout) getView().findViewById(R.id.mpsdkCardholderNameInput);
             mCardExpiryDateInput = (LinearLayout) getView().findViewById(R.id.mpsdkExpiryDateInput);
-            mSecurityCodeInput = (LinearLayout) getView().findViewById(R.id.mpsdkCardSecurityCodeContainer);
+            mCardSecurityCodeInput = (LinearLayout) getView().findViewById(R.id.mpsdkCardSecurityCodeContainer);
             mCardIdNumberInput = (LinearLayout) getView().findViewById(R.id.mpsdkCardIdentificationNumberContainer);
             mCardIdTypeInput = (LinearLayout) getView().findViewById(R.id.mpsdkCardIdentificationTypeContainer);
+            mCardPaymentTypeInput = (LinearLayout) getView().findViewById(R.id.mpsdkCardPaymentTypeSelectionContainer);
         }
 
     }
@@ -123,7 +138,7 @@ public class InputsFragment extends Fragment implements InputsFragmentView {
     }
 
     private void setSecurityCodeListeners() {
-        mSecurityCodeEditText.setOnEditorActionListener(new OnEditorActionInputGuessingFormListener(new OnNextKeyPressedCallback() {
+        mCardSecurityCodeEditText.setOnEditorActionListener(new OnEditorActionInputGuessingFormListener(new OnNextKeyPressedCallback() {
             @Override
             public void onNextKeyPressed() {
                 mPresenter.validateSecurityCodeAndContinue();
@@ -146,57 +161,103 @@ public class InputsFragment extends Fragment implements InputsFragmentView {
 
     @Override
     public void showCardNumberFocusStateNormalStrategy() {
-        setInputVisibilities(View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
+        setInputVisibilities(View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE);
+        mCardNumberEditText.requestFocus();
     }
 
     @Override
     public void showCardNumberFocusStateIdNotRequiredStrategy() {
-        setInputVisibilities(View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
+        setInputVisibilities(View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE);
+        mCardNumberEditText.requestFocus();
     }
 
     @Override
     public void showCardholderNameFocusStateNormalStrategy() {
-        setInputVisibilities(View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE);
+        setInputVisibilities(View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
+        mCardHolderNameEditText.requestFocus();
     }
 
     @Override
     public void showCardholderNameFocusStateIdNotRequiredStrategy() {
-        setInputVisibilities(View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE);
+        setInputVisibilities(View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
+        mCardHolderNameEditText.requestFocus();
     }
 
     @Override
     public void showExpiryDateFocusStateNormalStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE);
+        setInputVisibilities(View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.GONE, View.VISIBLE, View.VISIBLE);
+        mCardExpiryDateEditText.requestFocus();
     }
 
     @Override
     public void showExpiryDateFocusStateIdNotRequiredStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE);
+        setInputVisibilities(View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
+        mCardExpiryDateEditText.requestFocus();
     }
 
     @Override
     public void showSecurityCodeFocusStateNormalStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE);
+        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.GONE, View.VISIBLE, View.VISIBLE);
+        mCardSecurityCodeEditText.requestFocus();
     }
 
     @Override
     public void showSecurityCodeFocusStateIdNotRequiredStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.GONE, View.GONE);
+        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE,View.GONE,  View.GONE, View.GONE);
+        mCardSecurityCodeEditText.requestFocus();
     }
 
     @Override
     public void showIdentificationNumberFocusStateNormalStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE);
+        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE);
+        mCardIdentificationNumberEditText.requestFocus();
     }
 
     @Override
     public void showSecurityCodeFocusStateSecurityCodeOnlyStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.GONE, View.GONE);
+        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
+        mCardSecurityCodeEditText.requestFocus();
+    }
+
+    @Override
+    public void showPaymentTypeFocusStateCreditOrDebitStrategy() {
+        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE);
+        mCardPaymentTypeSpinner.requestFocus();
+    }
+
+    @Override
+    public void showCardNumberFocusStateCreditOrDebitStrategy() {
+        setInputVisibilities(View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE);
+        mCardNumberEditText.requestFocus();
+    }
+
+    @Override
+    public void showCardholderNameFocusStateCreditOrDebitStrategy() {
+        setInputVisibilities(View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
+        mCardHolderNameEditText.requestFocus();
+    }
+
+    @Override
+    public void showExpiryDateFocusStateCreditOrDebitStrategy() {
+        setInputVisibilities(View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE);
+        mCardExpiryDateEditText.requestFocus();
+    }
+
+    @Override
+    public void showSecurityCodeFocusStateCreditOrDebitStrategy() {
+        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE);
+        mCardSecurityCodeEditText.requestFocus();
+    }
+
+    @Override
+    public void showIdentificationNumberFocusStateCreditOrDebitStrategy() {
+        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE);
+        mCardIdentificationNumberEditText.requestFocus();
     }
 
     @Override
     public void showOnlySecurityCodeStrategyViews() {
-        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.GONE, View.GONE);
+        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
     }
 
     public void setFlowStrategy(String strategy) {
@@ -204,14 +265,24 @@ public class InputsFragment extends Fragment implements InputsFragmentView {
     }
 
     private void setInputVisibilities(int cardNumberVisibility, int cardholderNameVisibility,
-                                       int expiryDateVisibility, int securityCodeVisibility,
-                                       int idTypeVisibility, int idNumberVisibility) {
+                                      int expiryDateVisibility, int securityCodeVisibility,
+                                      int paymentTypeVisibility, int idTypeVisibility,
+                                      int idNumberVisibility) {
         mCardNumberInput.setVisibility(cardNumberVisibility);
         mCardholderNameInput.setVisibility(cardholderNameVisibility);
         mCardExpiryDateInput.setVisibility(expiryDateVisibility);
-        mSecurityCodeInput.setVisibility(securityCodeVisibility);
+        mCardSecurityCodeInput.setVisibility(securityCodeVisibility);
+        mCardPaymentTypeInput.setVisibility(paymentTypeVisibility);
         mCardIdTypeInput.setVisibility(idTypeVisibility);
         mCardIdNumberInput.setVisibility(idNumberVisibility);
+    }
+
+    public void validateCurrentFocusInputAndContinue() {
+        mPresenter.validateCurrentFocusInputAndContinue();
+    }
+
+    public void validateCurrentFocusInputAndGoBack() {
+        mPresenter.validateCurrentFocusInputAndGoBack();
     }
 
 }

@@ -6,4 +6,6 @@ package com.mercadopago.model;
 public interface Input {
 
     void validate() throws InputException;
+
+    void validateIsEmptyOrValid() throws InputException;
 }

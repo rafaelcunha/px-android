@@ -25,5 +25,17 @@ public interface InputsFragmentView {
 
     void showSecurityCodeFocusStateIdNotRequiredStrategy();
 
+    void showPaymentTypeFocusStateCreditOrDebitStrategy();
+
+    void showCardNumberFocusStateCreditOrDebitStrategy();
+
+    void showCardholderNameFocusStateCreditOrDebitStrategy();
+
+    void showExpiryDateFocusStateCreditOrDebitStrategy();
+
+    void showSecurityCodeFocusStateCreditOrDebitStrategy();
+
+    void showIdentificationNumberFocusStateCreditOrDebitStrategy();
+
     void showOnlySecurityCodeStrategyViews();
 }

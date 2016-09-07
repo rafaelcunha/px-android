@@ -1,9 +1,9 @@
 package com.mercadopago.model;
 
 /**
- * Created by vaserber on 9/6/16.
+ * Created by vaserber on 9/7/16.
  */
-public class CardholderNameInput implements Input {
+public class PaymentTypeInput implements Input {
 
     @Override
     public void validate() throws InputException {

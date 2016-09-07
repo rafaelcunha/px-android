@@ -9,4 +9,9 @@ public class ExpiryDateInput implements Input {
     public void validate() throws InputException {
 
     }
+
+    @Override
+    public void validateIsEmptyOrValid() throws InputException {
+
+    }
 }

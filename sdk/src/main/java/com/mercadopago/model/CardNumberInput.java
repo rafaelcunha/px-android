@@ -27,6 +27,11 @@ public class CardNumberInput implements Input {
 //        }
     }
 
+    @Override
+    public void validateIsEmptyOrValid() throws InputException {
+
+    }
+
     public void setErrorMessages(String emptyErrorMessage) {
         this.emptyErrorMessage = emptyErrorMessage;
     }

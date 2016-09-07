@@ -2,6 +2,8 @@ package com.mercadopago;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.mercadopago.fragments.InputsFragment;
 import com.mercadopago.fragments.InputsPresenter;
@@ -15,6 +17,10 @@ public class GuessingFormActivity extends MercadoPagoActivity implements Guessin
 
     //Fragments
     private InputsFragment mInputsFragment;
+
+    //Buttons
+    private FrameLayout mBackButton;
+    private FrameLayout mNextButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +68,8 @@ public class GuessingFormActivity extends MercadoPagoActivity implements Guessin
     @Override
     protected void onValidStart() {
         //TODO: analizar que estrategia seguir segun los parametros de entrada
-        mInputsFragment.setFlowStrategy(InputsPresenter.ID_NOT_REQUIRED_STRATEGY);
+        setListeners();
+        mInputsFragment.setFlowStrategy(InputsPresenter.CREDIT_CARD_COMPLETE_STRATEGY);
         mInputsFragment.showCurrentFocusInput();
 //        initializeToolbar();
 //        setListeners();
@@ -93,5 +100,22 @@ public class GuessingFormActivity extends MercadoPagoActivity implements Guessin
     @Override
     protected void initializeControls() {
         mInputsFragment = (InputsFragment) getSupportFragmentManager().findFragmentById(R.id.mpsdkInputsFragment);
+        mBackButton = (FrameLayout) findViewById(R.id.mpsdkBackButton);
+        mNextButton = (FrameLayout) findViewById(R.id.mpsdkNextButton);
+    }
+
+    private void setListeners() {
+        mNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mInputsFragment.validateCurrentFocusInputAndContinue();
+            }
+        });
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mInputsFragment.validateCurrentFocusInputAndGoBack();
+            }
+        });
     }
 }

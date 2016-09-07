@@ -8,6 +8,7 @@ import com.mercadopago.model.ExpiryDateInput;
 import com.mercadopago.model.IdentificationNumberInput;
 import com.mercadopago.model.Input;
 import com.mercadopago.model.InputException;
+import com.mercadopago.model.PaymentTypeInput;
 import com.mercadopago.model.SecurityCodeInput;
 
 /**
@@ -17,6 +18,7 @@ public class InputsPresenter {
 
     //Strategies for this form
     public static final String CREDIT_CARD_COMPLETE_STRATEGY = "creditCardCompleteStrategy";
+    public static final String CREDIT_OR_DEBIT_STRATEGY = "creditOrDebitStrategy";
     public static final String ID_NOT_REQUIRED_STRATEGY = "idNotRequiredStrategy";
     public static final String SECURITY_CODE_ONLY_STRATEGY = "securityCodeOnlyStrategy";
 
@@ -35,7 +37,7 @@ public class InputsPresenter {
     private ExpiryDateInput mExpiryDateInput;
     private SecurityCodeInput mSecurityCodeInput;
     private IdentificationNumberInput mIdentificationNumberInput;
-
+    private PaymentTypeInput mPaymentTypeInput;
 
     public InputsPresenter(Context context) {
         this.mContext = context;
@@ -44,6 +46,7 @@ public class InputsPresenter {
         this.mExpiryDateInput = new ExpiryDateInput();
         this.mSecurityCodeInput = new SecurityCodeInput();
         this.mIdentificationNumberInput = new IdentificationNumberInput();
+        this.mPaymentTypeInput = new PaymentTypeInput();
         this.mCurrentFocusInput = mCardNumberInput;
     }
 
@@ -62,6 +65,8 @@ public class InputsPresenter {
             showSecurityCodeFocusStateAccordingStrategy();
         } else if (mCurrentFocusInput instanceof IdentificationNumberInput) {
             showIdentificationNumberFocusStateAccordingStrategy();
+        } else if (mCurrentFocusInput instanceof PaymentTypeInput) {
+            showPaymentTypeFocusStateAccordingStrategy();
         }
     }
 
@@ -81,6 +86,8 @@ public class InputsPresenter {
             mView.showCardNumberFocusStateNormalStrategy();
         } else if (mStrategy.equals(ID_NOT_REQUIRED_STRATEGY)) {
             mView.showCardNumberFocusStateIdNotRequiredStrategy();
+        } else if (mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
+            mView.showCardNumberFocusStateCreditOrDebitStrategy();
         }
     }
 
@@ -89,6 +96,8 @@ public class InputsPresenter {
             mView.showCardholderNameFocusStateNormalStrategy();
         } else if (mStrategy.equals(ID_NOT_REQUIRED_STRATEGY)) {
             mView.showCardholderNameFocusStateIdNotRequiredStrategy();
+        } else if (mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
+            mView.showCardholderNameFocusStateCreditOrDebitStrategy();
         }
     }
 
@@ -97,6 +106,8 @@ public class InputsPresenter {
             mView.showExpiryDateFocusStateNormalStrategy();
         } else if (mStrategy.equals(ID_NOT_REQUIRED_STRATEGY)) {
             mView.showExpiryDateFocusStateIdNotRequiredStrategy();
+        } else if (mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
+            mView.showExpiryDateFocusStateCreditOrDebitStrategy();
         }
     }
 
@@ -107,12 +118,22 @@ public class InputsPresenter {
             mView.showSecurityCodeFocusStateSecurityCodeOnlyStrategy();
         } else if (mStrategy.equals(ID_NOT_REQUIRED_STRATEGY)) {
             mView.showSecurityCodeFocusStateIdNotRequiredStrategy();
+        } else if (mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
+            mView.showSecurityCodeFocusStateCreditOrDebitStrategy();
         }
     }
 
     private void showIdentificationNumberFocusStateAccordingStrategy() {
         if (mStrategy.equals(CREDIT_CARD_COMPLETE_STRATEGY)) {
             mView.showIdentificationNumberFocusStateNormalStrategy();
+        } else if (mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
+            mView.showIdentificationNumberFocusStateCreditOrDebitStrategy();
+        }
+    }
+
+    private void showPaymentTypeFocusStateAccordingStrategy() {
+        if (mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
+            mView.showPaymentTypeFocusStateCreditOrDebitStrategy();
         }
     }
 
@@ -121,6 +142,38 @@ public class InputsPresenter {
         if (strategy.equals(SECURITY_CODE_ONLY_STRATEGY)) {
             mCurrentFocusInput = mSecurityCodeInput;
             mView.showOnlySecurityCodeStrategyViews();
+        }
+    }
+
+    public void validateCurrentFocusInputAndContinue() {
+        if (mCurrentFocusInput instanceof CardNumberInput) {
+            validateCardNumberAndContinue();
+        } else if (mCurrentFocusInput instanceof CardholderNameInput) {
+            validateCardholderNameAndContinue();
+        } else if (mCurrentFocusInput instanceof ExpiryDateInput) {
+            validateExpiryDateAndContinue();
+        } else if (mCurrentFocusInput instanceof SecurityCodeInput) {
+            validateSecurityCodeAndContinue();
+        } else if (mCurrentFocusInput instanceof IdentificationNumberInput) {
+            validateIdentificationNumberAndContinue();
+        } else if (mCurrentFocusInput instanceof PaymentTypeInput) {
+            validatePaymentTypeAndContinue();
+        }
+    }
+
+    public void validateCurrentFocusInputAndGoBack() {
+        if (mCurrentFocusInput instanceof CardNumberInput) {
+            return;
+        } else if (mCurrentFocusInput instanceof CardholderNameInput) {
+            validateCardholderNameAndGoBack();
+        } else if (mCurrentFocusInput instanceof ExpiryDateInput) {
+            validateExpiryDateAndGoBack();
+        } else if (mCurrentFocusInput instanceof SecurityCodeInput) {
+            validateSecurityCodeAndGoBack();
+        } else if (mCurrentFocusInput instanceof IdentificationNumberInput) {
+            validateIdentificationNumberAndGoBack();
+        } else if (mCurrentFocusInput instanceof PaymentTypeInput) {
+            validatePaymentTypeAndGoBack();
         }
     }
 
@@ -142,10 +195,28 @@ public class InputsPresenter {
         }
     }
 
+    public void validateCardholderNameAndGoBack() {
+        try {
+            mCardholderNameInput.validateIsEmptyOrValid();
+            setBackFocusFromCardholderNameAccordingStrategy();
+        } catch (InputException e) {
+            //TODO: mostrar mensaje de error
+        }
+    }
+
     public void validateExpiryDateAndContinue() {
         try {
             mExpiryDateInput.validate();
             setNextFocusFromExpiryDateAccordingStrategy();
+        } catch (InputException e) {
+            //TODO: mostrar mensaje de error
+        }
+    }
+
+    public void validateExpiryDateAndGoBack() {
+        try {
+            mExpiryDateInput.validateIsEmptyOrValid();
+            setBackFocusFromExpiryDateAccordingStrategy();
         } catch (InputException e) {
             //TODO: mostrar mensaje de error
         }
@@ -160,6 +231,15 @@ public class InputsPresenter {
         }
     }
 
+    public void validateSecurityCodeAndGoBack() {
+        try {
+            mSecurityCodeInput.validateIsEmptyOrValid();
+            setBackFocusFromSecurityCodeAccordingStrategy();
+        } catch (InputException e) {
+            //TODO: mostrar mensaje de error
+        }
+    }
+
     public void validateIdentificationNumberAndContinue() {
         try {
             mIdentificationNumberInput.validate();
@@ -168,9 +248,36 @@ public class InputsPresenter {
         }
     }
 
+    public void validateIdentificationNumberAndGoBack() {
+        try {
+            mIdentificationNumberInput.validateIsEmptyOrValid();
+            setBackFocusFromIdentificationNumberAccordingStrategy();
+        } catch (InputException e) {
+            //TODO: mostrar mensaje de error
+        }
+    }
+
+    public void validatePaymentTypeAndGoBack() {
+        try {
+            mPaymentTypeInput.validateIsEmptyOrValid();
+            setBackFocusFromPaymentTypeAccordingStrategy();
+        } catch (InputException e) {
+            //TODO: mostrar mensaje de error
+        }
+    }
+
+    public void validatePaymentTypeAndContinue() {
+        try {
+            mPaymentTypeInput.validate();
+        } catch (InputException e) {
+            //TODO: mostrar mensaje de error
+        }
+    }
+
     private void setNextFocusFromCardNumberAccordingStrategy() {
         if (mStrategy.equals(CREDIT_CARD_COMPLETE_STRATEGY) ||
-                mStrategy.equals(ID_NOT_REQUIRED_STRATEGY)) {
+                mStrategy.equals(ID_NOT_REQUIRED_STRATEGY) ||
+                mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
             mCurrentFocusInput = mCardholderNameInput;
             getCurrentFocusInput();
         }
@@ -178,16 +285,36 @@ public class InputsPresenter {
 
     private void setNextFocusFromCardholderNameAccordingStrategy() {
         if (mStrategy.equals(CREDIT_CARD_COMPLETE_STRATEGY) ||
-                mStrategy.equals(ID_NOT_REQUIRED_STRATEGY)) {
+                mStrategy.equals(ID_NOT_REQUIRED_STRATEGY) ||
+                mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
             mCurrentFocusInput = mExpiryDateInput;
+            getCurrentFocusInput();
+        }
+    }
+
+    private void setBackFocusFromCardholderNameAccordingStrategy() {
+        if (mStrategy.equals(CREDIT_CARD_COMPLETE_STRATEGY) ||
+                mStrategy.equals(ID_NOT_REQUIRED_STRATEGY) ||
+                mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
+            mCurrentFocusInput = mCardNumberInput;
             getCurrentFocusInput();
         }
     }
 
     private void setNextFocusFromExpiryDateAccordingStrategy() {
         if (mStrategy.equals(CREDIT_CARD_COMPLETE_STRATEGY) ||
-                mStrategy.equals(ID_NOT_REQUIRED_STRATEGY)) {
+                mStrategy.equals(ID_NOT_REQUIRED_STRATEGY) ||
+                mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
             mCurrentFocusInput = mSecurityCodeInput;
+            getCurrentFocusInput();
+        }
+    }
+
+    private void setBackFocusFromExpiryDateAccordingStrategy() {
+        if (mStrategy.equals(CREDIT_CARD_COMPLETE_STRATEGY) ||
+                mStrategy.equals(ID_NOT_REQUIRED_STRATEGY) ||
+                mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
+            mCurrentFocusInput = mCardholderNameInput;
             getCurrentFocusInput();
         }
     }
@@ -195,6 +322,35 @@ public class InputsPresenter {
     private void setNextFocusFromSecurityCodeAccordingStrategy() {
         if (mStrategy.equals(CREDIT_CARD_COMPLETE_STRATEGY)) {
             mCurrentFocusInput = mIdentificationNumberInput;
+            getCurrentFocusInput();
+        } else if (mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
+            mCurrentFocusInput = mPaymentTypeInput;
+            getCurrentFocusInput();
+        }
+    }
+
+    private void setBackFocusFromSecurityCodeAccordingStrategy() {
+        if (mStrategy.equals(CREDIT_CARD_COMPLETE_STRATEGY) ||
+                mStrategy.equals(ID_NOT_REQUIRED_STRATEGY) ||
+                mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
+            mCurrentFocusInput = mExpiryDateInput;
+            getCurrentFocusInput();
+        }
+    }
+
+    private void setBackFocusFromIdentificationNumberAccordingStrategy() {
+        if (mStrategy.equals(CREDIT_CARD_COMPLETE_STRATEGY)) {
+            mCurrentFocusInput = mSecurityCodeInput;
+            getCurrentFocusInput();
+        } else if (mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
+            mCurrentFocusInput = mPaymentTypeInput;
+            getCurrentFocusInput();
+        }
+    }
+
+    private void setBackFocusFromPaymentTypeAccordingStrategy() {
+        if (mStrategy.equals(CREDIT_OR_DEBIT_STRATEGY)) {
+            mCurrentFocusInput = mSecurityCodeInput;
             getCurrentFocusInput();
         }
     }
