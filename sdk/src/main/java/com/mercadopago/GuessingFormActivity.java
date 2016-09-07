@@ -33,6 +33,22 @@ public class GuessingFormActivity extends MercadoPagoActivity implements Guessin
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mInputsFragment.showCurrentFocusInput();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
     protected void setContentView() {
         setContentView(R.layout.mpsdk_activity_guessing_form);
     }
@@ -117,5 +133,10 @@ public class GuessingFormActivity extends MercadoPagoActivity implements Guessin
                 mInputsFragment.validateCurrentFocusInputAndGoBack();
             }
         });
+    }
+
+    @Override
+    protected void initializeFragments(Bundle savedInstanceState) {
+        super.initializeFragments(savedInstanceState);
     }
 }

@@ -3,6 +3,8 @@ package com.mercadopago.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +67,16 @@ public class InputsFragment extends Fragment implements InputsFragmentView {
         setNavigationListeners();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+    }
+
     private void initializeControls() {
         if (getView() != null) {
             //Edit texts
@@ -117,6 +129,22 @@ public class InputsFragment extends Fragment implements InputsFragmentView {
                 mPresenter.validateCardNumberAndContinue();
             }
         }));
+        mCardNumberEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mPresenter.setCardNumber(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     private void setCardholderNameListeners() {

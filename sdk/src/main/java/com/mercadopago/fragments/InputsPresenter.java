@@ -354,4 +354,8 @@ public class InputsPresenter {
             getCurrentFocusInput();
         }
     }
+
+    public void setCardNumber(CharSequence s) {
+        mCardNumberInput.setCardNumber(s.toString());
+    }
 }

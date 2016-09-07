@@ -36,7 +36,11 @@ public class CardNumberInput implements Input {
         this.emptyErrorMessage = emptyErrorMessage;
     }
 
-//    @Override
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
+
+    //    @Override
 //    public void onCardDataChanged(String cardNumber) {
 //        this.cardNumber = cardNumber;
 //    }
