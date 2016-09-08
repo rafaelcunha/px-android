@@ -38,4 +38,6 @@ public interface InputsFragmentView {
     void showIdentificationNumberFocusStateCreditOrDebitStrategy();
 
     void showOnlySecurityCodeStrategyViews();
+
+    void checkFlipCardToBack();
 }

@@ -12,10 +12,17 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
+import com.mercadopago.GuessingFormActivity;
 import com.mercadopago.R;
+import com.mercadopago.callbacks.MaskFilterCallback;
 import com.mercadopago.callbacks.OnNextKeyPressedCallback;
+import com.mercadopago.callbacks.PaymentMethodSelectionCallback;
+import com.mercadopago.listeners.CardNumberTextWatcher;
 import com.mercadopago.listeners.OnEditorActionInputGuessingFormListener;
+import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.views.MPEditText;
+
+import java.util.List;
 
 /**
  * Created by vaserber on 9/6/16.
@@ -145,6 +152,34 @@ public class InputsFragment extends Fragment implements InputsFragmentView {
 
             }
         });
+        mCardNumberEditText.addTextChangedListener(new CardNumberTextWatcher(new PaymentMethodSelectionCallback() {
+            @Override
+            public void onPaymentMethodListSet(List<PaymentMethod> paymentMethodList) {
+
+            }
+
+            @Override
+            public void onPaymentMethodSet(PaymentMethod paymentMethod) {
+
+            }
+
+            @Override
+            public void onPaymentMethodCleared() {
+
+            }
+
+            @Override
+            public void onBinEntered(String bin) {
+
+//                List<PaymentMethod> list = mController.guessPaymentMethodsByBin(mBin);
+//                mPaymentSelectionCallback.onPaymentMethodListSet(list);
+            }
+        }, new MaskFilterCallback() {
+            @Override
+            public void applyMask() {
+
+            }
+        }));
     }
 
     private void setCardholderNameListeners() {
@@ -313,4 +348,8 @@ public class InputsFragment extends Fragment implements InputsFragmentView {
         mPresenter.validateCurrentFocusInputAndGoBack();
     }
 
+    @Override
+    public void checkFlipCardToBack() {
+        ((GuessingFormActivity)(getActivity())).checkFlipCardToBack();
+    }
 }
