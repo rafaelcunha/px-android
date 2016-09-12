@@ -1,5 +1,6 @@
 package com.mercadopago.model;
 
+import com.google.gson.annotations.SerializedName;
 import com.mercadopago.constants.PaymentTypes;
 
 import java.util.List;
@@ -12,6 +13,9 @@ public class PaymentMethodSearch {
     private List<PaymentMethodSearchItem> groups;
 
     private List<PaymentMethod> paymentMethods;
+
+    @SerializedName("custom_options")
+    private List<CustomSearchItem> customSearchItems;
 
     public List<PaymentMethodSearchItem> getGroups() {
         return groups;
@@ -112,5 +116,13 @@ public class PaymentMethodSearch {
             }
         }
         return foundPaymentMethod;
+    }
+
+    public List<CustomSearchItem> getCustomSearchItems() {
+        return customSearchItems;
+    }
+
+    public boolean hasCustomSearchItems() {
+        return customSearchItems != null && !customSearchItems.isEmpty();
     }
 }

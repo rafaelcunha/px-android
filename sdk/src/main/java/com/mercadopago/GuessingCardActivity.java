@@ -251,9 +251,18 @@ public class GuessingCardActivity extends FrontCardActivity {
         showOnlySecurityCodeInput();
 
         mCurrentPaymentMethod = mCard.getPaymentMethod();
-        mSecurityCodeLocation = mCard.getSecurityCode().getCardLocation();
+        //TODO Cambiar hardcoded
+        mSecurityCodeLocation = mCard.getSecurityCode() != null ? mCard.getSecurityCode().getCardLocation() : "back";
 
-        setInputMaxLength(mCardSecurityCodeEditText, mCard.getSecurityCode().getLength());
+        if(mCard.getSecurityCode() != null) {
+            mCardSecurityCodeLength = mCard.getSecurityCode().getLength();
+        } else if ("amex".equals(mCard.getPaymentMethod().getId())) {
+            mCardSecurityCodeLength = 4;
+        } else {
+            mCardSecurityCodeLength= 3;
+        }
+
+        setInputMaxLength(mCardSecurityCodeEditText, mCardSecurityCodeLength);
         setCardSecurityCodeListeners();
         setOnlySecurityCodeNavigationListeners();
     }
@@ -277,16 +286,15 @@ public class GuessingCardActivity extends FrontCardActivity {
                     mExpiryYear = String.valueOf(mCard.getExpirationYear());
                     mCardHolderName = "";
 
-                    Setting setting = Setting.getSettingByBin(mCurrentPaymentMethod.getSettings(), mCard.getFirstSixDigits());
-                    mCardNumberLength = setting == null ? CARD_NUMBER_MAX_LENGTH : setting.getCardNumber().getLength();
+                    mCardNumberLength = CARD_NUMBER_MAX_LENGTH;
 
                     mCardNumber = getCardNumberHidden();
                     mCardNumberLength = mCardNumber.length();
                     mFrontFragment.populateViews();
-                    if (CardInterface.CARD_SIDE_BACK.equals(mCard.getSecurityCode().getCardLocation())) {
-                        setSecurityCodeSettings(mCard.getSecurityCode());
-                        checkFlipCardToBack(false);
-                    }
+                    clearSecurityCodeFront();
+                    //Length
+                    mSecurityCode = mCardSecurityCodeEditText.getText().toString();
+                    checkFlipCardToBack(false);
                 }
             }
         });

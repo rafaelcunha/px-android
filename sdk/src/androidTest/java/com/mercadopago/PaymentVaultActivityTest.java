@@ -196,17 +196,6 @@ public class PaymentVaultActivityTest {
     }
 
     @Test
-    public void ifSelectedSearchItemReceivedReturnIsItemSelectedTrue() {
-        String json = StaticMock.getCompletePaymentMethodSearchAsJson();
-
-        PaymentMethodSearch paymentMethodSearch = JsonUtil.getInstance().fromJson(json, PaymentMethodSearch.class);
-        validStartIntent.putExtra("selectedSearchItem", JsonUtil.getInstance().toJson(paymentMethodSearch.getGroups().get(0)));
-        mTestRule.launchActivity(validStartIntent);
-
-        assertTrue(mTestRule.getActivity().isItemSelected());
-    }
-
-    @Test
     public void ifSelectedSearchItemReceivedDoNotRetrievePaymentMethodSearch() {
         String json = StaticMock.getCompletePaymentMethodSearchAsJson();
         PaymentMethodSearch paymentMethodSearch = JsonUtil.getInstance().fromJson(json, PaymentMethodSearch.class);

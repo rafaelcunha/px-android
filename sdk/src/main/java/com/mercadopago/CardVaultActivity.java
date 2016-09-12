@@ -207,12 +207,15 @@ public class CardVaultActivity extends ShowCardActivity {
                     completeTokenData(mToken, mCard);
                 }
                 mBin = mToken.getFirstSixDigits();
-                mCardholder = mToken.getCardholder();
-                List<Setting> settings = mCurrentPaymentMethod.getSettings();
-                Setting setting = Setting.getSettingByBin(settings, mBin);
 
-                mSecurityCodeLocation = mCard == null ? setting.getSecurityCode().getCardLocation() : mCard.getSecurityCode().getCardLocation();
-                mCardNumberLength = mCard == null ? setting.getCardNumber().getLength() : CARD_NUMBER_MAX_LENGTH;
+                if(mBin != null) {
+                    mCardholder = mToken.getCardholder();
+                    List<Setting> settings = mCurrentPaymentMethod.getSettings();
+                    Setting setting = Setting.getSettingByBin(settings, mBin);
+
+                    mSecurityCodeLocation = mCard == null ? setting.getSecurityCode().getCardLocation() : mCard.getSecurityCode().getCardLocation();
+                    mCardNumberLength = mCard == null ? setting.getCardNumber().getLength() : CARD_NUMBER_MAX_LENGTH;
+                }
             }
             initializeCard();
             if (mCurrentPaymentMethod != null) {

@@ -13,11 +13,14 @@ import com.mercadopago.examples.services.ServicesExampleActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Activity mActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mActivity = this;
     }
 
     public void runCheckoutExample(View view) {

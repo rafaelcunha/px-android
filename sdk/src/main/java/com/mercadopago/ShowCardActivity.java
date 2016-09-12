@@ -141,7 +141,7 @@ public abstract class ShowCardActivity extends FrontCardActivity {
             saveCardExpiryYear(String.valueOf(mToken.getExpirationYear()).substring(2, 4));
         }
 
-        if (mCurrentPaymentMethod.isSecurityCodeRequired(mBin)
+        if (mBin != null && mCurrentPaymentMethod.isSecurityCodeRequired(mBin)
                 && mSecurityCodeLocation.equals(CARD_SIDE_FRONT)) {
             saveCardSecurityCode(getSecurityCodeHidden());
         }
@@ -199,7 +199,7 @@ public abstract class ShowCardActivity extends FrontCardActivity {
 
     @Override
     public boolean isSecurityCodeRequired() {
-        return mCurrentPaymentMethod == null || mCurrentPaymentMethod.isSecurityCodeRequired(mBin);
+        return mCurrentPaymentMethod == null || (mBin != null && mCurrentPaymentMethod.isSecurityCodeRequired(mBin));
     }
 
     @Override

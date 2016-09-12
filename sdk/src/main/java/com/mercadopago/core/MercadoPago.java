@@ -243,7 +243,15 @@ public class MercadoPago {
 
             service.getPaymentMethodSearch(this.mKey, amount, excludedPaymentTypesAppended, excludedPaymentMethodsAppended).enqueue(callback);
         } else {
-            throw new RuntimeException("Unsupported key type for this method");
+            Retrofit retro = new Retrofit.Builder()
+                    .baseUrl("http://private-4d9654-mercadopagoexamples.apiary-mock.com/")
+                    .addConverterFactory(GsonConverterFactory.create(JsonUtil.getInstance().getGson()))
+                    .client(HttpClientUtil.getClient(this.mContext, 10, 20, 20))
+                    .addCallAdapterFactory(new ErrorHandlingCallAdapter.ErrorHandlingCallAdapterFactory())
+                    .build();
+
+            PaymentService service = retro.create(PaymentService.class);
+            service.getPaymentMethodSearch(this.mKey, amount, "", "").enqueue(callback);
         }
     }
 
