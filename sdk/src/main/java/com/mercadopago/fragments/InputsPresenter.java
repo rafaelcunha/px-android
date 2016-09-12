@@ -12,6 +12,9 @@ import com.mercadopago.model.InputException;
 import com.mercadopago.model.PaymentTypeInput;
 import com.mercadopago.model.SecurityCodeInput;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by vaserber on 9/6/16.
  */
@@ -20,11 +23,15 @@ public class InputsPresenter {
     private InputsFragmentView mView;
     private Context mContext;
 
+    private List<Input> mInputs;
+
     //Current strategy
-    private String mStrategy;
+//    private String mStrategy;
 
     //Current focus
     private Input mCurrentFocusInput;
+
+    private int mCurrentPosition;
 
     //Inputs
     private CardNumberInput mCardNumberInput;
@@ -43,6 +50,13 @@ public class InputsPresenter {
         this.mIdentificationNumberInput = new IdentificationNumberInput();
         this.mPaymentTypeInput = new PaymentTypeInput();
         this.mCurrentFocusInput = mCardNumberInput;
+        this.mInputs = new ArrayList<>();
+        this.mCurrentPosition = 0;
+        mInputs.add(mCardNumberInput);
+        mInputs.add(mCardholderNameInput);
+        mInputs.add(mExpiryDateInput);
+        mInputs.add(mSecurityCodeInput);
+        mInputs.add(mIdentificationNumberInput);
     }
 
     public void setView(InputsFragmentView view) {
@@ -51,94 +65,94 @@ public class InputsPresenter {
 
     public void getCurrentFocusInput() {
         if (mCurrentFocusInput instanceof CardNumberInput) {
-            showCardNumberFocusStateAccordingStrategy();
+//            showCardNumberFocusStateAccordingStrategy();
         } else if (mCurrentFocusInput instanceof CardholderNameInput) {
-            showCardholderNameFocusStateAccordingStrategy();
+//            showCardholderNameFocusStateAccordingStrategy();
         } else if (mCurrentFocusInput instanceof ExpiryDateInput) {
-            showExpiryDateFocusStateAccordingStrategy();
+//            showExpiryDateFocusStateAccordingStrategy();
         } else if (mCurrentFocusInput instanceof SecurityCodeInput) {
-            showSecurityCodeFocusStateAccordingStrategy();
+//            showSecurityCodeFocusStateAccordingStrategy();
         } else if (mCurrentFocusInput instanceof IdentificationNumberInput) {
-            showIdentificationNumberFocusStateAccordingStrategy();
+//            showIdentificationNumberFocusStateAccordingStrategy();
         } else if (mCurrentFocusInput instanceof PaymentTypeInput) {
-            showPaymentTypeFocusStateAccordingStrategy();
+//            showPaymentTypeFocusStateAccordingStrategy();
         }
     }
 
-    public void setCurrentStrategy(String strategy) {
-        if (strategyHasChanged(strategy)) {
-            updateStrategy(strategy);
-        }
-        this.mStrategy = strategy;
-    }
+//    public void setCurrentStrategy(String strategy) {
+//        if (strategyHasChanged(strategy)) {
+//            updateStrategy(strategy);
+//        }
+//        this.mStrategy = strategy;
+//    }
 
-    private boolean strategyHasChanged(String strategy) {
-        return (mStrategy != null && !mStrategy.equals(strategy)) || (mStrategy == null);
-    }
+//    private boolean strategyHasChanged(String strategy) {
+//        return (mStrategy != null && !mStrategy.equals(strategy)) || (mStrategy == null);
+//    }
 
-    private void showCardNumberFocusStateAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
-            mView.showCardNumberFocusStateNormalStrategy();
-        } else if (mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY)) {
-            mView.showCardNumberFocusStateIdNotRequiredStrategy();
-        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mView.showCardNumberFocusStateCreditOrDebitStrategy();
-        }
-    }
+//    private void showCardNumberFocusStateAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
+//            mView.showCardNumberFocusStateNormalStrategy();
+//        } else if (mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY)) {
+//            mView.showCardNumberFocusStateIdNotRequiredStrategy();
+//        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mView.showCardNumberFocusStateCreditOrDebitStrategy();
+//        }
+//    }
 
-    private void showCardholderNameFocusStateAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
-            mView.showCardholderNameFocusStateNormalStrategy();
-        } else if (mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY)) {
-            mView.showCardholderNameFocusStateIdNotRequiredStrategy();
-        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mView.showCardholderNameFocusStateCreditOrDebitStrategy();
-        }
-    }
+//    private void showCardholderNameFocusStateAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
+//            mView.showCardholderNameFocusStateNormalStrategy();
+//        } else if (mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY)) {
+//            mView.showCardholderNameFocusStateIdNotRequiredStrategy();
+//        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mView.showCardholderNameFocusStateCreditOrDebitStrategy();
+//        }
+//    }
 
-    private void showExpiryDateFocusStateAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
-            mView.showExpiryDateFocusStateNormalStrategy();
-        } else if (mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY)) {
-            mView.showExpiryDateFocusStateIdNotRequiredStrategy();
-        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mView.showExpiryDateFocusStateCreditOrDebitStrategy();
-        }
-    }
+//    private void showExpiryDateFocusStateAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
+//            mView.showExpiryDateFocusStateNormalStrategy();
+//        } else if (mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY)) {
+//            mView.showExpiryDateFocusStateIdNotRequiredStrategy();
+//        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mView.showExpiryDateFocusStateCreditOrDebitStrategy();
+//        }
+//    }
 
-    private void showSecurityCodeFocusStateAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
-            mView.showSecurityCodeFocusStateNormalStrategy();
-        } else if (mStrategy.equals(GuessingFormActivity.SECURITY_CODE_ONLY_STRATEGY)) {
-            mView.showSecurityCodeFocusStateSecurityCodeOnlyStrategy();
-        } else if (mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY)) {
-            mView.showSecurityCodeFocusStateIdNotRequiredStrategy();
-        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mView.showSecurityCodeFocusStateCreditOrDebitStrategy();
-        }
-    }
+//    private void showSecurityCodeFocusStateAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
+//            mView.showSecurityCodeFocusStateNormalStrategy();
+//        } else if (mStrategy.equals(GuessingFormActivity.SECURITY_CODE_ONLY_STRATEGY)) {
+//            mView.showSecurityCodeFocusStateSecurityCodeOnlyStrategy();
+//        } else if (mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY)) {
+//            mView.showSecurityCodeFocusStateIdNotRequiredStrategy();
+//        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mView.showSecurityCodeFocusStateCreditOrDebitStrategy();
+//        }
+//    }
 
-    private void showIdentificationNumberFocusStateAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
-            mView.showIdentificationNumberFocusStateNormalStrategy();
-        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mView.showIdentificationNumberFocusStateCreditOrDebitStrategy();
-        }
-    }
+//    private void showIdentificationNumberFocusStateAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
+//            mView.showIdentificationNumberFocusStateNormalStrategy();
+//        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mView.showIdentificationNumberFocusStateCreditOrDebitStrategy();
+//        }
+//    }
 
-    private void showPaymentTypeFocusStateAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mView.showPaymentTypeFocusStateCreditOrDebitStrategy();
-        }
-    }
-
-    private void updateStrategy(String strategy) {
-        //TODO: cambiar las vistas que correspondan en el fragment
-        if (strategy.equals(GuessingFormActivity.SECURITY_CODE_ONLY_STRATEGY)) {
-            mCurrentFocusInput = mSecurityCodeInput;
-            mView.showOnlySecurityCodeStrategyViews();
-        }
-    }
+//    private void showPaymentTypeFocusStateAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mView.showPaymentTypeFocusStateCreditOrDebitStrategy();
+//        }
+//    }
+//
+//    private void updateStrategy(String strategy) {
+//        //TODO: cambiar las vistas que correspondan en el fragment
+//        if (strategy.equals(GuessingFormActivity.SECURITY_CODE_ONLY_STRATEGY)) {
+//            mCurrentFocusInput = mSecurityCodeInput;
+//            mView.showOnlySecurityCodeStrategyViews();
+//        }
+//    }
 
     public void validateCurrentFocusInputAndContinue() {
         if (mCurrentFocusInput instanceof CardNumberInput) {
@@ -175,7 +189,7 @@ public class InputsPresenter {
     public void validateCardNumberAndContinue() {
         try {
             mCardNumberInput.validate();
-            setNextFocusFromCardNumberAccordingStrategy();
+//            setNextFocusFromCardNumberAccordingStrategy();
         } catch (InputException e) {
             //TODO: mostrar mensaje de error
         }
@@ -184,7 +198,7 @@ public class InputsPresenter {
     public void validateCardholderNameAndContinue() {
         try {
             mCardholderNameInput.validate();
-            setNextFocusFromCardholderNameAccordingStrategy();
+//            setNextFocusFromCardholderNameAccordingStrategy();
         } catch (InputException e) {
             //TODO: mostrar mensaje de error
         }
@@ -193,7 +207,7 @@ public class InputsPresenter {
     public void validateCardholderNameAndGoBack() {
         try {
             mCardholderNameInput.validateIsEmptyOrValid();
-            setBackFocusFromCardholderNameAccordingStrategy();
+//            setBackFocusFromCardholderNameAccordingStrategy();
         } catch (InputException e) {
             //TODO: mostrar mensaje de error
         }
@@ -202,7 +216,7 @@ public class InputsPresenter {
     public void validateExpiryDateAndContinue() {
         try {
             mExpiryDateInput.validate();
-            setNextFocusFromExpiryDateAccordingStrategy();
+//            setNextFocusFromExpiryDateAccordingStrategy();
             mView.checkFlipCardToBack();
         } catch (InputException e) {
             //TODO: mostrar mensaje de error
@@ -212,7 +226,7 @@ public class InputsPresenter {
     public void validateExpiryDateAndGoBack() {
         try {
             mExpiryDateInput.validateIsEmptyOrValid();
-            setBackFocusFromExpiryDateAccordingStrategy();
+//            setBackFocusFromExpiryDateAccordingStrategy();
         } catch (InputException e) {
             //TODO: mostrar mensaje de error
         }
@@ -221,7 +235,7 @@ public class InputsPresenter {
     public void validateSecurityCodeAndContinue() {
         try {
             mSecurityCodeInput.validate();
-            setNextFocusFromSecurityCodeAccordingStrategy();
+//            setNextFocusFromSecurityCodeAccordingStrategy();
         } catch (InputException e) {
             //TODO: mostrar mensaje de error
         }
@@ -230,7 +244,7 @@ public class InputsPresenter {
     public void validateSecurityCodeAndGoBack() {
         try {
             mSecurityCodeInput.validateIsEmptyOrValid();
-            setBackFocusFromSecurityCodeAccordingStrategy();
+//            setBackFocusFromSecurityCodeAccordingStrategy();
         } catch (InputException e) {
             //TODO: mostrar mensaje de error
         }
@@ -247,7 +261,7 @@ public class InputsPresenter {
     public void validateIdentificationNumberAndGoBack() {
         try {
             mIdentificationNumberInput.validateIsEmptyOrValid();
-            setBackFocusFromIdentificationNumberAccordingStrategy();
+//            setBackFocusFromIdentificationNumberAccordingStrategy();
         } catch (InputException e) {
             //TODO: mostrar mensaje de error
         }
@@ -256,7 +270,7 @@ public class InputsPresenter {
     public void validatePaymentTypeAndGoBack() {
         try {
             mPaymentTypeInput.validateIsEmptyOrValid();
-            setBackFocusFromPaymentTypeAccordingStrategy();
+//            setBackFocusFromPaymentTypeAccordingStrategy();
         } catch (InputException e) {
             //TODO: mostrar mensaje de error
         }
@@ -270,86 +284,86 @@ public class InputsPresenter {
         }
     }
 
-    private void setNextFocusFromCardNumberAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY) ||
-                mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY) ||
-                mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mCurrentFocusInput = mCardholderNameInput;
-            getCurrentFocusInput();
-        }
-    }
-
-    private void setNextFocusFromCardholderNameAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY) ||
-                mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY) ||
-                mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mCurrentFocusInput = mExpiryDateInput;
-            getCurrentFocusInput();
-        }
-    }
-
-    private void setBackFocusFromCardholderNameAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY) ||
-                mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY) ||
-                mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mCurrentFocusInput = mCardNumberInput;
-            getCurrentFocusInput();
-        }
-    }
-
-    private void setNextFocusFromExpiryDateAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY) ||
-                mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY) ||
-                mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mCurrentFocusInput = mSecurityCodeInput;
-            getCurrentFocusInput();
-        }
-    }
-
-    private void setBackFocusFromExpiryDateAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY) ||
-                mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY) ||
-                mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mCurrentFocusInput = mCardholderNameInput;
-            getCurrentFocusInput();
-        }
-    }
-
-    private void setNextFocusFromSecurityCodeAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
-            mCurrentFocusInput = mIdentificationNumberInput;
-            getCurrentFocusInput();
-        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mCurrentFocusInput = mPaymentTypeInput;
-            getCurrentFocusInput();
-        }
-    }
-
-    private void setBackFocusFromSecurityCodeAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY) ||
-                mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY) ||
-                mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mCurrentFocusInput = mExpiryDateInput;
-            getCurrentFocusInput();
-        }
-    }
-
-    private void setBackFocusFromIdentificationNumberAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
-            mCurrentFocusInput = mSecurityCodeInput;
-            getCurrentFocusInput();
-        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mCurrentFocusInput = mPaymentTypeInput;
-            getCurrentFocusInput();
-        }
-    }
-
-    private void setBackFocusFromPaymentTypeAccordingStrategy() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
-            mCurrentFocusInput = mSecurityCodeInput;
-            getCurrentFocusInput();
-        }
-    }
+//    private void setNextFocusFromCardNumberAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY) ||
+//                mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY) ||
+//                mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mCurrentFocusInput = mCardholderNameInput;
+//            getCurrentFocusInput();
+//        }
+//    }
+//
+//    private void setNextFocusFromCardholderNameAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY) ||
+//                mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY) ||
+//                mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mCurrentFocusInput = mExpiryDateInput;
+//            getCurrentFocusInput();
+//        }
+//    }
+//
+//    private void setBackFocusFromCardholderNameAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY) ||
+//                mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY) ||
+//                mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mCurrentFocusInput = mCardNumberInput;
+//            getCurrentFocusInput();
+//        }
+//    }
+//
+//    private void setNextFocusFromExpiryDateAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY) ||
+//                mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY) ||
+//                mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mCurrentFocusInput = mSecurityCodeInput;
+//            getCurrentFocusInput();
+//        }
+//    }
+//
+//    private void setBackFocusFromExpiryDateAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY) ||
+//                mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY) ||
+//                mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mCurrentFocusInput = mCardholderNameInput;
+//            getCurrentFocusInput();
+//        }
+//    }
+//
+//    private void setNextFocusFromSecurityCodeAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
+//            mCurrentFocusInput = mIdentificationNumberInput;
+//            getCurrentFocusInput();
+//        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mCurrentFocusInput = mPaymentTypeInput;
+//            getCurrentFocusInput();
+//        }
+//    }
+//
+//    private void setBackFocusFromSecurityCodeAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY) ||
+//                mStrategy.equals(GuessingFormActivity.ID_NOT_REQUIRED_STRATEGY) ||
+//                mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mCurrentFocusInput = mExpiryDateInput;
+//            getCurrentFocusInput();
+//        }
+//    }
+//
+//    private void setBackFocusFromIdentificationNumberAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
+//            mCurrentFocusInput = mSecurityCodeInput;
+//            getCurrentFocusInput();
+//        } else if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mCurrentFocusInput = mPaymentTypeInput;
+//            getCurrentFocusInput();
+//        }
+//    }
+//
+//    private void setBackFocusFromPaymentTypeAccordingStrategy() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_OR_DEBIT_STRATEGY)) {
+//            mCurrentFocusInput = mSecurityCodeInput;
+//            getCurrentFocusInput();
+//        }
+//    }
 
     public void setCardNumber(CharSequence s) {
         mCardNumberInput.setCardNumber(s.toString());

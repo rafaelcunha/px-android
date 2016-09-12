@@ -8,14 +8,10 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.google.gson.reflect.TypeToken;
-import com.mercadopago.core.MercadoPago;
 import com.mercadopago.fragments.CardBackFragment;
 import com.mercadopago.fragments.CardIdentificationFragment;
 import com.mercadopago.fragments.FrontFragment;
 import com.mercadopago.fragments.InputsFragment;
-import com.mercadopago.fragments.InputsPresenter;
-import com.mercadopago.model.CardToken;
-import com.mercadopago.model.Identification;
 import com.mercadopago.model.IdentificationType;
 import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.PaymentPreference;
@@ -32,10 +28,10 @@ import java.util.List;
 public class GuessingFormActivity extends MercadoPagoActivity implements GuessingFormActivityView, CardInterface {
 
     //Strategies for this form
-    public static final String CREDIT_CARD_COMPLETE_STRATEGY = "creditCardCompleteStrategy";
-    public static final String CREDIT_OR_DEBIT_STRATEGY = "creditOrDebitStrategy";
-    public static final String ID_NOT_REQUIRED_STRATEGY = "idNotRequiredStrategy";
-    public static final String SECURITY_CODE_ONLY_STRATEGY = "securityCodeOnlyStrategy";
+//    public static final String CREDIT_CARD_COMPLETE_STRATEGY = "creditCardCompleteStrategy";
+//    public static final String CREDIT_OR_DEBIT_STRATEGY = "creditOrDebitStrategy";
+//    public static final String ID_NOT_REQUIRED_STRATEGY = "idNotRequiredStrategy";
+//    public static final String SECURITY_CODE_ONLY_STRATEGY = "securityCodeOnlyStrategy";
 
     //Card State
     public static final String CARD_SIDE_FRONT = "front";
@@ -123,35 +119,17 @@ public class GuessingFormActivity extends MercadoPagoActivity implements Guessin
     protected void onValidStart() {
         //TODO: analizar que estrategia seguir segun los parametros de entrada
         setListeners();
-        setFlowStrategy(CREDIT_CARD_COMPLETE_STRATEGY);
+//        setFlowStrategy(SECURITY_CODE_ONLY_STRATEGY);
         mInputsFragment.showCurrentFocusInput();
-        mPresenter.initializeFragments();
+//        mPresenter.initializeFragments();
         mPresenter.initializeGuessingControls();
 
-
-//        initializeToolbar();
-//        setListeners();
-//        openKeyboard(mCardNumberEditText);
-//        mCurrentEditingEditText = CardInterface.CARD_NUMBER_INPUT;
-//
-//        mMercadoPago = new MercadoPago.Builder()
-//                .setContext(getActivity())
-//                .setPublicKey(mPublicKey)
-//                .build();
-//
-//        getBankDealsAsync();
-//
-//        if (mPaymentMethodList == null) {
-//            getPaymentMethodsAsync();
-//        } else {
-//            startGuessingForm();
-//        }
     }
 
-    private void setFlowStrategy(String strategy) {
-        mInputsFragment.setFlowStrategy(strategy);
-        mPresenter.setFlowStrategy(strategy);
-    }
+//    private void setFlowStrategy(String strategy) {
+//        mInputsFragment.setFlowStrategy(strategy);
+//        mPresenter.setFlowStrategy(strategy);
+//    }
 
     @Override
     protected void onInvalidStart(String message) {

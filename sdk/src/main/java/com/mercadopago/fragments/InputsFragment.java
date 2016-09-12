@@ -222,110 +222,110 @@ public class InputsFragment extends Fragment implements InputsFragmentView {
         mPresenter.getCurrentFocusInput();
     }
 
-    @Override
-    public void showCardNumberFocusStateNormalStrategy() {
-        setInputVisibilities(View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE);
-        mCardNumberEditText.requestFocus();
-    }
-
-    @Override
-    public void showCardNumberFocusStateIdNotRequiredStrategy() {
-        setInputVisibilities(View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE);
-        mCardNumberEditText.requestFocus();
-    }
-
-    @Override
-    public void showCardholderNameFocusStateNormalStrategy() {
-        setInputVisibilities(View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
-        mCardHolderNameEditText.requestFocus();
-    }
-
-    @Override
-    public void showCardholderNameFocusStateIdNotRequiredStrategy() {
-        setInputVisibilities(View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
-        mCardHolderNameEditText.requestFocus();
-    }
-
-    @Override
-    public void showExpiryDateFocusStateNormalStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.GONE, View.VISIBLE, View.VISIBLE);
-        mCardExpiryDateEditText.requestFocus();
-    }
-
-    @Override
-    public void showExpiryDateFocusStateIdNotRequiredStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
-        mCardExpiryDateEditText.requestFocus();
-    }
-
-    @Override
-    public void showSecurityCodeFocusStateNormalStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.GONE, View.VISIBLE, View.VISIBLE);
-        mCardSecurityCodeEditText.requestFocus();
-    }
-
-    @Override
-    public void showSecurityCodeFocusStateIdNotRequiredStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE,View.GONE,  View.GONE, View.GONE);
-        mCardSecurityCodeEditText.requestFocus();
-    }
-
-    @Override
-    public void showIdentificationNumberFocusStateNormalStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE);
-        mCardIdentificationNumberEditText.requestFocus();
-    }
-
-    @Override
-    public void showSecurityCodeFocusStateSecurityCodeOnlyStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
-        mCardSecurityCodeEditText.requestFocus();
-    }
-
-    @Override
-    public void showPaymentTypeFocusStateCreditOrDebitStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE);
-        mCardPaymentTypeSpinner.requestFocus();
-    }
-
-    @Override
-    public void showCardNumberFocusStateCreditOrDebitStrategy() {
-        setInputVisibilities(View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE);
-        mCardNumberEditText.requestFocus();
-    }
-
-    @Override
-    public void showCardholderNameFocusStateCreditOrDebitStrategy() {
-        setInputVisibilities(View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
-        mCardHolderNameEditText.requestFocus();
-    }
-
-    @Override
-    public void showExpiryDateFocusStateCreditOrDebitStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE);
-        mCardExpiryDateEditText.requestFocus();
-    }
-
-    @Override
-    public void showSecurityCodeFocusStateCreditOrDebitStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE);
-        mCardSecurityCodeEditText.requestFocus();
-    }
-
-    @Override
-    public void showIdentificationNumberFocusStateCreditOrDebitStrategy() {
-        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE);
-        mCardIdentificationNumberEditText.requestFocus();
-    }
-
-    @Override
-    public void showOnlySecurityCodeStrategyViews() {
-        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
-    }
-
-    public void setFlowStrategy(String strategy) {
-        mPresenter.setCurrentStrategy(strategy);
-    }
+//    @Override
+//    public void showCardNumberFocusStateNormalStrategy() {
+//        setInputVisibilities(View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE);
+//        mCardNumberEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showCardNumberFocusStateIdNotRequiredStrategy() {
+//        setInputVisibilities(View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE);
+//        mCardNumberEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showCardholderNameFocusStateNormalStrategy() {
+//        setInputVisibilities(View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
+//        mCardHolderNameEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showCardholderNameFocusStateIdNotRequiredStrategy() {
+//        setInputVisibilities(View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
+//        mCardHolderNameEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showExpiryDateFocusStateNormalStrategy() {
+//        setInputVisibilities(View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.GONE, View.VISIBLE, View.VISIBLE);
+//        mCardExpiryDateEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showExpiryDateFocusStateIdNotRequiredStrategy() {
+//        setInputVisibilities(View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
+//        mCardExpiryDateEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showSecurityCodeFocusStateNormalStrategy() {
+//        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.GONE, View.VISIBLE, View.VISIBLE);
+//        mCardSecurityCodeEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showSecurityCodeFocusStateIdNotRequiredStrategy() {
+//        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE,View.GONE,  View.GONE, View.GONE);
+//        mCardSecurityCodeEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showIdentificationNumberFocusStateNormalStrategy() {
+//        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE);
+//        mCardIdentificationNumberEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showSecurityCodeFocusStateSecurityCodeOnlyStrategy() {
+//        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
+//        mCardSecurityCodeEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showPaymentTypeFocusStateCreditOrDebitStrategy() {
+//        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE);
+//        mCardPaymentTypeSpinner.requestFocus();
+//    }
+//
+//    @Override
+//    public void showCardNumberFocusStateCreditOrDebitStrategy() {
+//        setInputVisibilities(View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE);
+//        mCardNumberEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showCardholderNameFocusStateCreditOrDebitStrategy() {
+//        setInputVisibilities(View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
+//        mCardHolderNameEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showExpiryDateFocusStateCreditOrDebitStrategy() {
+//        setInputVisibilities(View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE);
+//        mCardExpiryDateEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showSecurityCodeFocusStateCreditOrDebitStrategy() {
+//        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE);
+//        mCardSecurityCodeEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showIdentificationNumberFocusStateCreditOrDebitStrategy() {
+//        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE);
+//        mCardIdentificationNumberEditText.requestFocus();
+//    }
+//
+//    @Override
+//    public void showOnlySecurityCodeStrategyViews() {
+//        setInputVisibilities(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.GONE, View.GONE, View.GONE);
+//    }
+//
+//    public void setFlowStrategy(String strategy) {
+//        mPresenter.setCurrentStrategy(strategy);
+//    }
 
     private void setInputVisibilities(int cardNumberVisibility, int cardholderNameVisibility,
                                       int expiryDateVisibility, int securityCodeVisibility,

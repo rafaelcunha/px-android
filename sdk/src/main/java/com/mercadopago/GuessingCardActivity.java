@@ -763,6 +763,10 @@ public class GuessingCardActivity extends FrontCardActivity {
                         clearSecurityCodeFront();
                     }
 
+                    @Override
+                    public void onBinEntered(String bin) {
+
+                    }
                 }));
     }
 

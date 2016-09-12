@@ -24,7 +24,7 @@ public class GuessingFormPresenter {
     private GuessingFormActivityView mView;
     private Context mContext;
 
-    private String mStrategy;
+//    private String mStrategy;
 
     //Card information
     private String mSecurityCodeLocation;
@@ -50,12 +50,12 @@ public class GuessingFormPresenter {
         this.mView = view;
     }
 
-    public void setFlowStrategy(String strategy) {
-        if (strategyHasChanged(strategy)) {
-            updateStrategy(strategy);
-        }
-        this.mStrategy = strategy;
-    }
+//    public void setFlowStrategy(String strategy) {
+//        if (strategyHasChanged(strategy)) {
+//            updateStrategy(strategy);
+//        }
+//        this.mStrategy = strategy;
+//    }
 
     public void setSecurityCodeLocation(String securityCodeLocation) {
         this.mSecurityCodeLocation = securityCodeLocation;
@@ -79,28 +79,28 @@ public class GuessingFormPresenter {
     public void setPaymentMethodList(List<PaymentMethod> paymentMethodList) {
         this.mPaymentMethodList = paymentMethodList;
     }
+//
+//    private boolean strategyHasChanged(String strategy) {
+//        return (mStrategy != null && !mStrategy.equals(strategy)) || (mStrategy == null);
+//    }
 
-    private boolean strategyHasChanged(String strategy) {
-        return (mStrategy != null && !mStrategy.equals(strategy)) || (mStrategy == null);
-    }
+//    private void updateStrategy(String strategy) {
+//        //TODO: cambiar las vistas que correspondan en el fragment
+//        if (strategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
+//            //TODO
+//        } else if (strategy.equals(GuessingFormActivity.SECURITY_CODE_ONLY_STRATEGY)) {
+//            //TODO
+//        }
+//    }
 
-    private void updateStrategy(String strategy) {
-        //TODO: cambiar las vistas que correspondan en el fragment
-        if (strategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
-            //TODO
-        } else if (strategy.equals(GuessingFormActivity.SECURITY_CODE_ONLY_STRATEGY)) {
-            //TODO
-        }
-    }
-
-    public void initializeFragments() {
-        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
-            mView.initializeFrontFragment();
-            mView.initializeBackFragment();
-        } else if (mStrategy.equals(GuessingFormActivity.SECURITY_CODE_ONLY_STRATEGY)) {
-            mView.initializeBackFragment();
-        }
-    }
+//    public void initializeFragments() {
+//        if (mStrategy.equals(GuessingFormActivity.CREDIT_CARD_COMPLETE_STRATEGY)) {
+//            mView.initializeFrontFragment();
+//            mView.initializeBackFragment();
+//        } else if (mStrategy.equals(GuessingFormActivity.SECURITY_CODE_ONLY_STRATEGY)) {
+//            mView.initializeBackFragment();
+//        }
+//    }
 
     public void initializeGuessingControls() {
         mMercadoPago = new MercadoPago.Builder()
