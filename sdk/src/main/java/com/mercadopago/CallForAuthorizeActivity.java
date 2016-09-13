@@ -1,8 +1,10 @@
 package com.mercadopago;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.model.Payment;
@@ -23,7 +25,7 @@ public class CallForAuthorizeActivity extends MercadoPagoActivity {
     protected MPTextView mCallForAuthTitle;
     protected MPTextView mAuthorizedPaymentMethod;
     protected MPTextView mExit;
-    protected MPTextView mPayWithOtherPaymentMethodButton;
+    protected FrameLayout mPayWithOtherPaymentMethodButton;
 
     //Params
     protected Payment mPayment;
@@ -76,7 +78,7 @@ public class CallForAuthorizeActivity extends MercadoPagoActivity {
                 finish();
             }
         });
-        mPayWithOtherPaymentMethodButton = (MPTextView) findViewById(R.id.mpsdkCallForAuthorizeOptionButton);
+        mPayWithOtherPaymentMethodButton = (FrameLayout) findViewById(R.id.mpsdkCallForAuthorizeOptionButton);
         mPayWithOtherPaymentMethodButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
