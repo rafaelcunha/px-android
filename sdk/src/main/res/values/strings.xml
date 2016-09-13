@@ -101,8 +101,8 @@
     <string name="mpsdk_title_other_reason_rejection">%1$s no procesó el pago</string>
     <string name="mpsdk_text_select_other_rejection">Usa otra tarjeta u otro medio de pago</string>
     <string name="mpsdk_text_some_card_data_is_incorrect">Algún dato de tu %1$s es incorrecto.</string>
-    <string name="mpsdk_text_card_number_is_incorrect">El número de tu %1$s es incorrecto.</string>
     <string name="mpsdk_title_bad_filled_other">Uy, no pudimos procesar el pago</string>
+    <string name="mpsdk_text_some_number">Algún número de tu %1$s es incorrecto.</string>
     <string name="mpsdk_text_insufficient_amount">Tu %1$s no tiene fondos suficientes</string>
     <string name="mpsdk_subtitle_rejection_insufficient_amount">¡No te desanimes! Recárgala en cualquier banco o desde tu banca electrónica e inténtalo de nuevo. O si prefieres, puedes elegir otro medio de pago.</string>
     <string name="mpsdk_subtitle_rejection_duplicated_payment">Si necesitas volver a pagar usa otra tarjeta u otro medio de pago.</string>
@@ -172,5 +172,5 @@
     <string name="mpsdk_no_connection_message">Sin conexión</string>
     <string name="mpsdk_instant_accreditation_time">Se acreditará instantáneamente</string>
     <string name="mpsdk_accreditation_time">Se acreditará en</string>
-    <string name="mpsdk_what_can_do_title">¿Que puedo hacer?</string>
+    <string name="mpsdk_what_can_do">¿Que puedo hacer?</string>
 </resources>
