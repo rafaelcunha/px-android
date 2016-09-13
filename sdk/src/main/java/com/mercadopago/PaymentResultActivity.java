@@ -18,6 +18,7 @@ public class PaymentResultActivity extends Activity {
     //Params
     protected Payment mPayment;
     protected PaymentMethod mPaymentMethod;
+
     private String mMerchantPublicKey;
 
     @Override
@@ -88,7 +89,7 @@ public class PaymentResultActivity extends Activity {
                 .setPublicKey(mMerchantPublicKey)
                 .setActivity(this)
                 .setPayment(mPayment)
-                .setPaymentTypeId(mPaymentMethod.getPaymentTypeId())
+                .setPaymentMethod(mPaymentMethod)
                 .startInstructionsActivity();
     }
 
