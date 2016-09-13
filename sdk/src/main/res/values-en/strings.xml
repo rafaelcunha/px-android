@@ -97,7 +97,7 @@
     <string name="mpsdk_text_other_payment_method_button_rejection">Use another payment method</string>
     <string name="mpsdk_text_pay_with_other_method">Pay with other method</string>
     <string name="mpsdk_text_enter_again">Enter again</string>
-    <string name="mpsdk_subtitle_rejection_insufficient_amount_credit_card">Don\'t worry! You can choose other payment method.</string>
+    <string name="mpsdk_subtitle_rejection_insufficient_amount_credit_card">Don\'t worry! You can choose another payment method.</string>
     <string name="mpsdk_title_other_reason_rejection">%1$s did not process the payment</string>
     <string name="mpsdk_text_select_other_rejection">Use another card or another payment method</string>
     <string name="mpsdk_title_bad_filled_other">Oops, we could not process your payment</string>
@@ -170,7 +170,7 @@
     <string name="mpsdk_title_activity_terms_and_conditions">Terms and conditions</string>
     <string name="mpsdk_format_date">%1$s/%2$s/%3$s - %4$s</string>
     <string name="mpsdk_no_connection_message">No connection</string>
-    <string name="mpsdk_instant_accreditation_time">Will it be credited instantly</string>
-    <string name="mpsdk_accreditation_time">Will be credited in</string>
-    <string name="mpsdk_what_can_do">What can I do?</string>
+    <string name="mpsdk_instant_accreditation_time">Will be accredited instantly</string>
+    <string name="mpsdk_accreditation_time">Will be accredited in</string>
+    <string name="mpsdk_what_can_do_title">What can I do?</string>
 </resources>
