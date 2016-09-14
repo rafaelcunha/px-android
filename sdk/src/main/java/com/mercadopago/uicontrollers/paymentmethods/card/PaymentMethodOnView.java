@@ -14,7 +14,7 @@ import com.mercadopago.views.MPTextView;
 /**
  * Created by mreverter on 28/6/16.
  */
-public abstract class PaymentMethodCard implements PaymentMethodViewController {
+public abstract class PaymentMethodOnView implements PaymentMethodViewController {
 
     protected PaymentMethod mPaymentMethod;
     protected Context mContext;
@@ -27,8 +27,11 @@ public abstract class PaymentMethodCard implements PaymentMethodViewController {
     @Override
     public void drawPaymentMethod() {
 
-        if (getLastFourDigits() != null) {
+        if (getLastFourDigits() != null && !getLastFourDigits().isEmpty()) {
             mDescription.setText(mContext.getString(R.string.mpsdk_last_digits_label) + " " + getLastFourDigits());
+        }
+        else {
+            mDescription.setText(mPaymentMethod.getName());
         }
         int resourceId = MercadoPagoUtil.getPaymentMethodIcon(mContext, mPaymentMethod.getId());
         if (resourceId != 0) {

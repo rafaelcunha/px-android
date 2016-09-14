@@ -15,6 +15,7 @@ import com.mercadopago.model.PaymentMethodSearch;
 import com.mercadopago.model.PaymentMethodSearchItem;
 import com.mercadopago.model.PaymentPreference;
 import com.mercadopago.model.Site;
+import com.mercadopago.model.Token;
 import com.mercadopago.util.CurrenciesUtil;
 import com.mercadopago.util.MercadoPagoUtil;
 
@@ -191,7 +192,7 @@ public class PaymentVaultPresenter {
         }
 
         if(mPaymentMethodSearch.hasCustomSearchItems()) {
-            mCustomSearchItems.addAll(mPaymentMethodSearch.getCustomSearchItems().subList(0, 4));
+            mCustomSearchItems.addAll(mPaymentMethodSearch.getCustomSearchItems());
         }
 
         if(!isUserLogged()) {
@@ -215,9 +216,9 @@ public class PaymentVaultPresenter {
             for (Card card : mSavedCards) {
                 CustomSearchItem searchItem = new CustomSearchItem();
                 searchItem.setDescription(mPaymentVaultView.getContext().getString(R.string.mpsdk_last_digits_label) + " " + card.getLastFourDigits());
-                searchItem.setType(card.getPaymentMethod().getPaymentTypeId());
-                searchItem.setId(card.getPaymentMethod().getId());
-                searchItem.setValue(card.getId());
+                searchItem.setType("card");
+                searchItem.setId(card.getId());
+                searchItem.setPaymentMethodId(card.getPaymentMethod().getId());
                 mCustomSearchItems.add(searchItem);
             }
         }
@@ -228,6 +229,7 @@ public class PaymentVaultPresenter {
         searchItem.setDescription("Tu cuenta de Mercado Pago");
         searchItem.setType("mercadopago_login");
         searchItem.setId("mercadopago");
+        searchItem.setPaymentMethodId("mercadopago");
         mCustomSearchItems.add(searchItem);
     }
 
@@ -248,19 +250,41 @@ public class PaymentVaultPresenter {
         return new OnSelectedCallback<CustomSearchItem>() {
             @Override
             public void onSelected(CustomSearchItem searchItem) {
-                if (MercadoPagoUtil.isCard(searchItem.getType())) {
-                    Card card = new Card();
-                    card.setId(searchItem.getValue());
-                    card.setPaymentMethod(mPaymentMethodSearch.getPaymentMethodById(searchItem.getId()));
-                    String description = searchItem.getDescription();
-                    card.setLastFourDigits(description.substring(description.length()-4, description.length()));
-                    selectCard(card);
+                if ("card".equals(searchItem.getType())) {
+                    if(isUserLogged()) {
+                        Card card = mPaymentMethodSearch.getCardById(searchItem.getId());
+                        card.setPaymentMethod(mPaymentMethodSearch.getPaymentMethodById(searchItem.getPaymentMethodId()));
+                        selectCard(card);
+                    } else {
+                        selectCard(getCardById(mSavedCards, searchItem.getId()));
+                    }
                 }
                 else if ("mercadopago_login".equals(searchItem.getType())) {
                     mPaymentVaultView.startLoginFlow();
+                } else if ("account_money".equals(searchItem.getType())) {
+                    PaymentMethod paymentMethod = new PaymentMethod();
+                    paymentMethod.setId(searchItem.getPaymentMethodId());
+                    paymentMethod.setPaymentTypeId(searchItem.getType());
+                    paymentMethod.setName(searchItem.getDescription());
+                    Token token = new Token();
+                    token.setId(mPaymentMethodSearch.getAccountMoney().getToken());
+                    mPaymentVaultView.selectAccountMoney(paymentMethod, token);
                 }
             }
         };
+    }
+
+    private Card getCardById(List<Card> savedCards, String cardId) {
+        Card foundCard= null;
+        if(savedCards != null) {
+            for (Card card: savedCards) {
+                if (card.getId().equals(cardId)) {
+                    foundCard = card;
+                    break;
+                }
+            }
+        }
+        return foundCard;
     }
 
     protected void startNextStepForPaymentType(PaymentMethodSearchItem item) {

@@ -7,7 +7,7 @@ public class CustomSearchItem {
     private String description;
     private String id;
     private String type;
-    private String value;
+    private String paymentMethodId;
 
     public String getDescription() {
         return description;
@@ -19,10 +19,6 @@ public class CustomSearchItem {
 
     public String getType() {
         return type;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     public void setDescription(String description) {
@@ -37,7 +33,11 @@ public class CustomSearchItem {
         this.type = type;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public String getPaymentMethodId() {
+        return paymentMethodId;
+    }
+
+    public void setPaymentMethodId(String paymentMethodId) {
+        this.paymentMethodId = paymentMethodId;
     }
 }

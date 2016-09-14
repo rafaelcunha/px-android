@@ -292,6 +292,18 @@ public class PaymentVaultActivity extends MercadoPagoActivity implements Payment
 //                .startPaymentVaultActivity();
     }
 
+    @Override
+    public void selectAccountMoney(PaymentMethod paymentMethod, Token token) {
+        mSelectedPaymentMethod = paymentMethod;
+        mToken = token;
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("token", JsonUtil.getInstance().toJson(mToken));
+        returnIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(mSelectedPaymentMethod));
+        this.setResult(Activity.RESULT_OK, returnIntent);
+        this.finish();
+        animatePaymentMethodSelection();
+    }
+
     protected void finishWithCardResult() {
         Intent returnIntent = new Intent();
         returnIntent.putExtra("token", JsonUtil.getInstance().toJson(mToken));

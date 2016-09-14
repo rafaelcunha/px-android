@@ -12,10 +12,14 @@ public class PaymentMethodSearch {
 
     private List<PaymentMethodSearchItem> groups;
 
-    private List<PaymentMethod> paymentMethods;
-
     @SerializedName("custom_options")
     private List<CustomSearchItem> customSearchItems;
+
+    private List<PaymentMethod> paymentMethods;
+
+    private List<Card> cards;
+
+    private AccountMoney accountMoney;
 
     public List<PaymentMethodSearchItem> getGroups() {
         return groups;
@@ -118,11 +122,32 @@ public class PaymentMethodSearch {
         return foundPaymentMethod;
     }
 
+    public Card getCardById(String cardId) {
+        Card foundCard= null;
+        if(cards != null) {
+            for (Card card: cards) {
+                if (card.getId().equals(cardId)) {
+                    foundCard = card;
+                    break;
+                }
+            }
+        }
+        return foundCard;
+    }
+
     public List<CustomSearchItem> getCustomSearchItems() {
         return customSearchItems;
     }
 
     public boolean hasCustomSearchItems() {
         return customSearchItems != null && !customSearchItems.isEmpty();
+    }
+
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public AccountMoney getAccountMoney() {
+        return accountMoney;
     }
 }

@@ -9,6 +9,7 @@ import com.mercadopago.model.Card;
 import com.mercadopago.model.CustomSearchItem;
 import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.PaymentMethodSearchItem;
+import com.mercadopago.model.Token;
 
 import java.util.List;
 
@@ -48,4 +49,6 @@ public interface PaymentVaultView {
     void selectPaymentMethod(PaymentMethod selectedPaymentMethod);
 
     void startLoginFlow();
+
+    void selectAccountMoney(PaymentMethod paymentMethod, Token token);
 }

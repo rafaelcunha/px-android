@@ -44,7 +44,7 @@ public class CustomPaymentMethodOptionsAdapter extends RecyclerView.Adapter<Cust
     public void onBindViewHolder(ViewHolder holder, int position) {
         CustomSearchItem customSearchItem = mData.get(position);
         holder.mDescription.setText(customSearchItem.getDescription());
-        int resId = MercadoPagoUtil.getPaymentMethodSearchItemIcon(mActivity, customSearchItem.getId());
+        int resId = MercadoPagoUtil.getPaymentMethodSearchItemIcon(mActivity, customSearchItem.getPaymentMethodId());
         holder.mImage.setImageResource(resId);
         holder.itemView.setTag(customSearchItem);
         if(position < mData.size()-1) {
