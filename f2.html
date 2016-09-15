@@ -554,20 +554,25 @@ Issuer issuer, PayerCost payerCost, Token token) {
                <section class="docs-section" id="f2_payment_result">
                   <h3 class="title">Resultado de pagos</h3>
                   <p>
-                    Cuando el usuario elige pagar con tarjeta pueden ocurrir diferentes escenarios a la hora de procesar el pago. El pago puede ser aprobado, pero también pueden haber varios motivos por los cuales el pago puede ser rechazado. Estos casos pueden ser dados por la carga errónea en el número de tarjeta, en el código de seguridad, en la fecha de vencimiento, por la falta de fondos para completar el pago, porque la tarjeta no esté habilitada, que tu usuario deba llamar al emisor de la tarjeta para autorizar el pago, entre otros.
+                    Cuando el usuario elige pagar con tarjeta pueden ocurrir diferentes escenarios a la hora de procesar el pago. El pago puede ser aprobado, pero también pueden haber varios motivos por los cuales el pago puede ser rechazado. Son motivos de rechazos de un pago, la carga errónea del número de tarjeta, del código de seguridad, de la fecha de vencimiento, la falta de fondos para completar el pago, que la tarjeta no esté habilitada, que tu usuario deba llamar al emisor de la tarjeta para autorizar el pago, entre otros.
                     </p>
                     <p>
-                    Ofrecemos un método en nuestra SDK que, dependiendo del tipo y el estado del pago, mostramos una pantalla de resultados con toda la información necesaria para que tu usuario entienda si el pago fue aprobado, el por qué fue rechazado o qué debe hacer si el mismo se encuentra pendiente.
+                    Ofrecemos un componente en nuestra SDK que, dependiendo del tipo y el estado del pago, mostramos una pantalla de resultados con toda la información necesaria para que tu usuario entienda si el pago fue aprobado, el por qué fue rechazado o qué debe hacer si el mismo se encuentra pendiente.
                     </p>
                     <p>
-                    Para aquellos pagos que fueron rechazados porque tu usuario ingresó mal algún dato de su tarjeta, éste componente retornará la variable booleana "revocerPayment" en true y así podrás soliticar solo el ingreso de los datos sensibles para recuperar el pago.
-                    Para los pagos rechazados en los cuales tu usuario debe llamar al emisor de la tarjeta para autorizar el pago, el componente retornará la variable booleana "recoverToken" en true y, junto con el código de seguridad, podrás realizar el pago.
+                    Dentro de los motivos de rechazos mencionados, existen casos que son recuperables para luego lograr la aprobación del pago.
+                    </p>
+                    <p>
+                    Para aquellos pagos que fueron rechazados porque tu usuario ingresó mal algún dato de su tarjeta, éste componente brinda la opción de que el usuario elija corregir el dato erróneo. En este caso retornará la variable booleana "revocerPayment" en true y luego podrás soliticar solo el ingreso de los datos sensibles para recuperar el pago y lograr una mejor experiencia.
+                    </p>
+                    <p>
+                    Por otro lado, se pueden recuperar los pagos en los cuales fueron rechazados porque tu usuario debe llamar al emisor de la tarjeta para autorizar el pago. Para estos casos nuestro componente brinda la opción de que el usuario notifique que fue autorizado. Cuando el usuario selecciona dicha opción, el componente retornará la variable booleana "recoverToken" en true y, junto con el código de seguridad, podrás realizar el pago.
                     </p>
                     <p>
                     A su vez, cuando se elige un tipo de medio de pago que no es con tarjeta, este quedará pendiente a una acción a realizar por el usuario. Para estos casos nuestro componente ofrece una pantalla con los pasos a seguir para concretar el pago.
                     </p>
                     <p>
-                    Para utilizar este componente, agrega el siguiente código:
+                    Este componente se utiliza con el siguiente código:
                     </p>
                     <p>
                      <pre class="snippet">
@@ -590,14 +595,13 @@ public void startPaymentResultActivity(Payment payment, PaymentMethod paymentMet
                 if (data.getBooleanExtra("selectOtherPaymentMethod", false)) {
                     //Do something 
                 } else if (data.getBooleanExtra("recoverPayment", false)) {
-                    //Do something 
+                    //Ask for only the card data 
                 } else if (data.getBooleanExtra("recoverToken", false)){
-                    //Do something
+                    //Ask for only the security code
                 }
           }
         }
   }
-
                         </code>
                         <button class="copy-button">
                            <img src="./img/clippy.svg" width="13" alt="Copy to clipboard">
@@ -611,7 +615,10 @@ public void startPaymentResultActivity(Payment payment, PaymentMethod paymentMet
                <section class="docs-section" id="f2_payment_recover">
                   <h3 class="title">Recupero de pagos</h3>
                   <p>
-                    Existen casos en los cuales un pago puede ser rechazado por la carga errónea del número de tarjeta, del código de seguridad o la fecha de vencimiento de la tarjeta. En estos casos es posible recuperar ese pago sin que el usuario deba ingresar todos los datos nuevamente. Solo se debe solicitar el ingreso de los datos de la tarjeta. Para lograr esto utilizamos el componente para realizar cobros con tarjeta pero iniciandolo con un token de la siguiente manera:
+                  Este componenete es para llevar adelante el recupero de pagos que fueron rechazados porque tu usuario ingresó mal los datos de su tarjeta o porque tu usuario debe realizar un llamado al emisor de la tarjeta para habilitar el pago. 
+                  </p>
+                  <p>
+                    Ante los casos en los cuales se rechazó el pago por la carga errónea de los datos de la tarjeta es posible recuperar este pago sin que el usuario deba ingresar todos los datos nuevamente. Solo se solicita el ingreso de los datos de la tarjeta. Para lograr esto utilizamos el componente para realizar cobros con tarjeta pero debes iniciar dicho componente con un token, de la siguiente forma: 
                   </p>
                   <p>
                      <pre class="snippet">
@@ -626,27 +633,6 @@ public void startCardVaultActivity(Token token) {
                       .setToken(token);
                       .startCardVaultActivity();
 }
-
-//Espera resultado
-@Override
-protected void onActivityResult(int requestCode, int resultCode,
-Intent data) {
-  if(requestCode == MercadoPago.CARD_VAULT_REQUEST_CODE) {
-      if(resultCode == RESULT_OK) {
-          PaymentMethod paymentMethod = JsonUtil.getInstance().fromJson(data.getStringExtra("paymentMethod"), PaymentMethod.class);
-          Issuer issuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
-          Token token = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
-          PayerCost payerCost = JsonUtil.getInstance().fromJson(data.getStringExtra("payerCost"), PayerCost.class);
-
-          // Listo! Envía los datos a tu servidor!
-      } else {
-        if ((data != null) && (data.hasExtra("mpException"))) {
-          MPException exception = JsonUtil.getInstance()
-            .fromJson(data.getStringExtra("mpException"), MPException.class);
-        }
-      }
-  }
-}
                         </code>
                         <button class="copy-button">
                            <img src="./img/clippy.svg" width="13" alt="Copy to clipboard">
@@ -654,7 +640,7 @@ Intent data) {
                      </pre>
                   </p>
                   <p>
-                     Por otro lado, existen casos en los cuales tu usuario deba llamar al emisor de la tarjeta para autorizar el pago. En estos casos támbién es posible recuperar el pago. Solo se debe solicitar el ingreso del código de seguridad de la tarjeta.  
+                     Ante los casos en los cuales el emisor de la tarjeta frena el pago, el usuario debe llamar y autorizar el mismo, solicitamos solo el código de seguridad y regeneramos el pago con este componente. De esta manera, no solicitamos a tu usuario que ingrese nuevamente todos los datos de la tarjeta, sino que solo le pedimos el código de seguridad.
                      Esto se logra con el componente de cobros con tarjeta pero iniciandolo de la siguiente manera:
                   </p>
                   <p>
@@ -674,43 +660,37 @@ public void startCardVaultActivity(Token token, PaymentMethod paymentMethod) {
                       .startCardVaultActivity();
 }
 
-//Espera resultado
-@Override
-protected void onActivityResult(int requestCode, int resultCode,
-Intent data) {
-  if(requestCode == MercadoPago.CARD_VAULT_REQUEST_CODE) {
-      if(resultCode == RESULT_OK) {
-          PaymentMethod paymentMethod = JsonUtil.getInstance().fromJson(data.getStringExtra("paymentMethod"), PaymentMethod.class);
-          Issuer issuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
-          Token token = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
-          PayerCost payerCost = JsonUtil.getInstance().fromJson(data.getStringExtra("payerCost"), PayerCost.class);
+//Espera ambos resultados
+protected void onActivityResult(int resultCode, Intent data){
+    if(requestCode == MercadoPago.CARD_VAULT_REQUEST_CODE) {
+        if (resultCode == RESULT_OK) {
+            if (mRecoverTokenEnabled != null && mRecoverTokenEnabled){
+                mCreatedToken = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
+                
+                // Listo! Envía los datos a tu servidor!
+            } else {
+                mSelectedIssuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
+                mSelectedPayerCost = JsonUtil.getInstance().fromJson(data.getStringExtra("payerCost"), PayerCost.class);
+                mCreatedToken = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
+                mSelectedPaymentMethod = JsonUtil.getInstance().fromJson(data.getStringExtra("paymentMethod"), PaymentMethod.class);
 
-          // Listo! Envía los datos a tu servidor!
-      } else {
-        if ((data != null) && (data.hasExtra("mpException"))) {
-          MPException exception = JsonUtil.getInstance()
-            .fromJson(data.getStringExtra("mpException"), MPException.class);
-        }
-      }
-  }
-}
-                  </code>
+                // Listo! Envía los datos a tu servidor!
+            }
+        } else {
+            if (data != null && data.getStringExtra("mpException") != null) {
+                Intent returnIntent = new Intent();
+                setResult(RESULT_CANCELED, returnIntent);
+                finish();
+            }
+        }  
+    }
+}                
+                      </code>
                         <button class="copy-button">
                            <img src="./img/clippy.svg" width="13" alt="Copy to clipboard">
                         </button>
                      </pre>
                   </p>
-                  <p>
-                    Existen dos casos en los cuales un pago no se logra aprobar pero aún así se puede recuperar para luego aprobar. 
-                    Un caso es cuando un pago es rechazado porque el usuario ingresó mal algún dato de su tarjeta. En éste caso podemos iniciar de nuevo
-                    la experiencia sin necesidad de que el usuario ingrese de nuevo todos los datos.
-                    Para eso se levanta cardVault así
-                    </p>
-                    <p>
-                    El otro caso es cuando el emisor de la tarjeta frena el pago y el usuario debe llamar y autorizar el mismo. 
-                    En estos casos solicitamos solo el código de seguridad y regeneramos el pago
-                    Para esto se levanta cardVault así
-                    </p>
                   <div class="doc-example ionic">
                      <img src="./img/phone/payment_results_cards.gif" class="img-phone-case"></img>
                   </div>
