@@ -216,7 +216,7 @@ public class PaymentVaultPresenter {
             for (Card card : mSavedCards) {
                 CustomSearchItem searchItem = new CustomSearchItem();
                 searchItem.setDescription(mPaymentVaultView.getContext().getString(R.string.mpsdk_last_digits_label) + " " + card.getLastFourDigits());
-                searchItem.setType("card");
+                searchItem.setType(card.getPaymentMethod().getPaymentTypeId());
                 searchItem.setId(card.getId());
                 searchItem.setPaymentMethodId(card.getPaymentMethod().getId());
                 mCustomSearchItems.add(searchItem);
@@ -250,7 +250,7 @@ public class PaymentVaultPresenter {
         return new OnSelectedCallback<CustomSearchItem>() {
             @Override
             public void onSelected(CustomSearchItem searchItem) {
-                if ("card".equals(searchItem.getType())) {
+                if (MercadoPagoUtil.isCard(searchItem.getType())) {
                     if(isUserLogged()) {
                         Card card = mPaymentMethodSearch.getCardById(searchItem.getId());
                         card.setPaymentMethod(mPaymentMethodSearch.getPaymentMethodById(searchItem.getPaymentMethodId()));

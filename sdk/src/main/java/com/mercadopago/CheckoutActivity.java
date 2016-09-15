@@ -458,7 +458,6 @@ public class CheckoutActivity extends MercadoPagoActivity {
         } else if ("account_money".equals(mSelectedPaymentMethod.getId())) {
             mPaymentMethodRow = ViewControllerFactory.getPaymentMethodOnEditionViewController(this, mSelectedPaymentMethod, mCreatedToken);
         } else {
-
             PaymentMethodSearchItem item = mPaymentMethodSearch.getSearchItemByPaymentMethod(mSelectedPaymentMethod);
             if (item != null) {
                 mPaymentMethodRow = ViewControllerFactory.getPaymentMethodOffEditionViewController(this, item);

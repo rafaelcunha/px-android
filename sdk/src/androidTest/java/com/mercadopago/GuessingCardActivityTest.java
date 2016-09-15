@@ -157,7 +157,7 @@ public class GuessingCardActivityTest {
         String contained = CardTestUtils.getMockedBinInFront(token.getFirstSixDigits());
 
         onView(withId(R.id.mpsdkCardNumberTextView)).check(matches(withText(containsString(contained))));
-        onView(withId(R.id.mpsdkCardholderNameView)).check(matches(withText(token.getCardholder().getName().toUpperCase())));
+        onView(withId(R.id.mpsdkCardholderNameView)).check(matches(withText(token.getCardHolder().getName().toUpperCase())));
         onView(withId(R.id.mpsdkCardHolderExpiryYear)).check(matches(withText(token.getExpirationYear().toString().substring(2, 4))));
         onView(withId(R.id.mpsdkCardHolderExpiryMonth)).check(matches(withText(token.getExpirationMonth().toString())));
         try {

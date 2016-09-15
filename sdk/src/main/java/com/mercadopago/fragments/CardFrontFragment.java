@@ -250,10 +250,10 @@ public class CardFrontFragment extends android.support.v4.app.Fragment {
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    mActivity.saveCardName(s.toString());
+                    mActivity.saveCardHolderName(s.toString());
                     if (s.length() == 0) {
                         mCardholderNameTextView.setText(getResources().getString(R.string.mpsdk_cardholder_name_short));
-                        mActivity.saveCardName(null);
+                        mActivity.saveCardHolderName(null);
                     }
                 }
             });

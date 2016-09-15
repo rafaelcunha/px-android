@@ -125,6 +125,7 @@ public class GuessingCardActivity extends FrontCardActivity {
     private int mCardNumberLength;
     private String mSecurityCodeLocation;
     private boolean mIssuerFound;
+    private PaymentMethod mCurrentPaymentMethod;
 
     @Override
     protected void onResume() {
@@ -252,15 +253,7 @@ public class GuessingCardActivity extends FrontCardActivity {
 
         mCurrentPaymentMethod = mCard.getPaymentMethod();
         //TODO Cambiar hardcoded
-        mSecurityCodeLocation = mCard.getSecurityCode() != null ? mCard.getSecurityCode().getCardLocation() : "back";
-
-        if(mCard.getSecurityCode() != null) {
-            mCardSecurityCodeLength = mCard.getSecurityCode().getLength();
-        } else if ("amex".equals(mCard.getPaymentMethod().getId())) {
-            mCardSecurityCodeLength = 4;
-        } else {
-            mCardSecurityCodeLength= 3;
-        }
+        mSecurityCodeLocation = mCard.getSecurityCode() != null ? mCard.getSecurityCode().getCardLocation() : CardInterface.CARD_SIDE_BACK;
 
         setInputMaxLength(mCardSecurityCodeEditText, mCardSecurityCodeLength);
         setCardSecurityCodeListeners();
@@ -282,18 +275,30 @@ public class GuessingCardActivity extends FrontCardActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    mExpiryMonth = String.valueOf(mCard.getExpirationMonth());
-                    mExpiryYear = String.valueOf(mCard.getExpirationYear());
-                    mCardHolderName = "";
+
+                    if(mCard.getExpirationMonth() == null) {
+                        saveCardExpiryMonth("••");
+                    } else {
+                        saveCardExpiryMonth(String.valueOf(mCard.getExpirationMonth()));
+                    }
+                    if(mCard.getExpirationYear() == null) {
+                        saveCardExpiryYear("••");
+                    } else {
+                        saveCardExpiryYear(String.valueOf(mCard.getExpirationYear()));
+                    }
+
+                    saveCardHolderName("");
 
                     mCardNumberLength = CARD_NUMBER_MAX_LENGTH;
 
-                    mCardNumber = getCardNumberHidden();
-                    mCardNumberLength = mCardNumber.length();
+                    saveCardNumber(getCardNumberHidden());
+
                     mFrontFragment.populateViews();
+
                     clearSecurityCodeFront();
-                    //Length
-                    mSecurityCode = mCardSecurityCodeEditText.getText().toString();
+
+                    saveCardSecurityCode(mCardSecurityCodeEditText.getText().toString());
+
                     checkFlipCardToBack(false);
                 }
             }
@@ -340,7 +345,7 @@ public class GuessingCardActivity extends FrontCardActivity {
     private String getCardNumberHidden() {
         StringBuilder maskStringBuilder = new StringBuilder();
         for (int i = 0; i < mCardNumberLength - ShowCardActivity.LAST_DIGITS_LENGTH; i++) {
-            maskStringBuilder.append("X");
+            maskStringBuilder.append("•");
         }
         maskStringBuilder.append(mCard.getLastFourDigits());
         return maskStringBuilder.toString();
@@ -356,7 +361,7 @@ public class GuessingCardActivity extends FrontCardActivity {
     @Override
     protected void initializeFragments(Bundle savedInstanceState) {
         mIssuerFound = true;
-        mErrorState = CardInterface.NORMAL_STATE;
+        setErrorState(CardInterface.NORMAL_STATE);
         mCardToken = new CardToken("", null, null, "", "", "", "");
         mIsSecurityCodeRequired = true;
         mCardSecurityCodeLength = CARD_DEFAULT_SECURITY_CODE_LENGTH;
@@ -663,28 +668,28 @@ public class GuessingCardActivity extends FrontCardActivity {
     private boolean checkIsEmptyOrValid() {
         switch (mCurrentEditingEditText) {
             case CARDHOLDER_NAME_INPUT:
-                if (TextUtils.isEmpty(mCardHolderName) || validateCardName(true)) {
+                if (TextUtils.isEmpty(getCardHolderName()) || validateCardName(true)) {
                     mCardNumberInput.setVisibility(View.VISIBLE);
                     mCardNumberEditText.requestFocus();
                     return true;
                 }
                 return false;
             case CARD_EXPIRYDATE_INPUT:
-                if (mExpiryMonth == null || validateExpiryDate(true)) {
+                if (getExpiryMonth() == null || validateExpiryDate(true)) {
                     mCardholderNameInput.setVisibility(View.VISIBLE);
                     mCardHolderNameEditText.requestFocus();
                     return true;
                 }
                 return false;
             case CARD_SECURITYCODE_INPUT:
-                if (TextUtils.isEmpty(mSecurityCode) || validateSecurityCode(true)) {
+                if (TextUtils.isEmpty(getSecurityCode()) || validateSecurityCode(true)) {
                     mCardExpiryDateInput.setVisibility(View.VISIBLE);
                     mCardExpiryDateEditText.requestFocus();
                     return true;
                 }
                 return false;
             case CARD_IDENTIFICATION_INPUT:
-                if (TextUtils.isEmpty(mCardIdentificationNumber) || validateIdentificationNumber(true)) {
+                if (TextUtils.isEmpty(getCardIdentificationNumber()) || validateIdentificationNumber(true)) {
                     if (isSecurityCodeRequired()) {
                         mSecurityCodeEditView.setVisibility(View.VISIBLE);
                         mCardSecurityCodeEditText.requestFocus();
@@ -776,6 +781,11 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     @Override
+    public PaymentMethod getCurrentPaymentMethod() {
+        return mCurrentPaymentMethod;
+    }
+
+    @Override
     public void initializeCardByToken() {
         if (mToken == null) {
             return;
@@ -783,15 +793,15 @@ public class GuessingCardActivity extends FrontCardActivity {
         if (mToken.getFirstSixDigits() != null) {
             mCardNumberEditText.setText(mToken.getFirstSixDigits());
         }
-        if (mToken.getCardholder() != null && mToken.getCardholder().getName() != null) {
-            mCardHolderNameEditText.setText(mToken.getCardholder().getName());
+        if (mToken.getCardHolder() != null && mToken.getCardHolder().getName() != null) {
+            mCardHolderNameEditText.setText(mToken.getCardHolder().getName());
         }
         if (mToken.getExpirationMonth() != null && mToken.getExpirationYear() != null) {
             mCardExpiryDateEditText.append(mToken.getExpirationMonth().toString());
             mCardExpiryDateEditText.append(mToken.getExpirationYear().toString().substring(2, 4));
         }
-        if (mToken.getCardholder() != null && mToken.getCardholder().getIdentification() != null) {
-            String number = mToken.getCardholder().getIdentification().getNumber();
+        if (mToken.getCardHolder() != null && mToken.getCardHolder().getIdentification() != null) {
+            String number = mToken.getCardHolder().getIdentification().getNumber();
             if (number != null) {
                 saveCardIdentificationNumber(number);
                 mCardIdentificationNumberEditText.setText(number);
@@ -866,7 +876,7 @@ public class GuessingCardActivity extends FrontCardActivity {
                         mCurrentPaymentMethod = null;
                         setSecurityCodeLocation(null);
                         setSecurityCodeRequired(true);
-                        mSecurityCode = "";
+                        saveCardSecurityCode("");
                         mCardSecurityCodeEditText.getText().clear();
                         mCardToken = new CardToken("", null, null, "", "", "", "");
                         mIdentificationNumberRequired = true;
@@ -1029,7 +1039,7 @@ public class GuessingCardActivity extends FrontCardActivity {
             SecurityCode securityCode = setting.getSecurityCode();
             setSecurityCodeSettings(securityCode);
         } else {
-            mSecurityCode = "";
+            saveCardSecurityCode("");
             setSecurityCodeRestrictions(false, null);
             hideSecurityCodeView();
         }
@@ -1116,7 +1126,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         //Location
         if (securityCode.getCardLocation().equals(CardInterface.CARD_SIDE_BACK)) {
             clearSecurityCodeFront();
-            mSecurityCode = mCardSecurityCodeEditText.getText().toString();
+            saveCardSecurityCode(mCardSecurityCodeEditText.getText().toString());
         } else if (securityCode.getCardLocation().equals(CardInterface.CARD_SIDE_FRONT)) {
             mCardSecurityCodeEditText.setOnClickListener(null);
             mFrontFragment.setCardSecurityView();
@@ -1477,7 +1487,7 @@ public class GuessingCardActivity extends FrontCardActivity {
                 }
 
                 if (s.length() == mCardSecurityCodeLength) {
-                    mSecurityCode = s.toString();
+                    saveCardSecurityCode(s.toString());
                 }
             }
 
@@ -1634,6 +1644,7 @@ public class GuessingCardActivity extends FrontCardActivity {
             @Override
             public void failure(ApiException apiException) {
                 if (isActivityActive()) {
+                    //TODO validar acá
                     setFailureRecovery(new FailureRecovery() {
                         @Override
                         public void recover() {
@@ -1688,7 +1699,7 @@ public class GuessingCardActivity extends FrontCardActivity {
 
     private boolean validateCardName(boolean requestFocus) {
         Cardholder cardHolder = new Cardholder();
-        cardHolder.setName(mCardHolderName);
+        cardHolder.setName(getCardHolderName());
         cardHolder.setIdentification(mIdentification);
         mCardToken.setCardholder(cardHolder);
         if (mCardToken.validateCardholderName()) {
@@ -1705,8 +1716,8 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     private boolean validateExpiryDate(boolean requestFocus) {
-        Integer month = (mExpiryMonth == null ? null : Integer.valueOf(mExpiryMonth));
-        Integer year = (mExpiryYear == null ? null : Integer.valueOf(mExpiryYear));
+        Integer month = (getExpiryMonth() == null ? null : Integer.valueOf(getExpiryMonth()));
+        Integer year = (getExpiryYear() == null ? null : Integer.valueOf(getExpiryYear()));
         mCardToken.setExpirationMonth(month);
         mCardToken.setExpirationYear(year);
         if (mCardToken.validateExpiryDate()) {
@@ -1723,7 +1734,7 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     public boolean validateSecurityCode(boolean requestFocus) {
-        mCardToken.setSecurityCode(mSecurityCode);
+        mCardToken.setSecurityCode(getSecurityCode());
         try {
             mCardToken.validateSecurityCode(this, mCurrentPaymentMethod);
             clearErrorView();
@@ -1749,7 +1760,7 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     public void checkChangeErrorView() {
-        if (mErrorState.equals(ERROR_STATE)) {
+        if (getErrorState().equals(ERROR_STATE)) {
             clearErrorView();
         }
     }
@@ -1758,7 +1769,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         mButtonContainer.setVisibility(View.GONE);
         mErrorContainer.setVisibility(View.VISIBLE);
         mErrorTextView.setText(message);
-        mErrorState = CardInterface.ERROR_STATE;
+        setErrorState(CardInterface.ERROR_STATE);
         openKeyboard();
     }
 
@@ -1766,7 +1777,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         mButtonContainer.setVisibility(View.VISIBLE);
         mErrorContainer.setVisibility(View.GONE);
         mErrorTextView.setText("");
-        mErrorState = CardInterface.NORMAL_STATE;
+        setErrorState(CardInterface.NORMAL_STATE);
     }
 
     public void checkStartIssuersActivity() {

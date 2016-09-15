@@ -5,14 +5,13 @@ import com.mercadopago.model.PaymentMethod;
 
 public abstract class FrontCardActivity extends MercadoPagoActivity implements CardInterface {
 
-    protected String mCardNumber;
-    protected String mCardHolderName;
-    protected String mExpiryMonth;
-    protected String mExpiryYear;
-    protected String mCardIdentificationNumber;
-    protected String mErrorState;
-    protected String mSecurityCode = "";
-    protected PaymentMethod mCurrentPaymentMethod;
+    private String mCardNumber;
+    private String mCardHolderName;
+    private String mExpiryMonth;
+    private String mExpiryYear;
+    private String mCardIdentificationNumber;
+    private String mErrorState;
+    private String mSecurityCode = "";
 
     public String getCardNumber() {
         return mCardNumber;
@@ -38,15 +37,11 @@ public abstract class FrontCardActivity extends MercadoPagoActivity implements C
         return mSecurityCode;
     }
 
-    public PaymentMethod getCurrentPaymentMethod() {
-        return mCurrentPaymentMethod;
-    }
-
     public void saveCardNumber(String number) {
         mCardNumber = number;
     }
 
-    public void saveCardName(String name) {
+    public void saveCardHolderName(String name) {
         mCardHolderName = name;
     }
 
@@ -64,10 +59,6 @@ public abstract class FrontCardActivity extends MercadoPagoActivity implements C
 
     public void saveCardIdentificationNumber(String number) {
         this.mCardIdentificationNumber = number;
-    }
-
-    public String getErrorState() {
-        return mErrorState;
     }
 
     public void saveErrorState(String state) {
@@ -95,4 +86,11 @@ public abstract class FrontCardActivity extends MercadoPagoActivity implements C
         return getResources().getIdentifier(colorName, "color", getPackageName());
     }
 
+    public String getErrorState() {
+        return mErrorState;
+    }
+
+    public void setErrorState(String mErrorState) {
+        this.mErrorState = mErrorState;
+    }
 }

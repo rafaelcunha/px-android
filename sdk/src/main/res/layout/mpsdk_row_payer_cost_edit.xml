@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="5dp"
-    android:focusable="true"
-    android:background="@drawable/mpsdk_item_focusable_list">
+    android:focusable="true">
 
     <LinearLayout
         android:id="@+id/mpsdkInstallmentsItem"

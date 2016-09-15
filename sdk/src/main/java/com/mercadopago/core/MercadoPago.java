@@ -376,7 +376,7 @@ public class MercadoPago {
     }
 
     private static void startInstallmentsActivity(Activity activity, BigDecimal amount, Site site,
-                                                  Token token, String publicKey, List<PayerCost> payerCosts,
+                                                  Token token, Card card, String publicKey, List<PayerCost> payerCosts,
                                                   PaymentPreference paymentPreference, Issuer issuer,
                                                   PaymentMethod paymentMethod, DecorationPreference decorationPreference) {
         Intent intent = new Intent(activity, InstallmentsActivity.class);
@@ -386,6 +386,7 @@ public class MercadoPago {
         }
         intent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
         intent.putExtra("token", JsonUtil.getInstance().toJson(token));
+        intent.putExtra("card", JsonUtil.getInstance().toJson(card));
         intent.putExtra("publicKey", publicKey);
         intent.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
         intent.putExtra("site", JsonUtil.getInstance().toJson(site));
@@ -397,12 +398,13 @@ public class MercadoPago {
     }
 
     private static void startIssuersActivity(Activity activity, String publicKey,
-                                             PaymentMethod paymentMethod, Token token,
+                                             PaymentMethod paymentMethod, Token token, Card card,
                                              List<Issuer> issuers, DecorationPreference decorationPreference) {
 
         Intent intent = new Intent(activity, IssuersActivity.class);
         intent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
         intent.putExtra("token", JsonUtil.getInstance().toJson(token));
+        intent.putExtra("card", JsonUtil.getInstance().toJson(card));
         intent.putExtra("publicKey", publicKey);
         intent.putExtra("issuers", JsonUtil.getInstance().toJson(issuers));
         intent.putExtra("decorationPreference", JsonUtil.getInstance().toJson(decorationPreference));
@@ -903,7 +905,8 @@ public class MercadoPago {
 
             if (this.mActivity == null) throw new IllegalStateException("activity is null");
             if (this.mPayment == null) throw new IllegalStateException("payment is null");
-            if (this.mPaymentTypeId == null) throw new IllegalStateException("payment type id is null");
+            if (this.mPaymentTypeId == null)
+                throw new IllegalStateException("payment type id is null");
             if (this.mKey == null) throw new IllegalStateException("key is null");
             if (this.mKeyType == null) throw new IllegalStateException("key type is null");
 
@@ -934,7 +937,7 @@ public class MercadoPago {
                     throw new IllegalStateException("payment method is null");
             }
 
-            MercadoPago.startInstallmentsActivity(mActivity, mAmount, mSite, mToken,
+            MercadoPago.startInstallmentsActivity(mActivity, mAmount, mSite, mToken, mCard,
                     mKey, mPayerCosts, mPaymentPreference, mIssuer, mPaymentMethod, mDecorationPreference);
         }
 
@@ -945,7 +948,7 @@ public class MercadoPago {
                 throw new IllegalStateException("payment method is null");
 
             MercadoPago.startIssuersActivity(this.mActivity, this.mKey, this.mPaymentMethod,
-                    this.mToken, this.mIssuers, this.mDecorationPreference);
+                    this.mToken, this.mCard, this.mIssuers, this.mDecorationPreference);
 
         }
 

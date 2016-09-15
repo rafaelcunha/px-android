@@ -73,5 +73,4 @@ public class CustomerCardsAdapter extends RecyclerView.Adapter<CustomerCardsAdap
             });
         }
     }
-
 }
