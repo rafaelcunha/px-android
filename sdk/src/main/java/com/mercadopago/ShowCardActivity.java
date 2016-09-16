@@ -103,18 +103,6 @@ public abstract class ShowCardActivity extends FrontCardActivity {
             saveCardHolderName(mCardInfo.getCardHolder().getName());
         }
 
-        if (mCardInfo.getExpirationMonth() == null) {
-            saveCardExpiryMonth("••");
-        } else {
-            saveCardExpiryMonth(String.valueOf(mCardInfo.getExpirationMonth()));
-        }
-
-        if (mCardInfo.getExpirationYear() == null) {
-            saveCardExpiryYear("••");
-        } else {
-            saveCardExpiryYear(String.valueOf(mCardInfo.getExpirationYear()).substring(2, 4));
-        }
-
         if (mCardInfo.getFirstSixDigits() != null && mCurrentPaymentMethod.isSecurityCodeRequired(mCardInfo.getFirstSixDigits())
                 && mSecurityCodeLocation.equals(CARD_SIDE_FRONT)) {
             saveCardSecurityCode(getSecurityCodeHidden());
@@ -143,11 +131,13 @@ public abstract class ShowCardActivity extends FrontCardActivity {
             mFrontFragment = new CardFrontFragment();
             mFrontFragment.disableAnimate();
             mFrontFragment.setDecorationPreference(mDecorationPreference);
+            mFrontFragment.hideExpirationDate();
         }
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.mpsdkActivityNewCardContainer, mFrontFragment)
                 .commit();
+
     }
 
     private String getCardNumberHidden() {

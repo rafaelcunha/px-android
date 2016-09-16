@@ -14,6 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.mercadopago.CardInterface;
 import com.mercadopago.R;
@@ -34,6 +35,7 @@ public class CardFrontFragment extends android.support.v4.app.Fragment {
     //Card input views
     private MPTextView mCardNumberTextView;
     private MPTextView mCardholderNameTextView;
+    private LinearLayout mExpirationDateContainer;
     private MPTextView mCardExpiryMonthTextView;
     private MPTextView mCardExpiryYearTextView;
     private MPTextView mCardDateDividerTextView;
@@ -54,6 +56,7 @@ public class CardFrontFragment extends android.support.v4.app.Fragment {
     private Animation mAnimFadeIn;
     private boolean mAnimate;
     private DecorationPreference mDecorationPreference;
+    private int mExpirationDateVisibility;
 
     private CardInterface mActivity;
 
@@ -106,6 +109,8 @@ public class CardFrontFragment extends android.support.v4.app.Fragment {
             mCardBorder = (ImageView) getView().findViewById(R.id.mpsdkCardShadowBorder);
             mCardLowApiImageView = (ImageView) getView().findViewById(R.id.mpsdkCardLowApiImageView);
             mCardLollipopImageView = (ImageView) getView().findViewById(R.id.mpsdkCardLollipopImageView);
+            mExpirationDateContainer = (LinearLayout) getView().findViewById(R.id.mpsdkExpirationDateContainer);
+            mExpirationDateContainer.setVisibility(mExpirationDateVisibility);
         }
     }
 
@@ -447,5 +452,9 @@ public class CardFrontFragment extends android.support.v4.app.Fragment {
 
     public void setDecorationPreference(DecorationPreference decorationPreference) {
         mDecorationPreference = decorationPreference;
+    }
+
+    public void hideExpirationDate() {
+        mExpirationDateVisibility = View.GONE;
     }
 }

@@ -252,9 +252,12 @@ public class GuessingCardActivity extends FrontCardActivity {
         showOnlySecurityCodeInput();
 
         mCurrentPaymentMethod = mCard.getPaymentMethod();
-        //TODO Cambiar hardcoded
-        mSecurityCodeLocation = mCard.getSecurityCode() != null ? mCard.getSecurityCode().getCardLocation() : CardInterface.CARD_SIDE_BACK;
 
+        if(mCard.getSecurityCode() == null) {
+            mCard.setSecurityCode(mCurrentPaymentMethod.getSettings().get(0).getSecurityCode());
+        }
+
+        mSecurityCodeLocation = mCard.getSecurityCode() != null ? mCard.getSecurityCode().getCardLocation() : CardInterface.CARD_SIDE_BACK;
         setInputMaxLength(mCardSecurityCodeEditText, mCardSecurityCodeLength);
         setCardSecurityCodeListeners();
         setOnlySecurityCodeNavigationListeners();
@@ -276,30 +279,31 @@ public class GuessingCardActivity extends FrontCardActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
 
-                    if(mCard.getExpirationMonth() == null) {
-                        saveCardExpiryMonth("••");
-                    } else {
+                    if(mCard.getExpirationMonth() != null) {
                         saveCardExpiryMonth(String.valueOf(mCard.getExpirationMonth()));
                     }
-                    if(mCard.getExpirationYear() == null) {
-                        saveCardExpiryYear("••");
-                    } else {
+                    if (mCard.getExpirationYear() != null) {
                         saveCardExpiryYear(String.valueOf(mCard.getExpirationYear()));
                     }
 
                     saveCardHolderName("");
+
+                    mCardSecurityCodeLength = mCard.getSecurityCode().getLength();
 
                     mCardNumberLength = CARD_NUMBER_MAX_LENGTH;
 
                     saveCardNumber(getCardNumberHidden());
 
                     mFrontFragment.populateViews();
-
                     clearSecurityCodeFront();
 
                     saveCardSecurityCode(mCardSecurityCodeEditText.getText().toString());
 
-                    checkFlipCardToBack(false);
+                    mFrontFragment.populateViews();
+                    if (CardInterface.CARD_SIDE_BACK.equals(mCard.getSecurityCode().getCardLocation())) {
+                        setSecurityCodeSettings(mCard.getSecurityCode());
+                        checkFlipCardToBack(false);
+                    }
                 }
             }
         });
@@ -370,6 +374,9 @@ public class GuessingCardActivity extends FrontCardActivity {
         if (mFrontFragment == null) {
             mFrontFragment = new CardFrontFragment();
             mFrontFragment.setDecorationPreference(mDecorationPreference);
+            if(savedCardSet()) {
+                mFrontFragment.hideExpirationDate();
+            }
         }
         if (mBackFragment == null) {
             mBackFragment = new CardBackFragment();

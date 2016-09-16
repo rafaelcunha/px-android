@@ -360,9 +360,7 @@ public class CheckoutActivity extends MercadoPagoActivity {
             mSelectedPayerCost = JsonUtil.getInstance().fromJson(data.getStringExtra("payerCost"), PayerCost.class);
             mCreatedToken = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
             mSelectedPaymentMethod = JsonUtil.getInstance().fromJson(data.getStringExtra("paymentMethod"), PaymentMethod.class);
-
             MPTracker.getInstance().trackScreen("REVIEW_AND_CONFIRM", 3, mMerchantPublicKey, mCheckoutPreference.getSiteId(), BuildConfig.VERSION_NAME, this);
-
             showReviewAndConfirm();
             showRegularLayout();
         } else {

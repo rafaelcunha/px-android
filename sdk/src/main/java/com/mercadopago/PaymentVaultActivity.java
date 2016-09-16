@@ -70,7 +70,7 @@ public class PaymentVaultActivity extends MercadoPagoActivity implements Payment
     protected void getActivityParameters() {
 
         mPaymentVaultPresenter = new PaymentVaultPresenter();
-
+        mPaymentVaultPresenter.setDecorationPreference(mDecorationPreference);
         mPaymentVaultPresenter.setMerchantPublicKey(getIntent().getStringExtra("merchantPublicKey"));
         mPaymentVaultPresenter.setMerchantBaseUrl(this.getIntent().getStringExtra("merchantBaseUrl"));
         mPaymentVaultPresenter.setMerchantGetCustomerUri(this.getIntent().getStringExtra("merchantGetCustomerUri"));
