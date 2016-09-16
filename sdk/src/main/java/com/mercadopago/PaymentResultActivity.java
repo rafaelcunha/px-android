@@ -89,7 +89,7 @@ public class PaymentResultActivity extends Activity {
                 .setPublicKey(mMerchantPublicKey)
                 .setActivity(this)
                 .setPayment(mPayment)
-                .setPaymentMethod(mPaymentMethod)
+                .setPaymentTypeId(mPaymentMethod.getPaymentTypeId())
                 .startInstructionsActivity();
     }
 
