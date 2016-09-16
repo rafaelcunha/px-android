@@ -554,22 +554,22 @@ Issuer issuer, PayerCost payerCost, Token token) {
                <section class="docs-section" id="f2_payment_result">
                   <h3 class="title">Resultado de pagos</h3>
                   <p>
-                    Cuando el usuario elige pagar con tarjeta pueden ocurrir diferentes escenarios a la hora de procesar el pago. El pago puede ser aprobado, pero también pueden haber varios motivos por los cuales el pago puede ser rechazado. Son motivos de rechazos de un pago, la carga errónea del número de tarjeta, del código de seguridad, de la fecha de vencimiento, la falta de fondos para completar el pago, que la tarjeta no esté habilitada, que tu usuario deba llamar al emisor de la tarjeta para autorizar el pago, entre otros.
+                    Cuando el usuario elige pagar con tarjeta pueden ocurrir diferentes escenarios a la hora de procesar el pago. El pago puede ser aprobado, pero también, pueden haber varios motivos por los cuales el pago puede ser rechazado. Son motivos de rechazo de un pago, la carga errónea del número de tarjeta, del código de seguridad, de la fecha de vencimiento, la falta de fondos para completar el pago, que la tarjeta no esté habilitada, que el usuario deba llamar al emisor de la tarjeta para autorizar el pago, entre otros.
                     </p>
                     <p>
-                    Ofrecemos un componente en nuestra SDK que, dependiendo del tipo y el estado del pago, mostramos una pantalla de resultados con toda la información necesaria para que tu usuario entienda si el pago fue aprobado, el por qué fue rechazado o qué debe hacer si el mismo se encuentra pendiente.
+                    Ofrecemos un componente en nuestra SDK, que dependiendo del tipo y el estado del pago, mostramos una pantalla de resultados con toda la información necesaria para que el usuario entienda si el pago fue aprobado, el por qué fue rechazado o qué debe hacer si el mismo se encuentra pendiente.
                     </p>
                     <p>
-                    Dentro de los motivos de rechazos mencionados, existen casos que son recuperables para luego lograr la aprobación del pago.
+                    Dentro de los motivos de rechazo mencionados, existen algunos que se pueden recuperar y lograr la aprobación del pago.
                     </p>
                     <p>
-                    Para aquellos pagos que fueron rechazados porque tu usuario ingresó mal algún dato de su tarjeta, éste componente brinda la opción de que el usuario elija corregir el dato erróneo. En este caso retornará la variable booleana "revocerPayment" en true y luego podrás soliticar solo el ingreso de los datos sensibles para recuperar el pago y lograr una mejor experiencia.
+                    Para aquellos pagos rechazados porque el usuario ingresó mal algún dato de su tarjeta, éste componente brinda la opción de que el usuario elija corregir el dato erróneo. En este caso retornará la variable booleana "recoverPayment" en true y luego podrás soliticar solo el ingreso de los datos sensibles para recuperar el pago y alcanzar una mejor experiencia.
                     </p>
                     <p>
-                    Por otro lado, se pueden recuperar los pagos en los cuales fueron rechazados porque tu usuario debe llamar al emisor de la tarjeta para autorizar el pago. Para estos casos nuestro componente brinda la opción de que el usuario notifique que fue autorizado. Cuando el usuario selecciona dicha opción, el componente retornará la variable booleana "recoverToken" en true y, junto con el código de seguridad, podrás realizar el pago.
+                    Por otro lado, se pueden recuperar los pagos rechazados porque el usuario debe llamar al emisor de la tarjeta para autorizar el pago. Para estos casos nuestro componente brinda la opción de que el usuario notifique que fue autorizado. Cuando el usuario selecciona dicha opción, el componente retornará la variable booleana "recoverToken" en true. Luego debes solicitar el código de seguridad y así podrás concretar el pago.
                     </p>
                     <p>
-                    A su vez, cuando se elige un tipo de medio de pago que no es con tarjeta, este quedará pendiente a una acción a realizar por el usuario. Para estos casos nuestro componente ofrece una pantalla con los pasos a seguir para concretar el pago.
+                    A su vez, cuando se elige un tipo de medio de pago que no es con tarjeta, el pago quedará pendiente a una acción a realizar por el usuario. Para estos casos nuestro componente ofrece una pantalla con los pasos a seguir para concretar el pago.
                     </p>
                     <p>
                     Este componente se utiliza con el siguiente código:
@@ -615,10 +615,11 @@ public void startPaymentResultActivity(Payment payment, PaymentMethod paymentMet
                <section class="docs-section" id="f2_payment_recover">
                   <h3 class="title">Recupero de pagos</h3>
                   <p>
-                  Este componenete es para llevar adelante el recupero de pagos que fueron rechazados porque tu usuario ingresó mal los datos de su tarjeta o porque tu usuario debe realizar un llamado al emisor de la tarjeta para habilitar el pago. 
+                  Este componenete es para llevar adelante el recupero de pagos que fueron rechazados porque el usuario ingresó mal los datos de su tarjeta o porque el usuario debe realizar un llamado al emisor de la tarjeta para habilitar el pago. 
                   </p>
                   <p>
-                    Ante los casos en los cuales se rechazó el pago por la carga errónea de los datos de la tarjeta es posible recuperar este pago sin que el usuario deba ingresar todos los datos nuevamente. Solo se solicita el ingreso de los datos de la tarjeta. Para lograr esto utilizamos el componente para realizar cobros con tarjeta pero debes iniciar dicho componente con un token, de la siguiente forma: 
+                    Ante los casos en los cuales se rechazó el pago por la carga errónea de los datos de la tarjeta es posible recuperar este pago sin que el usuario deba ingresar todos los datos nuevamente. Solo se solicita el ingreso de los datos de la tarjeta. 
+                    Para lograr esto utilizamos el componente para realizar cobros con tarjeta pero debes iniciar dicho componente con un token. De la siguiente forma: 
                   </p>
                   <p>
                      <pre class="snippet">
@@ -640,8 +641,8 @@ public void startCardVaultActivity(Token token) {
                      </pre>
                   </p>
                   <p>
-                     Ante los casos en los cuales el emisor de la tarjeta frena el pago, el usuario debe llamar y autorizar el mismo, solicitamos solo el código de seguridad y regeneramos el pago con este componente. De esta manera, no solicitamos a tu usuario que ingrese nuevamente todos los datos de la tarjeta, sino que solo le pedimos el código de seguridad.
-                     Esto se logra con el componente de cobros con tarjeta pero iniciandolo de la siguiente manera:
+                     En los casos en los cuales el emisor de la tarjeta frena el pago, el usuario debe llamar y autorizar el mismo, solicitamos solo el código de seguridad y regeneramos el pago con este componente. De esta manera, no solicitamos al usuario que ingrese nuevamente todos los datos de la tarjeta, sino que solo le pedimos el código de seguridad.
+                     Esto se logra con el componente de cobros con tarjeta pero iniciándolo de la siguiente manera:
                   </p>
                   <p>
                      <pre class="snippet">
