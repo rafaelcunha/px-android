@@ -594,8 +594,7 @@ public void startPaymentResultActivity(Payment payment, PaymentMethod paymentMet
           if (resultCode == RESULT_CANCELED && data != null) {
                 if (data.getStringExtra("nextAction").equals(PaymentResultAction.SELECT_OTHER_PAYMENT_METHOD)){
                     //Do something 
-                } data.getStringExtra("nextAction").equals(PaymentResultAction.RECOVER_PAYMENT) ||
-                    data.getStringExtra("nextAction").equals(PaymentResultAction.RECOVER_TOKEN)){
+                } data.getStringExtra("nextAction").equals(PaymentResultAction.RECOVER_PAYMENT)){
                     //Recover payment
                 }
         }
