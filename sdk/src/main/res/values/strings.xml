@@ -75,6 +75,9 @@
     <string name="mpsdk_cardholder_name_short">NOMBRE APELLIDO</string>
     <string name="mpsdk_title_activity_new_card">Ingresa los datos de tu tarjeta</string>
 
+    <string name="mpsdk_credit_card">Crédito</string>
+    <string name="mpsdk_debit_card">Débito</string>
+
     <!-- Congrats -->
     <string name="mpsdk_title_activity_congrat">¡Listo, se acreditó tu pago!</string>
     <string name="mpsdk_subtitle_action_activity_congrat">Te enviaremos los datos a\n%1$s</string>

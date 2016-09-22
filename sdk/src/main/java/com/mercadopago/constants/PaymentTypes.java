@@ -1,5 +1,9 @@
 package com.mercadopago.constants;
 
+import android.content.Context;
+
+import com.mercadopago.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,5 +33,15 @@ public class PaymentTypes {
             add(DIGITAL_CURRENCY);
             add(BANK_TRANSFER);
         }};
+    }
+
+    public static String getString(String paymentType, Context context) {
+        String ans = null;
+        if (paymentType.equals(CREDIT_CARD)) {
+            ans = context.getString(R.string.mpsdk_credit_card);
+        } else if (paymentType.equals(DEBIT_CARD)) {
+            ans = context.getString(R.string.mpsdk_debit_card);
+        }
+        return ans;
     }
 }

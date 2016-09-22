@@ -96,9 +96,9 @@ public class ComponentsExampleActivity extends AppCompatActivity {
 
         new MercadoPago.StartActivityBuilder()
                 .setActivity(this)
-                .setPublicKey(mPublicKey)
+                .setPublicKey("6c0d81bc-99c1-4de8-9976-c8d1d62cd4f2")
                 .setAmount(mAmount)
-                .setSite(Sites.ARGENTINA)
+                .setSite(Sites.MEXICO)
                 .setInstallmentsEnabled(true)
                 .setPaymentPreference(paymentPreference) //Optional
                 .setDecorationPreference(decorationPreference) //Optional

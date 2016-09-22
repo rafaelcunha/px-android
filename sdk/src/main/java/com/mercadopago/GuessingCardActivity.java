@@ -31,9 +31,11 @@ import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.adapters.IdentificationTypesAdapter;
+import com.mercadopago.adapters.PaymentTypeIdsAdapter;
 import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.callbacks.PaymentMethodSelectionCallback;
+import com.mercadopago.constants.PaymentTypes;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.fragments.CardBackFragment;
@@ -62,6 +64,7 @@ import com.mercadopago.views.MPEditText;
 import com.mercadopago.views.MPTextView;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuessingCardActivity extends FrontCardActivity {
@@ -82,8 +85,10 @@ public class GuessingCardActivity extends FrontCardActivity {
     private LinearLayout mSecurityCodeEditView;
     private LinearLayout mInputContainer;
     private Spinner mIdentificationTypeSpinner;
+    private Spinner mPaymentTypeSpinner;
     private LinearLayout mIdentificationTypeContainer;
     private LinearLayout mIdentificationNumberContainer;
+    private LinearLayout mPaymentTypeContainer;
     private ScrollView mScrollView;
     private ProgressBar mProgressBar;
     private FrameLayout mBackButton;
@@ -122,6 +127,7 @@ public class GuessingCardActivity extends FrontCardActivity {
     private int mCardNumberLength;
     private String mSecurityCodeLocation;
     private boolean mIssuerFound;
+    private String mSelectedPaymentType;
 
     @Override
     protected void onResume() {
@@ -308,6 +314,8 @@ public class GuessingCardActivity extends FrontCardActivity {
         mIdentificationTypeSpinner = (Spinner) findViewById(R.id.mpsdkCardIdentificationType);
         mIdentificationTypeContainer = (LinearLayout) findViewById(R.id.mpsdkCardIdentificationTypeContainer);
         mIdentificationNumberContainer = (LinearLayout) findViewById(R.id.mpsdkCardIdentificationNumberContainer);
+        mPaymentTypeContainer = (LinearLayout) findViewById(R.id.mpsdkCardPaymentMethodSelectionContainer);
+        mPaymentTypeSpinner = (Spinner) findViewById(R.id.mpsdkCardPaymentMethodSelector);
         mProgressBar = (ProgressBar) findViewById(R.id.mpsdkProgressBar);
         mBackButton = (FrameLayout) findViewById(R.id.mpsdkBackButton);
         mNextButton = (FrameLayout) findViewById(R.id.mpsdkNextButton);
@@ -323,6 +331,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         mProgressBar.setVisibility(View.GONE);
         mIdentificationTypeContainer.setVisibility(View.GONE);
         mIdentificationNumberContainer.setVisibility(View.GONE);
+        mPaymentTypeContainer.setVisibility(View.GONE);
         mButtonContainer.setVisibility(View.VISIBLE);
 
         mCardBackground = findViewById(R.id.mpsdkCardBackground);
@@ -726,7 +735,9 @@ public class GuessingCardActivity extends FrontCardActivity {
                 new PaymentMethodSelectionCallback() {
                     @Override
                     public void onPaymentMethodListSet(List<PaymentMethod> paymentMethodList) {
-                        if (paymentMethodList.size() == 0 || paymentMethodList.size() > 1) {
+                        if (paymentMethodList.size() == 2) {
+                            enablePaymentTypeSelection(paymentMethodList);
+                        } else if (paymentMethodList.size() == 0 || paymentMethodList.size() > 1) {
                             blockCardNumbersInput(mCardNumberEditText);
                             setErrorView(getString(R.string.mpsdk_invalid_payment_method));
                         } else {
@@ -764,6 +775,19 @@ public class GuessingCardActivity extends FrontCardActivity {
                     }
 
                 }));
+    }
+
+    private void enablePaymentTypeSelection(List<PaymentMethod> paymentMethodList) {
+        mPaymentTypeContainer.setVisibility(View.VISIBLE);
+        List<String> paymentTypeIds = new ArrayList<>();
+        for (PaymentMethod pm: paymentMethodList) {
+            paymentTypeIds.add(PaymentTypes.getString(pm.getPaymentTypeId(), getActivity());
+        }
+        mSelectedPaymentType = paymentTypeIds.get(0);
+        mPaymentTypeSpinner.setAdapter(new PaymentTypeIdsAdapter(getActivity(), paymentTypeIds));
+
+        mIdentificationTypeSpinner.setAdapter(new IdentificationTypesAdapter(getActivity(), identificationTypes));
+        mIdentificationTypeContainer.setVisibility(View.VISIBLE);
     }
 
     private boolean needsMask(CharSequence s) {
