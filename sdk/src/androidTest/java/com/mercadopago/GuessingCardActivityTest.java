@@ -448,7 +448,7 @@ public class GuessingCardActivityTest {
         onView(withId(R.id.mpsdkCardholderName)).check(matches(not(isDisplayed())));
         onView(withId(R.id.mpsdkCardExpiryDate)).check(matches(not(isDisplayed())));
         onView(withId(R.id.mpsdkCardSecurityCode)).check(matches(not(isDisplayed())));
-        onView(withId(R.id.mpsdkCardIdentificationType)).check(matches((isDisplayed())));
+        onView(withId(R.id.mpsdkCardIdentificationTypeSelector)).check(matches((isDisplayed())));
         onView(withId(R.id.mpsdkCardIdentificationNumber)).check(matches((isDisplayed())));
 
         onView(withId(R.id.mpsdkCardIdentificationNumber)).check(matches(hasFocus()));
@@ -476,7 +476,7 @@ public class GuessingCardActivityTest {
         onView(withId(R.id.mpsdkCardNumber)).check(matches(not(isDisplayed())));
         onView(withId(R.id.mpsdkCardholderName)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCardSecurityCode)).check(matches(not(isDisplayed())));
-        onView(withId(R.id.mpsdkCardIdentificationType)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.mpsdkCardIdentificationTypeSelector)).check(matches(not(isDisplayed())));
         onView(withId(R.id.mpsdkCardIdentificationNumber)).check(matches(not(isDisplayed())));
 
         onView(withId(R.id.mpsdkCardholderName)).check(matches(hasFocus()));
@@ -486,7 +486,7 @@ public class GuessingCardActivityTest {
         onView(withId(R.id.mpsdkCardNumber)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCardExpiryDate)).check(matches(not(isDisplayed())));
         onView(withId(R.id.mpsdkCardSecurityCode)).check(matches(not(isDisplayed())));
-        onView(withId(R.id.mpsdkCardIdentificationType)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.mpsdkCardIdentificationTypeSelector)).check(matches(not(isDisplayed())));
         onView(withId(R.id.mpsdkCardIdentificationNumber)).check(matches(not(isDisplayed())));
 
         onView(withId(R.id.mpsdkCardNumber)).check(matches(hasFocus()));

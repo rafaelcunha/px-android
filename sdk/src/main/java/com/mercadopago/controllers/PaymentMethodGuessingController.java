@@ -22,6 +22,10 @@ public class PaymentMethodGuessingController {
         this.mSavedBin = "";
     }
 
+    public List<PaymentMethod> getGuessedPaymentMethods() {
+        return mGuessedPaymentMethods;
+    }
+
     public String getPaymentTypeId() {
         return mPaymentTypeId;
     }

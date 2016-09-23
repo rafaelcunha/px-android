@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 
 import com.mercadopago.R;
 import com.mercadopago.model.IdentificationType;
+import com.mercadopago.model.PaymentType;
 import com.mercadopago.views.MPTextView;
 
 import java.util.List;
@@ -17,14 +18,16 @@ import java.util.List;
  * Created by vaserber on 9/22/16.
  */
 
-public class PaymentTypeIdsAdapter extends BaseAdapter {
+public class PaymentTypesAdapter extends BaseAdapter {
 
-    private List<String> mData;
+    private List<PaymentType> mData;
     private static LayoutInflater mInflater = null;
+    private Context mContext;
 
-    public PaymentTypeIdsAdapter(Activity activity, List<String> data) {
+    public PaymentTypesAdapter(Activity activity, List<PaymentType> data) {
         mData = data;
         mInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mContext = activity;
     }
 
     public int getCount() {
@@ -39,7 +42,7 @@ public class PaymentTypeIdsAdapter extends BaseAdapter {
         }
     }
 
-    public List<String> getPaymentTypeIds() {
+    public List<PaymentType> getPaymentTypes() {
         return mData;
     }
 
@@ -54,10 +57,10 @@ public class PaymentTypeIdsAdapter extends BaseAdapter {
         if (convertView == null)
             row = mInflater.inflate(R.layout.mpsdk_row_simple_spinner, parent, false);
 
-        String paymentTypeId = mData.get(position);
+        PaymentType paymentType = mData.get(position);
 
         MPTextView label = (MPTextView) row.findViewById(R.id.mpsdkLabel);
-        label.setText(paymentTypeId);
+        label.setText(paymentType.toString(mContext));
 
         return row;
     }

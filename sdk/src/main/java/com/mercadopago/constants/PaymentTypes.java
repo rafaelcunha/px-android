@@ -35,13 +35,4 @@ public class PaymentTypes {
         }};
     }
 
-    public static String getString(String paymentType, Context context) {
-        String ans = null;
-        if (paymentType.equals(CREDIT_CARD)) {
-            ans = context.getString(R.string.mpsdk_credit_card);
-        } else if (paymentType.equals(DEBIT_CARD)) {
-            ans = context.getString(R.string.mpsdk_debit_card);
-        }
-        return ans;
-    }
 }

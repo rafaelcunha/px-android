@@ -42,32 +42,21 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/mpsdkCardPaymentMethodSelectionContainer"
+        android:id="@+id/mpsdkCardPaymentTypeSelectionContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone">
 
-        <com.mercadopago.views.MPTextView
-            android:id="@+id/mpsdkPaymentMethodSelectorText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:textSize="14dp"
-            android:lines="1"
-            android:textColor="@color/mpsdk_color_new_card_text"
-            android:text="@string/mpsdk_card_identification_type"/>
-
         <Spinner
-            android:id="@+id/mpsdkCardPaymentMethodSelector"
+            android:id="@+id/mpsdkCardPaymentTypeSelector"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:paddingLeft="5dp"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
-            android:paddingRight="5dp"
-            style="@style/Widget.AppCompat.Spinner.Underlined"/>
+            android:paddingRight="5dp"/>
     </LinearLayout>
 
 
@@ -192,7 +181,7 @@
 
         <!-- spinner -->
         <Spinner
-            android:id="@+id/mpsdkCardIdentificationType"
+            android:id="@+id/mpsdkCardIdentificationTypeSelector"
             android:layout_width="100dp"
             android:layout_height="36dp"/>
 
