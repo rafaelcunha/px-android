@@ -19,7 +19,7 @@
     <string name="mpsdk_cod_seg_desc_amex"><ns1:g example="4" id="numeros">%1$d</ns1:g> digits code on the front of the card</string>
     <string name="mpsdk_title_activity_vault">Pay</string>
     <string name="mpsdk_select_pm_label">Choose a payment method…</string>
-    <string name="mpsdk_last_digits_label">ending in</string>
+    <string name="mpsdk_last_digits_label">Ending in</string>
     <string name="mpsdk_confirm">Confirm</string>
     <string name="mpsdk_title_activity_payment_vault">How do you want to pay?</string>
     <string name="mpsdk_invalid_pm_for_current_amount">The selected payment method can\'t be used to pay this amount. Please select another method</string>
@@ -79,7 +79,7 @@
     <string name="mpsdk_title_activity_congrat">Done, your payment was accredited!</string>
     <string name="mpsdk_subtitle_action_activity_congrat">We will send you the data to\n%1$s</string>
     <string name="mpsdk_text_state_acount_activity_congrat">On your statement you will see the charge as MERCADOPAGO</string>
-    <string name="mpsdk_payment_id_description">Ticket:</string>
+    <string name="mpsdk_payment_id_description">Ticket\nNº</string>
 
     <!-- CallForAuthorize -->
     <string name="mpsdk_title_activity_call_for_authorize">You must authorize with %1$s the payment of %2$s to Mercado Pago</string>

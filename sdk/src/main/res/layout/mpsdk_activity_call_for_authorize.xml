@@ -128,8 +128,8 @@
                         android:text="@string/mpsdk_text_pay_with_other_method"/>
                 </FrameLayout>
 
-                <com.mercadopago.customviews.MPTextView
-                    android:id="@+id/mpsdkExitCallForAuthorize"
+                <com.mercadopago.views.MPTextView
+                    android:id="@+id/mpsdkKeepBuyingCallForAuthorize"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="40dp"
                     android:paddingRight="40dp"

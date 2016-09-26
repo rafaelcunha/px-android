@@ -31,7 +31,7 @@
                         android:id="@+id/mpsdkClock"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:layout_marginTop="30dp"
+                        android:layout_marginTop="34dp"
                         android:layout_marginBottom="14dp"
                         android:tint="@color/mpsdk_white"
                         android:src="@drawable/icon_pending"
@@ -98,7 +98,7 @@
                 </FrameLayout>
 
                 <com.mercadopago.views.MPTextView
-                    android:id="@+id/mpsdkExitPending"
+                    android:id="@+id/mpsdkKeepBuyingPending"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

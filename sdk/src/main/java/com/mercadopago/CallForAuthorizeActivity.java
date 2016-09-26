@@ -1,6 +1,5 @@
 package com.mercadopago;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -24,7 +23,7 @@ public class CallForAuthorizeActivity extends MercadoPagoActivity {
     //Controls
     protected MPTextView mCallForAuthTitle;
     protected MPTextView mAuthorizedPaymentMethod;
-    protected MPTextView mExit;
+    protected MPTextView mKeepBuyingButton;
     protected FrameLayout mPayWithOtherPaymentMethodButton;
 
     //Params
@@ -91,9 +90,8 @@ public class CallForAuthorizeActivity extends MercadoPagoActivity {
                 finish();
             }
         });
-
-        mExit = (MPTextView) findViewById(R.id.mpsdkExitCallForAuthorize);
-        mExit.setOnClickListener(new View.OnClickListener() {
+        mKeepBuyingButton = (MPTextView) findViewById(R.id.mpsdkKeepBuyingCallForAuthorize);
+        mKeepBuyingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finishWithOkResult();
@@ -163,7 +161,7 @@ public class CallForAuthorizeActivity extends MercadoPagoActivity {
         if (mBackPressedOnce) {
             finishWithOkResult();
         } else {
-            Snackbar.make(mExit, getString(R.string.mpsdk_press_again_to_leave), Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mKeepBuyingButton, getString(R.string.mpsdk_press_again_to_leave), Snackbar.LENGTH_LONG).show();
             mBackPressedOnce = true;
             resetBackPressedOnceIn(4000);
         }

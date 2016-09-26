@@ -118,7 +118,7 @@ public class PendingActivityTest {
         onView(withId(R.id.mpsdkPendingOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkExitPending)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingPending)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class PendingActivityTest {
         onView(withId(R.id.mpsdkPendingOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkExitPending)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingPending)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -174,7 +174,7 @@ public class PendingActivityTest {
         onView(withId(R.id.mpsdkPendingOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkExitPending)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingPending)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -202,11 +202,11 @@ public class PendingActivityTest {
         onView(withId(R.id.mpsdkPendingOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkExitPending)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingPending)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void finishActivityWhenClickOnExitPending(){
+    public void finishActivityWhenClickOnKeepBuyingPending(){
         mPayment.setStatus(Payment.StatusCodes.STATUS_IN_PROCESS);
         mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_PENDING_CONTINGENCY);
 
@@ -214,10 +214,10 @@ public class PendingActivityTest {
         mTestRule.launchActivity(validStartIntent);
 
         //Keep buying button isDisplayed
-        onView(withId(R.id.mpsdkExitPending)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingPending)).check(matches(isDisplayed()));
 
         //Click on Keep buying button
-        onView(withId(R.id.mpsdkExitPending)).perform(click());
+        onView(withId(R.id.mpsdkKeepBuyingPending)).perform(click());
 
         //Pending finish
         assertTrue(mTestRule.getActivity().isFinishing());

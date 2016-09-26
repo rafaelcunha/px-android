@@ -148,9 +148,9 @@ public class CallForAuthorizeActivityTest {
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButton)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
-        //Exit button is displayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        //Keep buying button is displayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
     }
 
     private Spanned getCallForAuthorizeTitle() {
@@ -191,9 +191,9 @@ public class CallForAuthorizeActivityTest {
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButton)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
-        //Exit button is displayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        //Keep buying button is displayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
     }
 
     @Test
@@ -228,9 +228,9 @@ public class CallForAuthorizeActivityTest {
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButton)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
-        //Exit button is displayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        //Keep buying button is displayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
     }
 
     @Test
@@ -265,9 +265,9 @@ public class CallForAuthorizeActivityTest {
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButton)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
-        //Exit button is displayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        //Keep buying button is displayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
     }
 
     @Test
@@ -302,9 +302,9 @@ public class CallForAuthorizeActivityTest {
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButton)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
-        //Exit button is displayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        //Keep buying button is displayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
     }
 
     @Test
@@ -339,9 +339,9 @@ public class CallForAuthorizeActivityTest {
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButton)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
-        //Exit button is displayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        //Keep buying button is displayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
     }
 
     @Test
@@ -376,9 +376,9 @@ public class CallForAuthorizeActivityTest {
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButton)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
-        //Exit button is displayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        //Keep buying button is displayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
     }
 
     @Test
@@ -413,9 +413,9 @@ public class CallForAuthorizeActivityTest {
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButton)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
-        //Exit button is displayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        //Keep buying button is displayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
     }
 
     @Test
@@ -452,9 +452,9 @@ public class CallForAuthorizeActivityTest {
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButton)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
-        //Exit button is displayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        //Keep buying button is displayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
     }
 
     @Test
@@ -491,9 +491,9 @@ public class CallForAuthorizeActivityTest {
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButton)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
-        //Exit button is displayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        //Keep buying button is displayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
     }
 
     @Test
@@ -527,9 +527,9 @@ public class CallForAuthorizeActivityTest {
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButton)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
-        //Exit button is displayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        //Keep buying button is displayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
     }
 
     @Test
@@ -563,9 +563,9 @@ public class CallForAuthorizeActivityTest {
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButton)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
-        //Exit button is displayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        //Keep buying button is displayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
     }
 
     @Test
@@ -599,9 +599,9 @@ public class CallForAuthorizeActivityTest {
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButton)).check(matches(isDisplayed()));
         onView(withId(R.id.mpsdkCallForAuthorizeOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
-        //Exit button is displayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        //Keep buying button is displayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
     }
 
     @Test
@@ -641,18 +641,18 @@ public class CallForAuthorizeActivityTest {
     }
 
     @Test
-    public void finishCallForAuthorizeActivityWhenClickOnExitCallForAuthorize(){
+    public void finishCallForAuthorizeActivityWhenClickOnKeepBuyingCallForAuthorize(){
         mPayment.setStatus(Payment.StatusCodes.STATUS_REJECTED);
         mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE);
 
         createIntent();
         mTestRule.launchActivity(validStartIntent);
 
-        //Exit button isDisplayed
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).check(matches(isDisplayed()));
+        //Keep buying button isDisplayed
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
 
-        //Click on exit button
-        onView(withId(R.id.mpsdkExitCallForAuthorize)).perform(ViewActions.scrollTo(),click());
+        //Click on keep buying button
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).perform(ViewActions.scrollTo(),click());
 
         //CallForAuthorize finish
         assertTrue(mTestRule.getActivity().isFinishing());

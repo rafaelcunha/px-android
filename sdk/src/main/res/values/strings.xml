@@ -19,7 +19,7 @@
     <string name="mpsdk_cod_seg_desc_amex"><xliff:g example="4" id="numeros">%1$d</xliff:g> números al frente de la tarjeta</string>
     <string name="mpsdk_title_activity_vault">Pagar</string>
     <string name="mpsdk_select_pm_label">Selecciona un medio de pago…</string>
-    <string name="mpsdk_last_digits_label">terminada en</string>
+    <string name="mpsdk_last_digits_label">Terminada en</string>
     <string name="mpsdk_confirm">Confirmar</string>
     <string name="mpsdk_title_activity_payment_vault">¿Cómo quieres pagar?</string>
     <string name="mpsdk_invalid_pm_for_current_amount">El medio de pago que elegiste no se puede usar para pagar ese monto. Por favor selecciona otro</string>
@@ -79,7 +79,7 @@
     <string name="mpsdk_title_activity_congrat">¡Listo, se acreditó tu pago!</string>
     <string name="mpsdk_subtitle_action_activity_congrat">Te enviaremos los datos a\n%1$s</string>
     <string name="mpsdk_text_state_acount_activity_congrat">En tu estado de cuenta verás el cargo como MERCADOPAGO</string>
-    <string name="mpsdk_payment_id_description">Comprobante: </string>
+    <string name="mpsdk_payment_id_description">Comprobante\nNº</string>
 
     <!-- CallForAuthorize -->
     <string name="mpsdk_title_activity_call_for_authorize">Debes autorizar ante %1$s el pago de %2$s a Mercado Pago</string>
