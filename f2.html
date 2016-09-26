@@ -76,7 +76,7 @@
                                  <li><a href="f2.html#f2_bank_deals">Promociones</a></li>
                                  <li><a href="f2.html#f2_create_payment">Creación de pago</a></li>
                                  <li><a href="f2.html#f2_payment_result">Resultado de pagos</a></li>
-                                 <li><a href="f2.html#f2_payment_recover">Recupero de pagos</a></li>
+                                 <li><a href="f2.html#f2_payment_recovery">Recupero de pagos</a></li>
                                  <li><a href="f2.html#f2_component_customization">Customiza los componentes</a></li>
                               </ul>
                            </li>
@@ -587,7 +587,7 @@ public void startPaymentResultActivity(Payment payment, PaymentMethod paymentMet
         .startPaymentResultActivity();
   }
 
-  //Espera el resultado
+  //Wait the result
   @Override
       protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MercadoPago.PAYMENT_RESULT_REQUEST_CODE) {
@@ -610,7 +610,7 @@ public void startPaymentResultActivity(Payment payment, PaymentMethod paymentMet
                      <img src="./img/phone/payment_results_cards.gif" class="img-phone-case"></img>
                   </div>
                </section>
-               <section class="docs-section" id="f2_payment_recover">
+               <section class="docs-section" id="f2_payment_recovery">
                   <h3 class="title">Recupero de pagos</h3>
                   <p>
                   Este componenete es el que utilizamos para realizar cobros con tarjeta de crédito, que además, nos permite recuperar pagos que fueron rechazados porque el usuario ingresó mal los datos de su tarjeta o porque el usuario debe realizar un llamado al emisor de la tarjeta para habilitar el pago. 
