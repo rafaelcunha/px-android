@@ -395,8 +395,10 @@ public class GuessingCardActivityTest {
         addInitCalls();
 
         mTestRule.launchActivity(validStartIntent);
-        onView(withId(R.id.mpsdkNextButton)).check(matches(isDisplayingAtLeast(100)));
-        onView(withId(R.id.mpsdkBackInactiveButton)).check(matches(isDisplayingAtLeast(100)));
+
+        onView(withId(R.id.mpsdkCardNumber)).perform(click());
+        onView(withId(R.id.mpsdkNextButton)).check(matches(isDisplayingAtLeast(90)));
+        onView(withId(R.id.mpsdkBackInactiveButton)).check(matches(isDisplayingAtLeast(90)));
         onView(withId(R.id.mpsdkBackButton)).check(matches(not(isDisplayed())));
         onView(withId(R.id.mpsdkCardNumber)).perform(typeText(CardTestUtils.getDummyCard("master").getCardNumber()));
         onView(withId(R.id.mpsdkNextButton)).perform(click());
@@ -1804,5 +1806,13 @@ public class GuessingCardActivityTest {
         addBankDealsCall();
         addPaymentMethodsCall();
         addIdentificationTypesCall();
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+
+        }
     }
 }
