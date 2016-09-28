@@ -18,6 +18,7 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -129,6 +130,7 @@ public class GuessingCardActivity extends FrontCardActivity {
     private boolean mIssuerFound;
     private PaymentType mSelectedPaymentType;
     private boolean mHasToEnablePaymentTypeSpinner = false;
+    private int mOriginalEditTextWidth;
 
     @Override
     protected void onResume() {
@@ -226,7 +228,6 @@ public class GuessingCardActivity extends FrontCardActivity {
         initializeToolbar();
         setListeners();
         openKeyboard(mCardNumberEditText);
-//        mCurrentEditingEditText = CardInterface.CARD_NUMBER_INPUT;
         onCardNumberFocus();
 
         mMercadoPago = new MercadoPago.Builder()
@@ -503,25 +504,23 @@ public class GuessingCardActivity extends FrontCardActivity {
             case CARD_NUMBER_INPUT:
                 if (validateCardNumber(true)) {
                     mCardNumberInput.setVisibility(View.GONE);
+                    if (mHasToEnablePaymentTypeSpinner) {
+                        mPaymentTypeContainer.setVisibility(View.GONE);
+                    }
                     mCardholderNameInput.setVisibility(View.VISIBLE);
                     mCardExpiryDateInput.setVisibility(View.VISIBLE);
-//                    mCardHolderNameEditText.requestFocus();
                     onCardholderNameFocus();
                     return true;
                 }
                 return false;
             case CARDHOLDER_NAME_INPUT:
                 if (validateCardName(true)) {
-                    if (mHasToEnablePaymentTypeSpinner) {
-                        mPaymentTypeContainer.setVisibility(View.GONE);
-                    }
                     mCardholderNameInput.setVisibility(View.GONE);
                     if (isSecurityCodeRequired()) {
                         mSecurityCodeEditView.setVisibility(View.VISIBLE);
                     } else if (mIdentificationNumberRequired) {
                         mIdentificationTypeContainer.setVisibility(View.VISIBLE);
                     }
-//                    mCardExpiryDateEditText.requestFocus();
                     onExpiryDateFocus();
                     return true;
                 }
@@ -530,13 +529,11 @@ public class GuessingCardActivity extends FrontCardActivity {
                 if (validateExpiryDate(true)) {
                     mCardExpiryDateInput.setVisibility(View.GONE);
                     if (isSecurityCodeRequired()) {
-//                        mCardSecurityCodeEditText.requestFocus();
                         onSecurityCodeFocus();
                         if (mIdentificationNumberRequired) {
                             mIdentificationTypeContainer.setVisibility(View.VISIBLE);
                         }
                     } else if (mIdentificationNumberRequired) {
-//                        mCardIdentificationNumberEditText.requestFocus();
                         onIdentificationNumberFocus();
                         mCardIdNumberInput.setVisibility(View.VISIBLE);
                     } else {
@@ -549,7 +546,6 @@ public class GuessingCardActivity extends FrontCardActivity {
                 if (validateSecurityCode(true)) {
                     mSecurityCodeEditView.setVisibility(View.GONE);
                     if (mIdentificationNumberRequired) {
-//                        mCardIdentificationNumberEditText.requestFocus();
                         onIdentificationNumberFocus();
                         mCardIdNumberInput.setVisibility(View.VISIBLE);
                     } else {
@@ -569,20 +565,18 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     private void onCardNumberFocus() {
-        mFrontFragment.setFontColor();
         MPTracker.getInstance().trackScreen("CARD_NUMBER", 2, mPublicKey, BuildConfig.VERSION_NAME, getActivity());
         disableBackInputButton();
         checkFlipCardToFront(true);
         mCurrentEditingEditText = CARD_NUMBER_INPUT;
         mCardNumberEditText.requestFocus();
-//        openKeyboard(mCardNumberEditText);
+        mFrontFragment.setFontColor();
     }
 
     private void onCardholderNameFocus() {
         if (!validateCardNumber(true)) {
             return;
         }
-        mFrontFragment.setFontColor();
         MPTracker.getInstance().trackScreen("CARD_HOLDER_NAME", 2, mPublicKey, BuildConfig.VERSION_NAME, getActivity());
 
         enableBackInputButton();
@@ -590,13 +584,13 @@ public class GuessingCardActivity extends FrontCardActivity {
         checkFlipCardToFront(true);
         mCurrentEditingEditText = CARDHOLDER_NAME_INPUT;
         mCardHolderNameEditText.requestFocus();
+        mFrontFragment.setFontColor();
     }
 
     private void onExpiryDateFocus() {
         if (!validateCardName(true)) {
             return;
         }
-        mFrontFragment.setFontColor();
         MPTracker.getInstance().trackScreen("CARD_EXPIRY_DATE", 2, mPublicKey, BuildConfig.VERSION_NAME, getActivity());
 
         enableBackInputButton();
@@ -604,13 +598,13 @@ public class GuessingCardActivity extends FrontCardActivity {
         checkFlipCardToFront(true);
         mCurrentEditingEditText = CARD_EXPIRYDATE_INPUT;
         mCardExpiryDateEditText.requestFocus();
+        mFrontFragment.setFontColor();
     }
 
     private void onSecurityCodeFocus() {
         if (!validateExpiryDate(true)) {
             return;
         }
-        mFrontFragment.setFontColor();
         if (mCurrentEditingEditText.equals(CARD_EXPIRYDATE_INPUT) ||
                         mCurrentEditingEditText.equals(CARD_IDENTIFICATION_INPUT) ||
                         mCurrentEditingEditText.equals(CARD_SECURITYCODE_INPUT)) {
@@ -624,6 +618,7 @@ public class GuessingCardActivity extends FrontCardActivity {
                 checkFlipCardToFront(true);
             }
             mCardSecurityCodeEditText.requestFocus();
+            mFrontFragment.setFontColor();
         }
     }
 
@@ -639,6 +634,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         checkTransitionCardToId();
         mCurrentEditingEditText = CARD_IDENTIFICATION_INPUT;
         mCardIdentificationNumberEditText.requestFocus();
+        mFrontFragment.setFontColor();
     }
 
 
@@ -647,10 +643,9 @@ public class GuessingCardActivity extends FrontCardActivity {
             case CARDHOLDER_NAME_INPUT:
                 if (TextUtils.isEmpty(mCardHolderName) || validateCardName(true)) {
                     if (mHasToEnablePaymentTypeSpinner) {
-                        mCardholderNameInput.setVisibility(View.GONE);
+                        mPaymentTypeContainer.setVisibility(View.VISIBLE);
                     }
                     mCardNumberInput.setVisibility(View.VISIBLE);
-//                    mCardNumberEditText.requestFocus();
                     onCardNumberFocus();
                     return true;
                 }
@@ -661,7 +656,6 @@ public class GuessingCardActivity extends FrontCardActivity {
                     if (mHasToEnablePaymentTypeSpinner) {
                         mPaymentTypeContainer.setVisibility(View.VISIBLE);
                     }
-//                    mCardHolderNameEditText.requestFocus();
                     onCardholderNameFocus();
                     return true;
                 }
@@ -669,7 +663,6 @@ public class GuessingCardActivity extends FrontCardActivity {
             case CARD_SECURITYCODE_INPUT:
                 if (TextUtils.isEmpty(mSecurityCode) || validateSecurityCode(true)) {
                     mCardExpiryDateInput.setVisibility(View.VISIBLE);
-//                    mCardExpiryDateEditText.requestFocus();
                     onExpiryDateFocus();
                     return true;
                 }
@@ -678,11 +671,9 @@ public class GuessingCardActivity extends FrontCardActivity {
                 if (TextUtils.isEmpty(mCardIdentificationNumber) || validateIdentificationNumber(true)) {
                     if (isSecurityCodeRequired()) {
                         mSecurityCodeEditView.setVisibility(View.VISIBLE);
-//                        mCardSecurityCodeEditText.requestFocus();
                         onSecurityCodeFocus();
                     } else {
                         mCardExpiryDateInput.setVisibility(View.VISIBLE);
-//                        mCardExpiryDateEditText.requestFocus();
                         onExpiryDateFocus();
                     }
                     return true;
@@ -790,7 +781,6 @@ public class GuessingCardActivity extends FrontCardActivity {
                 mCardIdentificationNumberEditText.setText(number);
             }
         }
-//        mCardNumberEditText.requestFocus();
         onCardNumberFocus();
     }
 
@@ -838,8 +828,6 @@ public class GuessingCardActivity extends FrontCardActivity {
                                     enablePaymentTypeSelection(mPaymentMethodGuessingController.getGuessedPaymentMethods());
                                 }
                                 onPaymentMethodSet(paymentMethodList.get(0));
-//                                mCardNumberEditText.requestFocus();
-//                                onCardNumberFocus();
                             }
                         } else if (paymentMethodList.size() == 0 || paymentMethodList.size() > 1) {
                             blockCardNumbersInput(mCardNumberEditText);
@@ -862,7 +850,7 @@ public class GuessingCardActivity extends FrontCardActivity {
                         mCurrentPaymentMethod = null;
                         mHasToEnablePaymentTypeSpinner = false;
                         mSelectedPaymentType = null;
-                        mPaymentTypeContainer.setVisibility(View.GONE);
+                        disablePaymentTypeSelection();
                         mCardholderNameInput.setVisibility(View.VISIBLE);
                         setSecurityCodeLocation(null);
                         setSecurityCodeRequired(true);
@@ -887,10 +875,16 @@ public class GuessingCardActivity extends FrontCardActivity {
             manageAdditionalInfoNeeded();
             mFrontFragment.populateCardNumber(getCardNumber());
             if (mCurrentEditingEditText.equals(CARD_NUMBER_INPUT)) {
-//                mCardNumberEditText.requestFocus();
                 onCardNumberFocus();
             }
         }
+    }
+
+    private void disablePaymentTypeSelection() {
+        mPaymentTypeContainer.setVisibility(View.GONE);
+        ViewGroup.LayoutParams params= mCardNumberEditText.getLayoutParams();
+        params.width = mOriginalEditTextWidth;
+        mCardNumberEditText.setLayoutParams(params);
     }
 
     private void enablePaymentTypeSelection(List<PaymentMethod> paymentMethodList) {
@@ -902,6 +896,11 @@ public class GuessingCardActivity extends FrontCardActivity {
         mSelectedPaymentType = paymentTypesList.get(0);
         mPaymentTypeSpinner.setAdapter(new PaymentTypesAdapter(getActivity(), paymentTypesList));
         mPaymentTypeContainer.setVisibility(View.VISIBLE);
+        ViewGroup.LayoutParams originalParams = mCardNumberEditText.getLayoutParams();
+        mOriginalEditTextWidth = originalParams.width;
+        ViewGroup.LayoutParams params= mCardNumberEditText.getLayoutParams();
+        params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+        mCardNumberEditText.setLayoutParams(params);
     }
 
     private boolean needsMask(CharSequence s) {
@@ -1162,8 +1161,6 @@ public class GuessingCardActivity extends FrontCardActivity {
         setErrorView(message);
         if (requestFocus) {
             mCardSecurityCodeEditText.toggleLineColorOnError(true);
-//            mCardSecurityCodeEditText.requestFocus();
-//            onSecurityCodeFocus();
         }
     }
 
@@ -1190,8 +1187,6 @@ public class GuessingCardActivity extends FrontCardActivity {
         setErrorView(message);
         if (requestFocus) {
             mCardIdentificationNumberEditText.toggleLineColorOnError(true);
-//            mCardIdentificationNumberEditText.requestFocus();
-//            onIdentificationNumberFocus();
         }
     }
 
@@ -1250,15 +1245,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         mCardNumberEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-//                mFrontFragment.setFontColor();
-//                if (hasFocus) {
-//                    MPTracker.getInstance().trackScreen("CARD_NUMBER", 2, mPublicKey, BuildConfig.VERSION_NAME, getActivity());
-//
-//                    disableBackInputButton();
-//                    openKeyboard(mCardNumberEditText);
-//                    checkFlipCardToFront(true);
-//                    mCurrentEditingEditText = CARD_NUMBER_INPUT;
-//                }
+
             }
         });
     }
@@ -1298,18 +1285,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         mCardHolderNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-//                if (!validateCardNumber(true)) {
-//                    return;
-//                }
-//                mFrontFragment.setFontColor();
-//                if (hasFocus) {
-//                    MPTracker.getInstance().trackScreen("CARD_HOLDER_NAME", 2, mPublicKey, BuildConfig.VERSION_NAME, getActivity());
-//
-//                    enableBackInputButton();
-//                    openKeyboard(mCardHolderNameEditText);
-//                    checkFlipCardToFront(true);
-//                    mCurrentEditingEditText = CARDHOLDER_NAME_INPUT;
-//                }
+
             }
         });
     }
@@ -1338,18 +1314,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         mCardExpiryDateEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-//                if (!validateCardName(true)) {
-//                    return;
-//                }
-//                mFrontFragment.setFontColor();
-//                if (hasFocus) {
-//                    MPTracker.getInstance().trackScreen("CARD_EXPIRY_DATE", 2, mPublicKey, BuildConfig.VERSION_NAME, getActivity());
-//
-//                    enableBackInputButton();
-//                    openKeyboard(mCardExpiryDateEditText);
-//                    checkFlipCardToFront(true);
-//                    mCurrentEditingEditText = CARD_EXPIRYDATE_INPUT;
-//                }
+
             }
         });
     }
@@ -1378,24 +1343,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         mCardSecurityCodeEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-//                if (!validateExpiryDate(true)) {
-//                    return;
-//                }
-//                mFrontFragment.setFontColor();
-//                if (hasFocus &&
-//                        (mCurrentEditingEditText.equals(CARD_EXPIRYDATE_INPUT) ||
-//                        mCurrentEditingEditText.equals(CARD_IDENTIFICATION_INPUT) ||
-//                        mCurrentEditingEditText.equals(CARD_SECURITYCODE_INPUT))) {
-//                    MPTracker.getInstance().trackScreen("CARD_SECURITY_CODE", 2, mPublicKey, BuildConfig.VERSION_NAME, getActivity());
-//                    enableBackInputButton();
-//                    openKeyboard(mCardSecurityCodeEditText);
-//                    mCurrentEditingEditText = CARD_SECURITYCODE_INPUT;
-//                    if (mSecurityCodeLocation == null || mSecurityCodeLocation.equals(CardInterface.CARD_SIDE_BACK)) {
-//                        checkFlipCardToBack(true);
-//                    } else {
-//                        checkFlipCardToFront(true);
-//                    }
-//                }
+
             }
         });
     }
@@ -1454,7 +1402,6 @@ public class GuessingCardActivity extends FrontCardActivity {
                     return false;
                 }
                 checkTransitionCardToId();
-//                mCardIdentificationNumberEditText.requestFocus();
                 onIdentificationNumberFocus();
                 return false;
             }
@@ -1482,18 +1429,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         mCardIdentificationNumberEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-//                if ((isSecurityCodeRequired() && !validateSecurityCode(true)) ||
-//                        (!isSecurityCodeRequired() && !validateExpiryDate(true))) {
-//                   return;
-//                }
-//                mFrontFragment.setFontColor();
-//                if (hasFocus) {
-//                    MPTracker.getInstance().trackScreen("IDENTIFICATION_NUMBER", 2, mPublicKey, BuildConfig.VERSION_NAME, getActivity());
-//                    enableBackInputButton();
-//                    openKeyboard(mCardIdentificationNumberEditText);
-//                    checkTransitionCardToId();
-//                    mCurrentEditingEditText = CARD_IDENTIFICATION_INPUT;
-//                }
+
             }
         });
     }
@@ -1686,7 +1622,6 @@ public class GuessingCardActivity extends FrontCardActivity {
             setErrorView(e.getMessage());
             if (requestFocus) {
                 mCardNumberEditText.toggleLineColorOnError(true);
-//                mCardNumberEditText.requestFocus();
                 onCardNumberFocus();
             }
             return false;
@@ -1705,8 +1640,6 @@ public class GuessingCardActivity extends FrontCardActivity {
             setErrorView(getString(R.string.mpsdk_invalid_empty_name));
             if (requestFocus) {
                 mCardHolderNameEditText.toggleLineColorOnError(true);
-//                mCardHolderNameEditText.requestFocus();
-//                onCardholderNameFocus();
             }
             return false;
         }
@@ -1724,8 +1657,6 @@ public class GuessingCardActivity extends FrontCardActivity {
             setErrorView(getString(R.string.mpsdk_invalid_expiry_date));
             if (requestFocus) {
                 mCardExpiryDateEditText.toggleLineColorOnError(true);
-//                mCardExpiryDateEditText.requestFocus();
-//                onExpiryDateFocus();
             }
             return false;
         }

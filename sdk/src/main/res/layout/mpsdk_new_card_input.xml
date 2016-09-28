@@ -25,7 +25,7 @@
             android:text="@string/mpsdk_card_number_label"/>
         <com.mercadopago.views.MPEditText
             android:id="@+id/mpsdkCardNumber"
-            android:layout_width="293dp"
+            android:layout_width="@dimen/mpsdk_edittext_width_inline_form"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
@@ -78,7 +78,7 @@
             android:text="@string/mpsdk_cardholder_name"/>
         <com.mercadopago.views.MPEditText
             android:id="@+id/mpsdkCardholderName"
-            android:layout_width="293dp"
+            android:layout_width="@dimen/mpsdk_edittext_width_inline_form"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
@@ -112,7 +112,7 @@
             android:text="@string/mpsdk_card_expire_date_label"/>
         <com.mercadopago.views.MPEditText
             android:id="@+id/mpsdkCardExpiryDate"
-            android:layout_width="293dp"
+            android:layout_width="@dimen/mpsdk_edittext_width_inline_form"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
@@ -147,7 +147,7 @@
 
         <com.mercadopago.views.MPEditText
             android:id="@+id/mpsdkCardSecurityCode"
-            android:layout_width="293dp"
+            android:layout_width="@dimen/mpsdk_edittext_width_inline_form"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"

@@ -24,4 +24,5 @@
     <dimen name="mpsdk_list_item_height_large">72dp</dimen>
     <dimen name="mpsdk_shopping_cart_height">120dp</dimen>
     <dimen name="mpsdk_card_camera_distance">2560dp</dimen>
+    <dimen name="mpsdk_edittext_width_inline_form">293dp</dimen>
 </resources>
