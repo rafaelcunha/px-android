@@ -898,9 +898,14 @@ public class GuessingCardActivity extends FrontCardActivity {
         mPaymentTypeContainer.setVisibility(View.VISIBLE);
         ViewGroup.LayoutParams originalParams = mCardNumberEditText.getLayoutParams();
         mOriginalEditTextWidth = originalParams.width;
-        ViewGroup.LayoutParams params= mCardNumberEditText.getLayoutParams();
-        params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-        mCardNumberEditText.setLayoutParams(params);
+
+        LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) mCardNumberEditText.getLayoutParams();
+        //parameters for left, top, right, bottom
+        linearParams.setMargins((int) getResources().getDimension(R.dimen.mpsdk_edittext_margin_inline_form),
+                (int) getResources().getDimension(R.dimen.mpsdk_edittext_margin_top_inline_form),
+                (int) getResources().getDimension(R.dimen.mpsdk_edittext_min_margin_inline_form), 0);
+        linearParams.width = (int) getResources().getDimension(R.dimen.mpsdk_edittext_min_width_inline_form);
+        mCardNumberEditText.setLayoutParams(linearParams);
     }
 
     private boolean needsMask(CharSequence s) {

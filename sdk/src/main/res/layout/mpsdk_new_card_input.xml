@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="12dp"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -27,9 +27,9 @@
             android:id="@+id/mpsdkCardNumber"
             android:layout_width="@dimen/mpsdk_edittext_width_inline_form"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginLeft="@dimen/mpsdk_edittext_margin_inline_form"
+            android:layout_marginRight="@dimen/mpsdk_edittext_margin_inline_form"
+            android:layout_marginTop="@dimen/mpsdk_edittext_margin_top_inline_form"
             android:textSize="19dp"
             android:textColor="@color/abc_search_url_text_selected"
             android:inputType="number"
@@ -37,6 +37,7 @@
             android:imeOptions="actionNext"
             android:singleLine="true"
             android:maxLength="19"
+            tools:text="5031 7557 3453 0604"
             custom:errorColor="@color/mpsdk_color_red_error"/>
 
     </LinearLayout>
@@ -50,11 +51,11 @@
 
         <Spinner
             android:id="@+id/mpsdkCardPaymentTypeSelector"
-            android:layout_width="100dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:paddingLeft="5dp"
-            android:paddingStart="5dp"
+            android:paddingLeft="2dp"
+            android:paddingStart="2dp"
             android:paddingEnd="5dp"
             android:paddingRight="5dp"/>
     </LinearLayout>
@@ -80,8 +81,8 @@
             android:id="@+id/mpsdkCardholderName"
             android:layout_width="@dimen/mpsdk_edittext_width_inline_form"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
+            android:layout_marginLeft="@dimen/mpsdk_edittext_margin_inline_form"
+            android:layout_marginRight="@dimen/mpsdk_edittext_margin_inline_form"
             android:layout_marginTop="2dp"
             android:maxLength="50"
             android:singleLine="true"
@@ -114,8 +115,8 @@
             android:id="@+id/mpsdkCardExpiryDate"
             android:layout_width="@dimen/mpsdk_edittext_width_inline_form"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
+            android:layout_marginLeft="@dimen/mpsdk_edittext_margin_inline_form"
+            android:layout_marginRight="@dimen/mpsdk_edittext_margin_inline_form"
             android:layout_marginTop="2dp"
             android:singleLine="true"
             android:imeOptions="actionNext"
@@ -149,8 +150,8 @@
             android:id="@+id/mpsdkCardSecurityCode"
             android:layout_width="@dimen/mpsdk_edittext_width_inline_form"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
+            android:layout_marginLeft="@dimen/mpsdk_edittext_margin_inline_form"
+            android:layout_marginRight="@dimen/mpsdk_edittext_margin_inline_form"
             android:layout_marginTop="2dp"
             android:singleLine="true"
             android:maxLength="4"
@@ -223,8 +224,8 @@
                         android:id="@+id/mpsdkCardIdentificationNumber"
                         android:layout_width="193dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginLeft="@dimen/mpsdk_edittext_margin_inline_form"
+                        android:layout_marginRight="@dimen/mpsdk_edittext_margin_inline_form"
                         android:layout_marginTop="2dp"
                         android:imeOptions="actionNext"
                         android:singleLine="true"
