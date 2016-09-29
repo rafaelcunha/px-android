@@ -233,6 +233,15 @@ public class StaticMock {
         }
     }
 
+    public static String getPaymentMethodListMLM() {
+        try {
+            return getFile(InstrumentationRegistry.getContext(), "mocks/payment_method_list_mlm.json");
+
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
     public static String getInvalidPayerCostsJson() {
 
         try {

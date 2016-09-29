@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.google.gson.reflect.TypeToken;
+import com.mercadopago.constants.PaymentTypes;
 import com.mercadopago.model.BankDeal;
 import com.mercadopago.model.DecorationPreference;
 import com.mercadopago.model.DummyCard;
@@ -32,6 +33,7 @@ import com.mercadopago.utils.IdentificationTestUtils;
 import com.mercadopago.utils.ViewUtils;
 import com.mercadopago.views.MPTextView;
 
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -44,6 +46,7 @@ import java.util.List;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
@@ -1786,6 +1789,54 @@ public class GuessingCardActivityTest {
         identificationNumberIsCurrentEditText();
     }
 
+    @Test
+    public void showDebitSpinnerWhenGuessingDoesntResolvePaymentType() {
+        addBankDealsCall();
+        addPaymentMethodsCallMLM();
+        addIdentificationTypesCall();
+
+        mTestRule.launchActivity(validStartIntent);
+        DummyCard card = CardTestUtils.getDummyCard("master");
+        onView(withId(R.id.mpsdkCardNumber)).perform(typeText(card.getCardNumber()));
+        onView(withId(R.id.mpsdkCardPaymentTypeSelector)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkNextButton)).perform(scrollTo()).perform(click());
+        onView(withId(R.id.mpsdkCardholderName)).perform(typeText(StaticMock.DUMMY_CARDHOLDER_NAME));
+        onView(withId(R.id.mpsdkCardNumber)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.mpsdkCardPaymentTypeSelector)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.mpsdkCardholderName)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void selectPaymentMethodOnPaymentTypeSelectionWithSpinner() {
+        addBankDealsCall();
+        addPaymentMethodsCallMLM();
+//        Type listType = new TypeToken<List<PaymentMethod>>() {
+//        }.getType();
+//        List<PaymentMethod> paymentMethodList = JsonUtil.getInstance().getGson().fromJson(paymentMethods, listType);
+        addIdentificationTypesCall();
+
+        GuessingCardActivity activity = mTestRule.launchActivity(validStartIntent);
+        DummyCard card = CardTestUtils.getDummyCard("master");
+        onView(withId(R.id.mpsdkCardNumber)).perform(typeText(card.getCardNumber()));
+        onView(withId(R.id.mpsdkCardPaymentTypeSelector)).check(matches(isDisplayed()));
+//        onView(withId(R.id.mpsdkCardPaymentTypeSelector)).perform(click());
+//        String expected = activity.getResources().getString(R.string.mpsdk_debit_card);
+//
+//        List<PaymentType> paymentTypesList = new ArrayList<>();
+//        for (PaymentMethod pm: paymentMethodList) {
+//            PaymentType type = new PaymentType(pm.getPaymentTypeId());
+//            paymentTypesList.add(type);
+//        }
+//
+//        onData(withId(R.id.mpsdkCardPaymentTypeSelector))
+//                .inAdapterView(allOf(withId(R.id.mpsdkLabel), withText(paymentTypesList.get(0).toString(activity))))
+//                .perform(click());
+//
+//        onView(withId(R.id.mpsdkCardPaymentTypeSelector)).check(matches(withSpinnerText(containsString(expected))));
+        String expectedPaymentType = activity.mCurrentPaymentMethod.getPaymentTypeId();
+        assertEquals(expectedPaymentType, PaymentTypes.CREDIT_CARD);
+    }
+
 
     private void addIdentificationTypesCall() {
         String identificationTypes = StaticMock.getIdentificationTypeList();
@@ -1800,6 +1851,11 @@ public class GuessingCardActivityTest {
     private void addBankDealsCall() {
         List<BankDeal> bankDeals = StaticMock.getBankDeals();
         mFakeAPI.addResponseToQueue(bankDeals, 200, "");
+    }
+
+    private void addPaymentMethodsCallMLM() {
+        String paymentMethods = StaticMock.getPaymentMethodListMLM();
+        mFakeAPI.addResponseToQueue(paymentMethods, 200, "");
     }
 
     private void addInitCalls() {

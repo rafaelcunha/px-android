@@ -96,4 +96,23 @@ public class CustomMatchers {
             }
         };
     }
+
+//    public static Matcher<Object> withPaymentTypeId (final String paymentTypeId){
+//        return new BoundedMatcher<Object, PaymentType>(PaymentType.class) {
+//            @Override
+//            public boolean matchesSafely(PaymentType paymentType) {
+//                if (paymentType.getId().equals(PaymentTypes.DEBIT_CARD)) {
+//                    return paymentTypeId.equals("Débito");
+//                } else if (paymentType.getId().equals(PaymentTypes.CREDIT_CARD)) {
+//                    return paymentTypeId.equals("Crédito");
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public void describeTo(Description description) {
+//                description.appendText("with payment type id: ");
+//            }
+//        };
+//    }
 }
