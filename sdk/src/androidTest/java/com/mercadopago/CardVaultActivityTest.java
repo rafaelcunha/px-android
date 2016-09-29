@@ -112,11 +112,11 @@ public class CardVaultActivityTest {
         Intent installmentsIntent = new Intent();
         installmentsIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(installmentList.get(0).getPayerCosts().get(0)));
         Instrumentation.ActivityResult installmentsResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, installmentsIntent);
-        intending(hasComponent(InstallmentsActivity.class.getName())).respondWith(installmentsResult);
+        intending(hasComponent(InstallmentsOldActivity.class.getName())).respondWith(installmentsResult);
 
         mTestRule.launchActivity(validStartIntent);
 
-        intended(hasComponent(InstallmentsActivity.class.getName()));
+        intended(hasComponent(InstallmentsOldActivity.class.getName()));
     }
 
     @Test
@@ -143,12 +143,12 @@ public class CardVaultActivityTest {
         Intent installmentsIntent = new Intent();
         installmentsIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(installmentList.get(0).getPayerCosts().get(0)));
         Instrumentation.ActivityResult installmentsResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, installmentsIntent);
-        intending(hasComponent(InstallmentsActivity.class.getName())).respondWith(installmentsResult);
+        intending(hasComponent(InstallmentsOldActivity.class.getName())).respondWith(installmentsResult);
 
 
         mTestRule.launchActivity(validStartIntent);
 
-        intended((hasComponent(InstallmentsActivity.class.getName())), times(0));
+        intended((hasComponent(InstallmentsOldActivity.class.getName())), times(0));
     }
 
     @Test
@@ -173,12 +173,12 @@ public class CardVaultActivityTest {
         Intent installmentsIntent = new Intent();
         installmentsIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(installmentList.get(0).getPayerCosts().get(0)));
         Instrumentation.ActivityResult installmentsResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, installmentsIntent);
-        intending(hasComponent(InstallmentsActivity.class.getName())).respondWith(installmentsResult);
+        intending(hasComponent(InstallmentsOldActivity.class.getName())).respondWith(installmentsResult);
 
 
         mTestRule.launchActivity(validStartIntent);
 
-        intended((hasComponent(InstallmentsActivity.class.getName())), times(0));
+        intended((hasComponent(InstallmentsOldActivity.class.getName())), times(0));
     }
 
     @Test
@@ -205,7 +205,7 @@ public class CardVaultActivityTest {
         Intent installmentsIntent = new Intent();
         installmentsIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(installmentList.get(0).getPayerCosts().get(0)));
         Instrumentation.ActivityResult installmentsResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, installmentsIntent);
-        intending(hasComponent(InstallmentsActivity.class.getName())).respondWith(installmentsResult);
+        intending(hasComponent(InstallmentsOldActivity.class.getName())).respondWith(installmentsResult);
 
         CardVaultActivity activity = mTestRule.launchActivity(validStartIntent);
 
@@ -280,11 +280,11 @@ public class CardVaultActivityTest {
         Intent installmentsIntent = new Intent();
         installmentsIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(installmentList.get(0).getPayerCosts().get(0)));
         Instrumentation.ActivityResult installmentsResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, installmentsIntent);
-        intending(hasComponent(InstallmentsActivity.class.getName())).respondWith(installmentsResult);
+        intending(hasComponent(InstallmentsOldActivity.class.getName())).respondWith(installmentsResult);
 
         CardVaultActivity activity = mTestRule.launchActivity(validStartIntent);
 
-        intended(hasComponent(InstallmentsActivity.class.getName()));
+        intended(hasComponent(InstallmentsOldActivity.class.getName()));
 
         assertEquals(installmentList.get(0).getPayerCosts().get(0).getInstallments(), activity.mPayerCost.getInstallments());
         assertTrue(activity.isFinishing());
@@ -423,11 +423,11 @@ public class CardVaultActivityTest {
         Intent installmentsIntent = new Intent();
         installmentsIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(installmentList.get(0).getPayerCosts().get(0)));
         Instrumentation.ActivityResult installmentsResult = new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, installmentsIntent);
-        intending(hasComponent(InstallmentsActivity.class.getName())).respondWith(installmentsResult);
+        intending(hasComponent(InstallmentsOldActivity.class.getName())).respondWith(installmentsResult);
 
         CardVaultActivity activity = mTestRule.launchActivity(validStartIntent);
 
-        intended(hasComponent(InstallmentsActivity.class.getName()));
+        intended(hasComponent(InstallmentsOldActivity.class.getName()));
 
         assertEquals(null, activity.mPayerCost);
         assertTrue(activity.isFinishing());
@@ -468,7 +468,7 @@ public class CardVaultActivityTest {
 
         onView(withId(R.id.mpsdkErrorRetry)).perform(click());
 
-        intended(hasComponent(InstallmentsActivity.class.getName()));
+        intended(hasComponent(InstallmentsOldActivity.class.getName()));
     }
 
 

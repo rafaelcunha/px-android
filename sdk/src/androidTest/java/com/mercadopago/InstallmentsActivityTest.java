@@ -63,7 +63,7 @@ import static org.junit.Assert.assertTrue;
 public class InstallmentsActivityTest {
 
     @Rule
-    public ActivityTestRule<InstallmentsActivity> mTestRule = new ActivityTestRule<>(InstallmentsActivity.class, true, false);
+    public ActivityTestRule<InstallmentsOldActivity> mTestRule = new ActivityTestRule<>(InstallmentsOldActivity.class, true, false);
     public Intent validStartIntent;
 
     private String mMerchantPublicKey;
@@ -116,7 +116,7 @@ public class InstallmentsActivityTest {
 
         validStartIntent.putExtra("payerCosts", JsonUtil.getInstance().toJson(payerCostList));
 
-        InstallmentsActivity activity = mTestRule.launchActivity(validStartIntent);
+        InstallmentsOldActivity activity = mTestRule.launchActivity(validStartIntent);
 
         assertEquals(activity.mPublicKey, mMerchantPublicKey);
         assertEquals(activity.getCurrentPaymentMethod().getId(), mPaymentMethod.getId());
@@ -139,7 +139,7 @@ public class InstallmentsActivityTest {
         Issuer issuer = StaticMock.getIssuer();
         validStartIntent.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
 
-        InstallmentsActivity activity = mTestRule.launchActivity(validStartIntent);
+        InstallmentsOldActivity activity = mTestRule.launchActivity(validStartIntent);
 
         assertEquals(activity.mPublicKey, mMerchantPublicKey);
         assertEquals(activity.getCurrentPaymentMethod().getId(), mPaymentMethod.getId());
@@ -359,7 +359,7 @@ public class InstallmentsActivityTest {
 
         mFakeAPI.addResponseToQueue(installmentList, 200, "");
 
-        InstallmentsActivity activity = mTestRule.launchActivity(validStartIntent);
+        InstallmentsOldActivity activity = mTestRule.launchActivity(validStartIntent);
 
         assertEquals(activity.mPublicKey, mMerchantPublicKey);
         assertEquals(activity.getCurrentPaymentMethod().getId(), mPaymentMethod.getId());
