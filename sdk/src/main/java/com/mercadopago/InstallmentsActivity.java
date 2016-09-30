@@ -35,7 +35,6 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     private InstallmentsPresenter mPresenter;
     private Activity mActivity;
     private boolean mActivityActive;
-    private boolean mLowResActive;
 
     //View controls
     private RecyclerView mInstallmentsRecyclerView;
@@ -59,21 +58,13 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mActivity = this;
         mActivityActive = true;
         getActivityParameters();
-        analizeLowRes();
-        setContentView();
-        validateActivityParameters();
+        mPresenter.analizeLowRes();
+        mPresenter.setContentView();
+        mPresenter.validateActivityParameters();
         initializeViews();
-        initializeCard();
+        mPresenter.loadViews();
     }
 
-    private void analizeLowRes() {
-        //falta agregar el chequeo de low res
-        if (mPresenter.isCardInfoAvailable()) {
-            this.mLowResActive = false;
-        } else {
-            this.mLowResActive = true;
-        }
-    }
 
 
     private void getActivityParameters() {
@@ -117,22 +108,20 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mPresenter.setDecorationPreference(decorationPreference);
     }
 
-    private void setContentView() {
-        if (mLowResActive) {
-            setContentView(R.layout.mpsdk_activity_installments_lowres);
-        } else {
-            setContentView(R.layout.mpsdk_activity_installments_normal);
-        }
+    @Override
+    public void setContentViewLowRes() {
+        setContentView(R.layout.mpsdk_activity_installments_lowres);
     }
 
-    private void validateActivityParameters() throws IllegalStateException {
-        mPresenter.validateActivityParameters();
+    @Override
+    public void setContentViewNormal() {
+        setContentView(R.layout.mpsdk_activity_installments_normal);
     }
 
     private void initializeViews() {
         mInstallmentsRecyclerView = (RecyclerView) findViewById(R.id.mpsdkActivityInstallmentsView);
         mProgressBar = (ProgressBar) findViewById(R.id.mpsdkProgressBar);
-        if (mLowResActive) {
+        if (mPresenter.isLowResActive()) {
             mLowResToolbar = (Toolbar) findViewById(R.id.mpsdkRegularToolbar);
             mLowResToolbar.setVisibility(View.VISIBLE);
         } else {
@@ -144,16 +133,20 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mProgressBar.setVisibility(View.GONE);
     }
 
-    private void initializeCard() {
-        if (mLowResActive) {
-            return;
-        }
-        mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_ONLY);
-        mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
-        mFrontCardView.inflateInParent(mCardContainer, true);
-        mFrontCardView.initializeControls();
-        mFrontCardView.drawEmptyCard();
+    @Override
+    public void loadLowResViews() {
+
     }
 
+    @Override
+    public void loadNormalViews() {
+        mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_EMPTY_FRONT_ONLY);
+//        mFrontCardView.setSize(CardRepresentationModes.BIG_SIZE);
+        mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
+        mFrontCardView.setToken(mPresenter.getToken());
+        mFrontCardView.inflateInParent(mCardContainer, true);
+        mFrontCardView.initializeControls();
+        mFrontCardView.draw();
+    }
 
 }

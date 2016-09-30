@@ -5,4 +5,8 @@ package com.mercadopago;
  */
 
 public interface InstallmentsActivityView {
+    void loadLowResViews();
+    void loadNormalViews();
+    void setContentViewLowRes();
+    void setContentViewNormal();
 }

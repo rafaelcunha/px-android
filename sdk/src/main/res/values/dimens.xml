@@ -24,4 +24,12 @@
     <dimen name="mpsdk_list_item_height_large">72dp</dimen>
     <dimen name="mpsdk_shopping_cart_height">120dp</dimen>
     <dimen name="mpsdk_card_camera_distance">2560dp</dimen>
+    <dimen name="mpsdk_card_size_extra_big_height">161dp</dimen>
+    <dimen name="mpsdk_card_size_extra_big_width">256dp</dimen>
+    <dimen name="mpsdk_card_size_big_height">151dp</dimen>
+    <dimen name="mpsdk_card_size_big_width">234dp</dimen>
+    <dimen name="mpsdk_card_size_medium_height">121dp</dimen>
+    <dimen name="mpsdk_card_size_medium_width">186dp</dimen>
+    <dimen name="mpsdk_card_size_medium_number_height">17dp</dimen>
+    <dimen name="mpsdk_card_size_medium_number_width">120dp</dimen>
 </resources>

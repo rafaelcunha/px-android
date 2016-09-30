@@ -2,6 +2,7 @@ package com.mercadopago.util;
 
 import com.mercadopago.CardInterface;
 import com.mercadopago.model.IdentificationType;
+import com.mercadopago.model.Token;
 
 import java.util.Locale;
 
@@ -12,9 +13,30 @@ public class MPCardMaskUtil {
 
     public static final int CPF_SEPARATOR_AMOUNT = 3;
     public static final int CNPJ_SEPARATOR_AMOUNT = 4;
+    public static final int LAST_DIGITS_LENGTH = 4;
+    public static final char HIDDEN_NUMBER_CHAR = "•".charAt(0);
 
     protected MPCardMaskUtil() {
 
+    }
+
+    public static String getCardNumberHiddenFromToken(Token token) {
+        if (token == null) {
+            return "";
+        }
+        int cardNumberLength = token.getCardNumberLength();
+        String lastFourDigits = token.getLastFourDigits();
+        String number = MPCardMaskUtil.getCardNumberHidden(cardNumberLength, lastFourDigits);
+        return number;
+    }
+
+    public static String getCardNumberHidden(int cardNumberLength, String lastFourDigits) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < cardNumberLength - LAST_DIGITS_LENGTH; i++) {
+            sb.append(HIDDEN_NUMBER_CHAR);
+        }
+        sb.append(lastFourDigits);
+        return buildNumberWithMask(cardNumberLength, sb.toString());
     }
 
     public static String buildNumberWithMask(int cardLength, String number) {
