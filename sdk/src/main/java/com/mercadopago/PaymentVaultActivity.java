@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,6 +28,7 @@ import com.mercadopago.model.PaymentMethodSearchItem;
 import com.mercadopago.model.PaymentPreference;
 import com.mercadopago.model.Site;
 import com.mercadopago.model.Token;
+import com.mercadopago.mpconnect.MPConnectActivity;
 import com.mercadopago.mptracker.MPTracker;
 import com.mercadopago.util.ApiUtil;
 import com.mercadopago.util.ErrorUtil;
@@ -214,6 +216,17 @@ public class PaymentVaultActivity extends MercadoPagoActivity implements Payment
             resolvePaymentVaultRequest(resultCode, data);
         } else if (requestCode == ErrorUtil.ERROR_REQUEST_CODE) {
             resolveErrorRequest(resultCode, data);
+        } else if (requestCode == MPConnectActivity.CONNECT_REQUEST_CODE) {
+            resolveConnectRequest(resultCode, data);
+        }
+    }
+
+    private void resolveConnectRequest(int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            String privateKey = data.getStringExtra("accessToken");
+            mPaymentVaultPresenter.userLoggedIn(privateKey);
+        } else {
+            Toast.makeText(this, "Unable to log in", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -278,18 +291,14 @@ public class PaymentVaultActivity extends MercadoPagoActivity implements Payment
 
     @Override
     public void startLoginFlow() {
-        //TODO IR A LOGIN Y DESPUÉS ESTO CON AT
-        mPaymentVaultPresenter.userLoggedIn("AT-12321132");
-//        new MercadoPago.StartActivityBuilder()
-//                .setActivity(this)
-//                .setPublicKey(mPaymentVaultPresenter.getMerchantPublicKey())
-//                .setSite(mPaymentVaultPresenter.getSite())
-//                .setAmount(mPaymentVaultPresenter.getAmount())
-//                .setPaymentMethodSearch(mPaymentVaultPresenter.getPaymentMethodSearch())
-//                .setPaymentPreference(mPaymentVaultPresenter.getPaymentPreference())
-//                .setDecorationPreference(mPaymentVaultPresenter.getDecorationPreference())
-//                .setCards(mPaymentVaultPresenter.getSavedCards())
-//                .startPaymentVaultActivity();
+        String mAppId = "3339632528347950";
+        String mRedirectUri = "https://www.mercadopago.com.ar";;
+
+        Intent intent = new Intent(this, MPConnectActivity.class);
+        intent.putExtra("appId", mAppId);
+        intent.putExtra("redirectUri", mRedirectUri);
+        //startActivity(intent);
+        this.startActivityForResult(intent, MPConnectActivity.CONNECT_REQUEST_CODE);
     }
 
     @Override

@@ -60,6 +60,8 @@ public class PaymentResultActivity extends Activity {
             startPendingActivity();
         } else if (MercadoPagoUtil.isCard(mPaymentMethod.getPaymentTypeId())) {
             startCardPaymentTypeResult();
+        } else if ("account_money".equals(mPaymentMethod.getId())) {
+            startCardPaymentTypeResult();
         } else {
             startInstructionsActivity();
         }

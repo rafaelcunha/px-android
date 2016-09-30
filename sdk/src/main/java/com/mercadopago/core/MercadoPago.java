@@ -86,17 +86,17 @@ public class MercadoPago {
     public static final int BIN_LENGTH = 6;
 
     private static final String MP_API_BASE_URL = "https://api.mercadopago.com";
-    private String mKey = null;
-    private String mKeyType = null;
     private Context mContext = null;
+    private String mPublicKey = null;
+    private String mPrivateKey = null;
 
     Retrofit mRetrofit;
 
     private MercadoPago(Builder builder) {
 
         this.mContext = builder.mContext;
-        this.mKey = builder.mKey;
-        this.mKeyType = builder.mKeyType;
+        this.mPublicKey = builder.mKey;
+        this.mPrivateKey = builder.mPrivateKey;
 
         System.setProperty("http.keepAlive", "false");
 
@@ -109,161 +109,121 @@ public class MercadoPago {
     }
 
     public void getPreference(String checkoutPreferenceId, Callback<CheckoutPreference> callback) {
-        if (this.mKeyType.equals(KEY_TYPE_PUBLIC)) {
-            MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_PREFERENCE", 3, mKey, BuildConfig.VERSION_NAME, mContext);
-            PaymentService service = mRetrofit.create(PaymentService.class);
-            service.getPreference(checkoutPreferenceId, this.mKey).enqueue(callback);
-        } else {
-            throw new RuntimeException("Unsupported key type for this method");
-        }
+        MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_PREFERENCE", 3, mPublicKey, BuildConfig.VERSION_NAME, mContext);
+        PaymentService service = mRetrofit.create(PaymentService.class);
+        service.getPreference(checkoutPreferenceId, this.mPublicKey).enqueue(callback);
     }
 
     public void createPayment(final PaymentIntent paymentIntent, final Callback<Payment> callback) {
-        if (this.mKeyType.equals(KEY_TYPE_PUBLIC)) {
-            MPTracker.getInstance().trackEvent("NO_SCREEN", "CREATE_PAYMENT", 1, mKey, BuildConfig.VERSION_NAME, mContext);
-            Retrofit paymentsRetrofitAdapter = new Retrofit.Builder()
-                    .baseUrl(MP_API_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create(JsonUtil.getInstance().getGson()))
-                    .client(HttpClientUtil.getClient(this.mContext, 10, 40, 40))
-                    .addCallAdapterFactory(new ErrorHandlingCallAdapter.ErrorHandlingCallAdapterFactory())
-                    .build();
+        MPTracker.getInstance().trackEvent("NO_SCREEN", "CREATE_PAYMENT", 1, mPublicKey, BuildConfig.VERSION_NAME, mContext);
 
-            PaymentService service = paymentsRetrofitAdapter.create(PaymentService.class);
-            service.createPayment(String.valueOf(paymentIntent.getTransactionId()), paymentIntent).enqueue(callback);
+        Retrofit paymentsRetrofitAdapter = new Retrofit.Builder()
+                .baseUrl("http://api.mp.internal.ml.com")
+                .addConverterFactory(GsonConverterFactory.create(JsonUtil.getInstance().getGson()))
+                .client(HttpClientUtil.getClient(this.mContext, 10, 40, 40))
+                .addCallAdapterFactory(new ErrorHandlingCallAdapter.ErrorHandlingCallAdapterFactory())
+                .build();
 
-        } else {
-            throw new RuntimeException("Unsupported key type for this method");
+        PaymentService service = paymentsRetrofitAdapter.create(PaymentService.class);
+        String apiVersion = "v0";
+        if("account_money".equals(paymentIntent.getPaymentMethodId())) {
+            apiVersion = "v1";
         }
+        service.createPayment(String.valueOf(paymentIntent.getTransactionId()), apiVersion, paymentIntent).enqueue(callback);
     }
 
     public void createToken(final SavedCardToken savedCardToken, final Callback<Token> callback) {
-        if (this.mKeyType.equals(KEY_TYPE_PUBLIC)) {
-            MPTracker.getInstance().trackEvent("NO_SCREEN", "CREATE_SAVED_CARD_TOKEN", 1, mKey, BuildConfig.VERSION_NAME, mContext);
+        MPTracker.getInstance().trackEvent("NO_SCREEN", "CREATE_SAVED_CARD_TOKEN", 1, mPublicKey, BuildConfig.VERSION_NAME, mContext);
 
-            savedCardToken.setDevice(mContext);
-            GatewayService service = mRetrofit.create(GatewayService.class);
-            service.getToken(this.mKey, savedCardToken).enqueue(callback);
-        } else {
-            throw new RuntimeException("Unsupported key type for this method");
-        }
+        savedCardToken.setDevice(mContext);
+        GatewayService service = mRetrofit.create(GatewayService.class);
+        service.getToken(this.mPublicKey, savedCardToken).enqueue(callback);
     }
 
     public void createToken(final CardToken cardToken, final Callback<Token> callback) {
-        if (this.mKeyType.equals(KEY_TYPE_PUBLIC)) {
-            MPTracker.getInstance().trackEvent("NO_SCREEN", "CREATE_CARD_TOKEN", 1, mKey, BuildConfig.VERSION_NAME, mContext);
+        MPTracker.getInstance().trackEvent("NO_SCREEN", "CREATE_CARD_TOKEN", 1, mPublicKey, BuildConfig.VERSION_NAME, mContext);
 
-            cardToken.setDevice(mContext);
-            GatewayService service = mRetrofit.create(GatewayService.class);
-            service.getToken(this.mKey, cardToken).enqueue(callback);
-        } else {
-            throw new RuntimeException("Unsupported key type for this method");
-        }
+        cardToken.setDevice(mContext);
+        GatewayService service = mRetrofit.create(GatewayService.class);
+        service.getToken(this.mPublicKey, cardToken).enqueue(callback);
     }
 
     public void getBankDeals(final Callback<List<BankDeal>> callback) {
-        if (this.mKeyType.equals(KEY_TYPE_PUBLIC)) {
-            MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_BANK_DEALS", 1, mKey, BuildConfig.VERSION_NAME, mContext);
-            BankDealService service = mRetrofit.create(BankDealService.class);
-            service.getBankDeals(this.mKey, mContext.getResources().getConfiguration().locale.toString()).enqueue(callback);
-        } else {
-            throw new RuntimeException("Unsupported key type for this method");
-        }
+        MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_BANK_DEALS", 1, mPublicKey, BuildConfig.VERSION_NAME, mContext);
+        BankDealService service = mRetrofit.create(BankDealService.class);
+        service.getBankDeals(this.mPublicKey, mContext.getResources().getConfiguration().locale.toString()).enqueue(callback);
     }
 
 
     public void getIdentificationTypes(Callback<List<IdentificationType>> callback) {
         IdentificationService service = mRetrofit.create(IdentificationService.class);
-        if (this.mKeyType.equals(KEY_TYPE_PUBLIC)) {
-            MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_IDENTIFICATION_TYPES", 1, mKey, BuildConfig.VERSION_NAME, mContext);
-            service.getIdentificationTypes(this.mKey, null).enqueue(callback);
-        } else {
-            service.getIdentificationTypes(null, this.mKey).enqueue(callback);
-        }
+        MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_IDENTIFICATION_TYPES", 1, mPublicKey, BuildConfig.VERSION_NAME, mContext);
+        service.getIdentificationTypes(this.mPublicKey, null).enqueue(callback);
+
     }
 
     public void getInstallments(String bin, BigDecimal amount, Long issuerId, String paymentMethodId, Callback<List<Installment>> callback) {
-        if (this.mKeyType.equals(KEY_TYPE_PUBLIC)) {
-            MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_INSTALLMENTS", 1, mKey, BuildConfig.VERSION_NAME, mContext);
-            PaymentService service = mRetrofit.create(PaymentService.class);
-            service.getInstallments(this.mKey, bin, amount, issuerId, paymentMethodId,
-                    mContext.getResources().getConfiguration().locale.toString()).enqueue(callback);
-        } else {
-            throw new RuntimeException("Unsupported key type for this method");
-        }
+
+        MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_INSTALLMENTS", 1, mPublicKey, BuildConfig.VERSION_NAME, mContext);
+        PaymentService service = mRetrofit.create(PaymentService.class);
+        service.getInstallments(this.mPublicKey, bin, amount, issuerId, paymentMethodId,
+                mContext.getResources().getConfiguration().locale.toString()).enqueue(callback);
     }
 
     public void getIssuers(String paymentMethodId, String bin, final Callback<List<Issuer>> callback) {
-        if (this.mKeyType.equals(KEY_TYPE_PUBLIC)) {
-            MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_ISSUERS", 1, mKey, BuildConfig.VERSION_NAME, mContext);
-            PaymentService service = mRetrofit.create(PaymentService.class);
-            service.getIssuers(this.mKey, paymentMethodId, bin).enqueue(callback);
-        } else {
-            throw new RuntimeException("Unsupported key type for this method");
-        }
+
+        MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_ISSUERS", 1, mPublicKey, BuildConfig.VERSION_NAME, mContext);
+        PaymentService service = mRetrofit.create(PaymentService.class);
+        service.getIssuers(this.mPublicKey, paymentMethodId, bin).enqueue(callback);
     }
 
     public void getPaymentMethods(final Callback<List<PaymentMethod>> callback) {
-        if (this.mKeyType.equals(KEY_TYPE_PUBLIC)) {
-            MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_PAYMENT_METHODS", 1, mKey, BuildConfig.VERSION_NAME, mContext);
-            PaymentService service = mRetrofit.create(PaymentService.class);
-            service.getPaymentMethods(this.mKey).enqueue(callback);
-        } else {
-            throw new RuntimeException("Unsupported key type for this method");
-        }
+
+        MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_PAYMENT_METHODS", 1, mPublicKey, BuildConfig.VERSION_NAME, mContext);
+        PaymentService service = mRetrofit.create(PaymentService.class);
+        service.getPaymentMethods(this.mPublicKey).enqueue(callback);
     }
 
     public void getPaymentMethodSearch(BigDecimal amount, List<String> excludedPaymentTypes, List<String> excludedPaymentMethods, final Callback<PaymentMethodSearch> callback) {
-        if (this.mKeyType.equals(KEY_TYPE_PUBLIC)) {
-            MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_PAYMENT_METHOD_SEARCH", 1, mKey, BuildConfig.VERSION_NAME, mContext);
 
-            PaymentService service = mRetrofit.create(PaymentService.class);
+        Retrofit retro = new Retrofit.Builder()
+                .baseUrl("http://api.mp.internal.ml.com")
+                .addConverterFactory(GsonConverterFactory.create(JsonUtil.getInstance().getGson()))
+                .client(HttpClientUtil.getClient(this.mContext, 10, 20, 20))
+                .addCallAdapterFactory(new ErrorHandlingCallAdapter.ErrorHandlingCallAdapterFactory())
+                .build();
+        PaymentService service = retro.create(PaymentService.class);
 
-            StringBuilder stringBuilder = new StringBuilder();
-            if (excludedPaymentTypes != null) {
+        MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_PAYMENT_METHOD_SEARCH", 1, mPublicKey, BuildConfig.VERSION_NAME, mContext);
 
-                for (String typeId : excludedPaymentTypes) {
-                    stringBuilder.append(typeId);
-                    if (!typeId.equals(excludedPaymentTypes.get(excludedPaymentTypes.size() - 1))) {
-                        stringBuilder.append(",");
-                    }
+        String excludedPaymentTypesAppended = getListAsString(excludedPaymentTypes, ",");
+        String excludedPaymentMethodsAppended = getListAsString(excludedPaymentMethods, ",");
+
+        service.getPaymentMethodSearch(this.mPublicKey,
+                this.mPrivateKey, amount, excludedPaymentTypesAppended, excludedPaymentMethodsAppended).
+                enqueue(callback);
+    }
+
+    private String getListAsString(List<String> list, String separator) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (list != null) {
+
+            for (String typeId : list) {
+                stringBuilder.append(typeId);
+                if (!typeId.equals(list.get(list.size() - 1))) {
+                    stringBuilder.append(separator);
                 }
             }
-            String excludedPaymentTypesAppended = stringBuilder.toString();
-
-            stringBuilder = new StringBuilder();
-            if (excludedPaymentMethods != null) {
-                for (String paymentMethodId : excludedPaymentMethods) {
-                    stringBuilder.append(paymentMethodId);
-                    if (!paymentMethodId.equals(excludedPaymentMethods.get(excludedPaymentMethods.size() - 1))) {
-                        stringBuilder.append(",");
-                    }
-                }
-            }
-            String excludedPaymentMethodsAppended = stringBuilder.toString();
-
-            service.getPaymentMethodSearch(this.mKey, amount, excludedPaymentTypesAppended, excludedPaymentMethodsAppended).enqueue(callback);
-        } else {
-            Retrofit retro = new Retrofit.Builder()
-                    .baseUrl("http://private-4d9654-mercadopagoexamples.apiary-mock.com/")
-                    .addConverterFactory(GsonConverterFactory.create(JsonUtil.getInstance().getGson()))
-                    .client(HttpClientUtil.getClient(this.mContext, 10, 20, 20))
-                    .addCallAdapterFactory(new ErrorHandlingCallAdapter.ErrorHandlingCallAdapterFactory())
-                    .build();
-
-            PaymentService service = retro.create(PaymentService.class);
-            service.getPaymentMethodSearch(this.mKey, amount, "", "").enqueue(callback);
         }
+        return stringBuilder.toString();
     }
 
     public void getPaymentResult(Long paymentId, String paymentTypeId, final Callback<PaymentResult> callback) {
-        if (this.mKeyType.equals(KEY_TYPE_PUBLIC)) {
-            MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_INSTRUCTIONS", 1, mKey, BuildConfig.VERSION_NAME, mContext);
 
-            PaymentService service = mRetrofit.create(PaymentService.class);
-            service.getPaymentResult(paymentId, this.mKey, paymentTypeId).enqueue(callback);
-        } else {
-            throw new RuntimeException("Unsupported key type for this method");
-        }
+        MPTracker.getInstance().trackEvent("NO_SCREEN", "GET_INSTRUCTIONS", 1, mPublicKey, BuildConfig.VERSION_NAME, mContext);
+
+        PaymentService service = mRetrofit.create(PaymentService.class);
+        service.getPaymentResult(paymentId, this.mPublicKey, paymentTypeId).enqueue(callback);
     }
 
     public static List<PaymentMethod> getValidPaymentMethodsForBin(String bin, List<PaymentMethod> paymentMethods) {
@@ -553,6 +513,7 @@ public class MercadoPago {
         private Context mContext;
         private String mKey;
         private String mKeyType;
+        private String mPrivateKey;
 
         public Builder() {
 
@@ -576,15 +537,13 @@ public class MercadoPago {
 
         public Builder setPrivateKey(String key) {
 
-            this.mKey = key;
-            this.mKeyType = MercadoPago.KEY_TYPE_PRIVATE;
+            this.mPrivateKey = key;
             return this;
         }
 
         public Builder setPublicKey(String key) {
 
             this.mKey = key;
-            this.mKeyType = MercadoPago.KEY_TYPE_PUBLIC;
             this.mKeyType = MercadoPago.KEY_TYPE_PUBLIC;
             return this;
         }

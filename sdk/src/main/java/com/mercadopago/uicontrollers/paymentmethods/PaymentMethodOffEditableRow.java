@@ -48,9 +48,8 @@ public class PaymentMethodOffEditableRow implements PaymentMethodViewController 
 
     private void drawWithPaymentMethod() {
 
-        mComment.setText(MercadoPagoUtil.getAccreditationTimeMessage(mContext, mPaymentMethod.getAccreditationTime()));
+        mDescription.setText(mPaymentMethod.getName());
         int resourceId = MercadoPagoUtil.getPaymentMethodIcon(mContext, mPaymentMethod.getId());
-
         if (resourceId != 0) {
             mIcon.setImageResource(resourceId);
         } else {

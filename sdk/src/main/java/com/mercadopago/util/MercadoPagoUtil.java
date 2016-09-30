@@ -90,39 +90,7 @@ public class MercadoPagoUtil {
         }
     }
 
-    public static String getAccreditationTimeMessage(Context context, int milliseconds) {
-
-        String accreditationMessage;
-
-        if (milliseconds == 0) {
-            accreditationMessage = context.getString(R.string.mpsdk_instant_accreditation_time);
-        } else {
-            StringBuilder accreditationTimeMessageBuilder = new StringBuilder();
-            if (milliseconds > 1440 && milliseconds < 2880) {
-
-                accreditationTimeMessageBuilder.append(context.getString(R.string.mpsdk_accreditation_time));
-                accreditationTimeMessageBuilder.append(" 1 ");
-                accreditationTimeMessageBuilder.append(context.getString(R.string.mpsdk_working_day));
-
-            } else if (milliseconds < 1440) {
-
-                accreditationTimeMessageBuilder.append(context.getString(R.string.mpsdk_accreditation_time));
-                accreditationTimeMessageBuilder.append(" ");
-                accreditationTimeMessageBuilder.append(milliseconds / 60);
-                accreditationTimeMessageBuilder.append(" ");
-                accreditationTimeMessageBuilder.append(context.getString(R.string.mpsdk_hour));
-
-            } else {
-
-                accreditationTimeMessageBuilder.append(context.getString(R.string.mpsdk_accreditation_time));
-                accreditationTimeMessageBuilder.append(" ");
-                accreditationTimeMessageBuilder.append(milliseconds / (60 * 24));
-                accreditationTimeMessageBuilder.append(" ");
-                accreditationTimeMessageBuilder.append(context.getString(R.string.mpsdk_working_days));
-            }
-            accreditationMessage = accreditationTimeMessageBuilder.toString();
-        }
-        return accreditationMessage;
+    public static boolean isAccountMoney(PaymentMethod paymentMethod) {
+        return "account_money".equals(paymentMethod.getId());
     }
-
 }

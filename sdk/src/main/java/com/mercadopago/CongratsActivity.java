@@ -87,8 +87,14 @@ public class CongratsActivity extends MercadoPagoActivity {
     @Override
     protected void onValidStart() {
         setPaymentEmailDescription();
-        setLastFourDigitsCard();
-        setInstallmentsDescription();
+        setPaymentMethodDescription();
+        //TODO review to generalize when payment service has a functional response
+        if(mPaymentMethod.getId().equals("account_money")) {
+            mInstallmentsDescription.setText(CurrenciesUtil.formatNumber(mPayment.getTransactionAmount(), mPayment.getCurrencyId(), true, true));
+            mInterestAmountDescription.setVisibility(View.GONE);
+        } else {
+            setInstallmentsDescription();
+        }
         setPaymentIdDescription();
     }
 
@@ -153,14 +159,21 @@ public class CongratsActivity extends MercadoPagoActivity {
         }
     }
 
-    private void setLastFourDigitsCard() {
-        if (isLastFourDigitsValid() && isPaymentMethodValid()) {
-            setPaymentMethodImage();
-            String message = getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
-            mLastFourDigitsDescription.setText(message);
+    private void setPaymentMethodDescription() {
+        if (MercadoPagoUtil.isAccountMoney(mPaymentMethod)) {
+            //TODO Review
+            if (mPaymentMethod.getId().equals("account_money")) {
+                mLastFourDigitsDescription.setText(mPaymentMethod.getName());
+                setPaymentMethodImage();
+            }
         } else {
-            mLastFourDigitsDescription.setVisibility(View.GONE);
-            mPaymentMethodImage.setVisibility(View.GONE);
+            if (isLastFourDigitsValid() && isPaymentMethodValid()) {
+                setPaymentMethodImage();
+                mLastFourDigitsDescription.setText(new StringBuilder().append(getString(R.string.mpsdk_last_digits_label)).append(" ").append(mPayment.getCard().getLastFourDigits()).toString());
+            } else {
+                mLastFourDigitsDescription.setVisibility(View.GONE);
+                mPaymentMethodImage.setVisibility(View.GONE);
+            }
         }
     }
 

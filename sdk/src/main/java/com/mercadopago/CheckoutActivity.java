@@ -24,6 +24,7 @@ import com.mercadopago.model.CheckoutPreference;
 import com.mercadopago.model.Customer;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.Item;
+import com.mercadopago.model.Payer;
 import com.mercadopago.model.PayerCost;
 import com.mercadopago.model.Payment;
 import com.mercadopago.model.PaymentIntent;
@@ -451,9 +452,8 @@ public class CheckoutActivity extends MercadoPagoActivity {
     }
 
     private void setPaymentMethodRowController() {
-        if (MercadoPagoUtil.isCard(mSelectedPaymentMethod.getPaymentTypeId())) {
-            mPaymentMethodRow = ViewControllerFactory.getPaymentMethodOnEditionViewController(this, mSelectedPaymentMethod, mCreatedToken);
-        } else if ("account_money".equals(mSelectedPaymentMethod.getId())) {
+        if (MercadoPagoUtil.isCard(mSelectedPaymentMethod.getPaymentTypeId())
+                || MercadoPagoUtil.isAccountMoney(mSelectedPaymentMethod)) {
             mPaymentMethodRow = ViewControllerFactory.getPaymentMethodOnEditionViewController(this, mSelectedPaymentMethod, mCreatedToken);
         } else {
             PaymentMethodSearchItem item = mPaymentMethodSearch.getSearchItemByPaymentMethod(mSelectedPaymentMethod);
@@ -573,6 +573,7 @@ public class CheckoutActivity extends MercadoPagoActivity {
                 resolvePaymentFailure(apiException);
             }
         });
+
     }
 
     private PaymentIntent createPaymentIntent() {

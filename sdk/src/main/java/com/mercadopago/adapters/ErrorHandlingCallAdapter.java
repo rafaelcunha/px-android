@@ -82,7 +82,7 @@ public class ErrorHandlingCallAdapter {
                                 T body = r.body();
                                 if (body instanceof Payment) {
                                     Payment mPayment = (Payment) body;
-                                    MPTracker.getInstance().trackPayment("NO_SCREEN", "CREATE_PAYMENT_RESPONSE", mPayment.getId(), mPayment.getPaymentMethodId(), mPayment.getStatus(), mPayment.getStatusDetail(), mPayment.getPaymentTypeId(), mPayment.getInstallments(), mPayment.getIssuerId());
+                                    //MPTracker.getInstance().trackPayment("NO_SCREEN", "CREATE_PAYMENT_RESPONSE", mPayment.getId(), mPayment.getPaymentMethodId(), mPayment.getStatus(), mPayment.getStatusDetail(), mPayment.getPaymentTypeId(), mPayment.getInstallments(), mPayment.getIssuerId());
                                 } else if (body instanceof Token) {
                                     Token mToken = (Token) body;
                                     MPTracker.getInstance().trackToken(mToken.getId());

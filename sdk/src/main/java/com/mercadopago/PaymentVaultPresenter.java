@@ -46,6 +46,7 @@ public class PaymentVaultPresenter {
     private DecorationPreference mDecorationPreference;
     private BigDecimal mAmount;
     private boolean mUserLogged;
+    private String mPrivateKey;
 
 
     public PaymentVaultPresenter() {
@@ -56,11 +57,15 @@ public class PaymentVaultPresenter {
     }
 
     public void initialize(String key, String keyType) {
-        mUserLogged = MercadoPago.KEY_TYPE_PRIVATE.equals(keyType);
+
+        if(MercadoPago.KEY_TYPE_PRIVATE.equals(keyType)) {
+            mPrivateKey = key;
+        }
 
         mCustomSearchItems = new ArrayList<>();
         mMercadoPago = new MercadoPago.Builder()
-                .setKey(key, keyType)
+                .setPublicKey(mMerchantPublicKey)
+                .setPrivateKey(mPrivateKey)
                 .setContext(mPaymentVaultView.getContext())
                 .build();
 
@@ -267,7 +272,7 @@ public class PaymentVaultPresenter {
                     paymentMethod.setPaymentTypeId(searchItem.getType());
                     paymentMethod.setName(searchItem.getDescription());
                     Token token = new Token();
-                    token.setId(mPaymentMethodSearch.getAccountMoney().getToken());
+                    token.setId(searchItem.getId());
                     mPaymentVaultView.selectAccountMoney(paymentMethod, token);
                 }
             }
@@ -339,7 +344,6 @@ public class PaymentVaultPresenter {
             }
         });
     }
-
 
     public void userLoggedIn(String privateKey) {
         mMerchantBaseUrl = null;
