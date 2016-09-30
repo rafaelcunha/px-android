@@ -115,6 +115,7 @@ public class InstallmentsPresenter {
         } else {
             this.mLowResActive = true;
         }
+//        this.mLowResActive = true;
     }
 
     public boolean isLowResActive() {

@@ -21,6 +21,7 @@ import com.mercadopago.model.Token;
 import com.mercadopago.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.uicontrollers.card.FrontCardView;
 import com.mercadopago.util.JsonUtil;
+import com.mercadopago.views.MPTextView;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -41,10 +42,12 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     private ProgressBar mProgressBar;
     //Low Res View
     private Toolbar mLowResToolbar;
+    private MPTextView mLowResTitleToolbar;
     //Normal View
     private FrameLayout mCardContainer;
     private LinearLayout mBackground;
     private Toolbar mNormalToolbar;
+    private MPTextView mNormalTitleToolbar;
     private FrontCardView mFrontCardView;
 
     @Override
@@ -123,11 +126,13 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mProgressBar = (ProgressBar) findViewById(R.id.mpsdkProgressBar);
         if (mPresenter.isLowResActive()) {
             mLowResToolbar = (Toolbar) findViewById(R.id.mpsdkRegularToolbar);
+            mLowResTitleToolbar = (MPTextView) findViewById(R.id.mpsdkTitle);
             mLowResToolbar.setVisibility(View.VISIBLE);
         } else {
             mCardContainer = (FrameLayout) findViewById(R.id.mpsdkActivityInstallmentsCardContainer);
             mBackground = (LinearLayout) findViewById(R.id.mpsdkActivityInstallmentsBackground);
             mNormalToolbar = (Toolbar) findViewById(R.id.mpsdkRegularToolbar);
+            mNormalTitleToolbar = (MPTextView) findViewById(R.id.mpsdkTitle);
             mNormalToolbar.setVisibility(View.VISIBLE);
         }
         mProgressBar.setVisibility(View.GONE);
@@ -135,13 +140,14 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
 
     @Override
     public void loadLowResViews() {
-
+        mLowResTitleToolbar.setText(getString(R.string.mpsdk_card_installments_title));
     }
 
     @Override
     public void loadNormalViews() {
-        mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_EMPTY_FRONT_ONLY);
-//        mFrontCardView.setSize(CardRepresentationModes.BIG_SIZE);
+        mNormalTitleToolbar.setText(getString(R.string.mpsdk_card_installments_title));
+        mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);
+        mFrontCardView.setSize(CardRepresentationModes.MEDIUM_SIZE);
         mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
         mFrontCardView.setToken(mPresenter.getToken());
         mFrontCardView.inflateInParent(mCardContainer, true);

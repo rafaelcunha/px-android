@@ -8,6 +8,7 @@ public class CardRepresentationModes {
     //Modes
     public static final String SHOW_FULL_FRONT_ONLY = "show_full_front_only_mode";
     public static final String SHOW_EMPTY_FRONT_ONLY = "show_empty_front_only_mode";
+    public static final String EDIT_FRONT = "edit_front_mode";
 
     //Sizes
     public static final String MEDIUM_SIZE = "medium_size";
