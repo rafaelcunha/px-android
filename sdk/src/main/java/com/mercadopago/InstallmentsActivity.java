@@ -40,6 +40,8 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     //View controls
     private RecyclerView mInstallmentsRecyclerView;
     private ProgressBar mProgressBar;
+    //ViewMode
+    private boolean mLowResActive;
     //Low Res View
     private Toolbar mLowResToolbar;
     private MPTextView mLowResTitleToolbar;
@@ -61,11 +63,11 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mActivity = this;
         mActivityActive = true;
         getActivityParameters();
-        mPresenter.analizeLowRes();
-        mPresenter.setContentView();
+        analizeLowRes();
+        setContentView();
         mPresenter.validateActivityParameters();
         initializeViews();
-        mPresenter.loadViews();
+        loadViews();
     }
 
 
@@ -111,6 +113,32 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mPresenter.setDecorationPreference(decorationPreference);
     }
 
+    public void analizeLowRes() {
+        //falta agregar el chequeo de low res
+        if (mPresenter.isCardInfoAvailable()) {
+            this.mLowResActive = false;
+        } else {
+            this.mLowResActive = true;
+        }
+//        this.mLowResActive = true;
+    }
+
+    public void loadViews() {
+        if (mLowResActive) {
+            loadLowResViews();
+        } else {
+            loadNormalViews();
+        }
+    }
+
+    public void setContentView() {
+        if (mLowResActive) {
+            setContentViewLowRes();
+        } else {
+            setContentViewNormal();
+        }
+    }
+
     @Override
     public void setContentViewLowRes() {
         setContentView(R.layout.mpsdk_activity_installments_lowres);
@@ -124,7 +152,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     private void initializeViews() {
         mInstallmentsRecyclerView = (RecyclerView) findViewById(R.id.mpsdkActivityInstallmentsView);
         mProgressBar = (ProgressBar) findViewById(R.id.mpsdkProgressBar);
-        if (mPresenter.isLowResActive()) {
+        if (mLowResActive) {
             mLowResToolbar = (Toolbar) findViewById(R.id.mpsdkRegularToolbar);
             mLowResTitleToolbar = (MPTextView) findViewById(R.id.mpsdkTitle);
             mLowResToolbar.setVisibility(View.VISIBLE);
@@ -146,10 +174,13 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     @Override
     public void loadNormalViews() {
         mNormalTitleToolbar.setText(getString(R.string.mpsdk_card_installments_title));
-        mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);
-        mFrontCardView.setSize(CardRepresentationModes.MEDIUM_SIZE);
+        mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.EDIT_FRONT);
+        mFrontCardView.setSize(CardRepresentationModes.EXTRA_BIG_SIZE);
         mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
-        mFrontCardView.setToken(mPresenter.getToken());
+        if (mPresenter.getToken() != null) {
+            mFrontCardView.setCardNumberLength(mPresenter.getToken().getCardNumberLength());
+            mFrontCardView.setLastFourDigits(mPresenter.getToken().getLastFourDigits());
+        }
         mFrontCardView.inflateInParent(mCardContainer, true);
         mFrontCardView.initializeControls();
         mFrontCardView.draw();

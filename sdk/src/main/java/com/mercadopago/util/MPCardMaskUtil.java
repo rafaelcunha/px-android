@@ -20,16 +20,6 @@ public class MPCardMaskUtil {
 
     }
 
-    public static String getCardNumberHiddenFromToken(Token token) {
-        if (token == null) {
-            return "";
-        }
-        int cardNumberLength = token.getCardNumberLength();
-        String lastFourDigits = token.getLastFourDigits();
-        String number = MPCardMaskUtil.getCardNumberHidden(cardNumberLength, lastFourDigits);
-        return number;
-    }
-
     public static String getCardNumberHidden(int cardNumberLength, String lastFourDigits) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < cardNumberLength - LAST_DIGITS_LENGTH; i++) {

@@ -11,8 +11,8 @@ import com.mercadopago.uicontrollers.CustomViewController;
 public interface FrontCardViewController extends CustomViewController {
     void decorateCardBorder(int borderColor);
     void setPaymentMethod(PaymentMethod paymentMethod);
-    void setToken(Token token);
     void setSize(String size);
-//    void drawEmptyCard();
+    void setCardNumberLength(int cardNumberLength);
+    void setLastFourDigits(String lastFourDigits);
     void draw();
 }

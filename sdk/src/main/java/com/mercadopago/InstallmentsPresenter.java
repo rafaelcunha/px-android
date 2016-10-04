@@ -26,9 +26,6 @@ public class InstallmentsPresenter {
     //Mercado Pago instance
     private MercadoPago mMercadoPago;
 
-    //ViewMode
-    private boolean mLowResActive;
-
     //Activity parameters
     private String mPublicKey;
     private PaymentMethod mPaymentMethod;
@@ -108,33 +105,4 @@ public class InstallmentsPresenter {
         return mToken != null && mPaymentMethod != null;
     }
 
-    public void analizeLowRes() {
-        //falta agregar el chequeo de low res
-        if (isCardInfoAvailable()) {
-            this.mLowResActive = false;
-        } else {
-            this.mLowResActive = true;
-        }
-//        this.mLowResActive = true;
-    }
-
-    public boolean isLowResActive() {
-        return mLowResActive;
-    }
-
-    public void loadViews() {
-        if (mLowResActive) {
-            mView.loadLowResViews();
-        } else {
-            mView.loadNormalViews();
-        }
-    }
-
-    public void setContentView() {
-        if (mLowResActive) {
-            mView.setContentViewLowRes();
-        } else {
-            mView.setContentViewNormal();
-        }
-    }
 }
