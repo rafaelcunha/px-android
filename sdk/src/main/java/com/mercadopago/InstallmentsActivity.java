@@ -1,8 +1,10 @@
 package com.mercadopago;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -11,6 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.google.gson.reflect.TypeToken;
+import com.mercadopago.adapters.PayerCostsAdapter;
+import com.mercadopago.callbacks.OnSelectedCallback;
+import com.mercadopago.customviews.MPTextView;
+import com.mercadopago.listeners.RecyclerItemClickListener;
+import com.mercadopago.model.ApiException;
 import com.mercadopago.model.DecorationPreference;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PayerCost;
@@ -20,8 +27,9 @@ import com.mercadopago.model.Site;
 import com.mercadopago.model.Token;
 import com.mercadopago.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.uicontrollers.card.FrontCardView;
+import com.mercadopago.util.ApiUtil;
+import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
-import com.mercadopago.views.MPTextView;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -38,6 +46,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     private boolean mActivityActive;
 
     //View controls
+    private PayerCostsAdapter mPayerCostsAdapter;
     private RecyclerView mInstallmentsRecyclerView;
     private ProgressBar mProgressBar;
     //ViewMode
@@ -66,8 +75,6 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         analizeLowRes();
         setContentView();
         mPresenter.validateActivityParameters();
-        initializeViews();
-        loadViews();
     }
 
 
@@ -149,6 +156,22 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         setContentView(R.layout.mpsdk_activity_installments_normal);
     }
 
+    @Override
+    public void onValidStart() {
+        mPresenter.setCardInfo();
+        initializeViews();
+        loadViews();
+        initializeAdapter();
+        mPresenter.loadPayerCosts();
+    }
+
+    @Override
+    public void onInvalidStart(String message) {
+        Intent returnIntent = new Intent();
+        setResult(RESULT_CANCELED, returnIntent);
+        finish();
+    }
+
     private void initializeViews() {
         mInstallmentsRecyclerView = (RecyclerView) findViewById(R.id.mpsdkActivityInstallmentsView);
         mProgressBar = (ProgressBar) findViewById(R.id.mpsdkProgressBar);
@@ -174,8 +197,8 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     @Override
     public void loadNormalViews() {
         mNormalTitleToolbar.setText(getString(R.string.mpsdk_card_installments_title));
-        mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.EDIT_FRONT);
-        mFrontCardView.setSize(CardRepresentationModes.EXTRA_BIG_SIZE);
+        mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);
+        mFrontCardView.setSize(CardRepresentationModes.MEDIUM_SIZE);
         mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
         if (mPresenter.getToken() != null) {
             mFrontCardView.setCardNumberLength(mPresenter.getToken().getCardNumberLength());
@@ -186,4 +209,62 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mFrontCardView.draw();
     }
 
+    private void initializeAdapter() {
+        mPayerCostsAdapter = new PayerCostsAdapter(this, mPresenter.getSite().getCurrencyId(), getDpadSelectionCallback());
+        initializeAdapterListener(mPayerCostsAdapter, mInstallmentsRecyclerView);
+    }
+
+    private void initializeAdapterListener(RecyclerView.Adapter adapter, RecyclerView view) {
+        view.setAdapter(adapter);
+        view.setLayoutManager(new LinearLayoutManager(this));
+        view.addOnItemTouchListener(new RecyclerItemClickListener(this,
+                new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        mPresenter.onItemSelected(position);
+                    }
+                }));
+    }
+
+    protected OnSelectedCallback<Integer> getDpadSelectionCallback() {
+        return new OnSelectedCallback<Integer>() {
+            @Override
+            public void onSelected(Integer position) {
+                mPresenter.onItemSelected(position);
+            }
+        };
+    }
+
+    @Override
+    public void initializeInstallments(List<PayerCost> payerCostList) {
+        mPayerCostsAdapter.addResults(payerCostList);
+    }
+
+    @Override
+    public void showLoadingView() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void stopLoadingView() {
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void startErrorView(String message, String errorDetail) {
+        ErrorUtil.startErrorActivity(mActivity, message, errorDetail, false);
+    }
+
+    @Override
+    public void showApiExceptionError(ApiException exception) {
+        ApiUtil.showApiExceptionError(mActivity, exception);
+    }
+
+    @Override
+    public void finishWithResult(PayerCost payerCost) {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(payerCost));
+        setResult(RESULT_OK, returnIntent);
+        finish();
+    }
 }
