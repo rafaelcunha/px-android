@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.mercadopago.R;
 import com.mercadopago.model.PayerCost;
 import com.mercadopago.util.CurrenciesUtil;
+import com.mercadopago.views.MPTextView;
 
 import java.math.BigDecimal;
 
@@ -23,11 +24,9 @@ public class PayerCostEditableRow implements PayerCostViewController {
 
     private Context mContext;
     private View mView;
-    private TextView mInstallmentsTextView;
-    private TextView mZeroRateText;
-    private TextView mRateText;
-    private View mEditHint;
-    private View mSeparator;
+    private MPTextView mInstallmentsTextView;
+    private MPTextView mZeroRateText;
+    private MPTextView mRateText;
 
     public PayerCostEditableRow(Context context, String currencyId) {
         this.mContext = context;
@@ -57,7 +56,7 @@ public class PayerCostEditableRow implements PayerCostViewController {
         sb.append(CurrenciesUtil.formatNumber(mPayerCost.getTotalAmount(), mCurrencyId));
         sb.append(" )");
         Spanned spannedFullAmountText = CurrenciesUtil.formatCurrencyInText(mPayerCost.getTotalAmount(),
-                mCurrencyId, sb.toString(), true, true);
+                mCurrencyId, sb.toString(), false, true);
         mRateText.setText(spannedFullAmountText);
     }
 
@@ -70,30 +69,20 @@ public class PayerCostEditableRow implements PayerCostViewController {
 
         sb.append(CurrenciesUtil.formatNumber(mPayerCost.getInstallmentAmount(), mCurrencyId));
         Spanned spannedInstallmentsText = CurrenciesUtil.formatCurrencyInText(mPayerCost.getInstallmentAmount(),
-                mCurrencyId, sb.toString(), true, true);
+                mCurrencyId, sb.toString(), false, true);
         mInstallmentsTextView.setText(spannedInstallmentsText);
     }
 
     @Override
     public void setOnClickListener(View.OnClickListener listener) {
-        mEditHint.setVisibility(View.VISIBLE);
         mView.setOnClickListener(listener);
     }
 
     @Override
-    public void showSeparator() {
-        mSeparator.setVisibility(View.VISIBLE);
-    }
-
-    @Override
     public void initializeControls() {
-        mInstallmentsTextView = (TextView) mView.findViewById(R.id.mpsdkInstallmentsText);
-        mZeroRateText = (TextView) mView.findViewById(R.id.mpsdkInstallmentsZeroRate);
-        mRateText = (TextView) mView.findViewById(R.id.mpsdkInstallmentsWithRate);
-        mEditHint = mView.findViewById(R.id.mpsdkEditHint);
-        mSeparator = mView.findViewById(R.id.mpsdkSeparator);
-        mSeparator.setVisibility(View.GONE);
-        mEditHint.setVisibility(View.GONE);
+        mInstallmentsTextView = (MPTextView) mView.findViewById(R.id.mpsdkInstallmentsText);
+        mZeroRateText = (MPTextView) mView.findViewById(R.id.mpsdkInstallmentsZeroRate);
+        mRateText = (MPTextView) mView.findViewById(R.id.mpsdkInstallmentsWithRate);
     }
 
     @Override

@@ -32,4 +32,5 @@
     <dimen name="mpsdk_card_size_medium_width">186dp</dimen>
     <dimen name="mpsdk_card_size_medium_number_height">17dp</dimen>
     <dimen name="mpsdk_card_size_medium_number_width">120dp</dimen>
+    <dimen name="mpsdk_list_row_height">82dp</dimen>
 </resources>
