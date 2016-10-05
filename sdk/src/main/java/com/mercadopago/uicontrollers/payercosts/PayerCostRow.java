@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 /**
  * Created by mreverter on 12/5/16.
  */
-public class PayerCostEditableRow implements PayerCostViewController {
+public class PayerCostRow implements PayerCostViewController {
 
     private PayerCost mPayerCost;
     private String mCurrencyId;
@@ -28,7 +28,7 @@ public class PayerCostEditableRow implements PayerCostViewController {
     private MPTextView mZeroRateText;
     private MPTextView mRateText;
 
-    public PayerCostEditableRow(Context context, String currencyId) {
+    public PayerCostRow(Context context, String currencyId) {
         this.mContext = context;
         this.mCurrencyId = currencyId;
 
@@ -52,9 +52,9 @@ public class PayerCostEditableRow implements PayerCostViewController {
     private void setAmountWithRateText() {
         mRateText.setVisibility(View.VISIBLE);
         StringBuilder sb = new StringBuilder();
-        sb.append("( ");
+        sb.append("(");
         sb.append(CurrenciesUtil.formatNumber(mPayerCost.getTotalAmount(), mCurrencyId));
-        sb.append(" )");
+        sb.append(")");
         Spanned spannedFullAmountText = CurrenciesUtil.formatCurrencyInText(mPayerCost.getTotalAmount(),
                 mCurrencyId, sb.toString(), false, true);
         mRateText.setText(spannedFullAmountText);
@@ -64,7 +64,7 @@ public class PayerCostEditableRow implements PayerCostViewController {
         StringBuilder sb = new StringBuilder();
         sb.append(mPayerCost.getInstallments());
         sb.append(" ");
-        sb.append(mContext.getString(R.string.mpsdk_installments_of));
+        sb.append(mContext.getString(R.string.mpsdk_installments_by));
         sb.append(" ");
 
         sb.append(CurrenciesUtil.formatNumber(mPayerCost.getInstallmentAmount(), mCurrencyId));
@@ -88,7 +88,7 @@ public class PayerCostEditableRow implements PayerCostViewController {
     @Override
     public View inflateInParent(ViewGroup parent, boolean attachToRoot) {
         mView = LayoutInflater.from(mContext)
-                .inflate(R.layout.mpsdk_row_payer_cost_edit, parent, attachToRoot);
+                .inflate(R.layout.mpsdk_row_payer_cost_list, parent, attachToRoot);
         return mView;
     }
 

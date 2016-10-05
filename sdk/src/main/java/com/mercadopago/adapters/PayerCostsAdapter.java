@@ -2,7 +2,6 @@ package com.mercadopago.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Spanned;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +10,9 @@ import android.widget.FrameLayout;
 
 import com.mercadopago.R;
 import com.mercadopago.callbacks.OnSelectedCallback;
-import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.model.PayerCost;
-import com.mercadopago.uicontrollers.payercosts.PayerCostEditableRow;
-import com.mercadopago.util.CurrenciesUtil;
+import com.mercadopago.uicontrollers.payercosts.PayerCostRow;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,12 +67,12 @@ public class PayerCostsAdapter extends  RecyclerView.Adapter<PayerCostsAdapter.V
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public FrameLayout mPayerCostContainer;
-        public PayerCostEditableRow mPayerCostEditableRow;
+        public PayerCostRow mPayerCostEditableRow;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mPayerCostContainer = (FrameLayout) itemView.findViewById(R.id.mpsdkPayerCostAdapterContainer);
-            mPayerCostEditableRow = new PayerCostEditableRow(mContext, mCurrencyId);
+            mPayerCostEditableRow = new PayerCostRow(mContext, mCurrencyId);
             mPayerCostEditableRow.inflateInParent(mPayerCostContainer, true);
             mPayerCostEditableRow.initializeControls();
 

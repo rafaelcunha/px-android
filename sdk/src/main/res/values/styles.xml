@@ -190,4 +190,8 @@
 
     <style name="Theme.MercadoPagoTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">19dp</item>
+    </style>
+
 </resources>

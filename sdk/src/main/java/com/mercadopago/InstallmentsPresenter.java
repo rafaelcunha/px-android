@@ -71,6 +71,9 @@ public class InstallmentsPresenter {
 
     public void setIssuer(Issuer issuer) {
         this.mIssuer = issuer;
+        if (mIssuer != null) {
+            this.mIssuerId = mIssuer.getId();
+        }
     }
 
     public void setDecorationPreference(DecorationPreference decorationPreference) {
@@ -112,6 +115,7 @@ public class InstallmentsPresenter {
             if (mIssuer == null) mView.onInvalidStart("issuer is null");
             if (mPublicKey == null) mView.onInvalidStart("public key not set");
             if (mPaymentMethod == null) mView.onInvalidStart("payment method is null");
+            else mView.onValidStart();
         } else {
             mView.onValidStart();
         }
@@ -139,6 +143,13 @@ public class InstallmentsPresenter {
         } else {
             mBin = "";
         }
+    }
+
+    public void initializeMercadoPago() {
+        mMercadoPago = new MercadoPago.Builder()
+                .setContext(mContext)
+                .setKey(mPublicKey, MercadoPago.KEY_TYPE_PUBLIC)
+                .build();
     }
 
     private boolean werePayerCostsSet() {

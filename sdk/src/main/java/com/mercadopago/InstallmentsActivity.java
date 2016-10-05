@@ -2,7 +2,11 @@ package com.mercadopago;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +37,7 @@ import com.mercadopago.util.JsonUtil;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,9 +61,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     private MPTextView mLowResTitleToolbar;
     //Normal View
     private FrameLayout mCardContainer;
-    private LinearLayout mBackground;
     private Toolbar mNormalToolbar;
-    private MPTextView mNormalTitleToolbar;
     private FrontCardView mFrontCardView;
 
     @Override
@@ -109,6 +112,8 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         if (getIntent().getStringExtra("decorationPreference") != null) {
             decorationPreference = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("decorationPreference"), DecorationPreference.class);
         }
+        payerCosts = null;
+
         mPresenter.setPaymentMethod(paymentMethod);
         mPresenter.setPublicKey(publicKey);
         mPresenter.setToken(token);
@@ -159,6 +164,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     @Override
     public void onValidStart() {
         mPresenter.setCardInfo();
+        mPresenter.initializeMercadoPago();
         initializeViews();
         loadViews();
         initializeAdapter();
@@ -181,9 +187,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
             mLowResToolbar.setVisibility(View.VISIBLE);
         } else {
             mCardContainer = (FrameLayout) findViewById(R.id.mpsdkActivityInstallmentsCardContainer);
-            mBackground = (LinearLayout) findViewById(R.id.mpsdkActivityInstallmentsBackground);
             mNormalToolbar = (Toolbar) findViewById(R.id.mpsdkRegularToolbar);
-            mNormalTitleToolbar = (MPTextView) findViewById(R.id.mpsdkTitle);
             mNormalToolbar.setVisibility(View.VISIBLE);
         }
         mProgressBar.setVisibility(View.GONE);
@@ -192,11 +196,13 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     @Override
     public void loadLowResViews() {
         mLowResTitleToolbar.setText(getString(R.string.mpsdk_card_installments_title));
+        loadToolbarArrow(mLowResToolbar);
     }
 
     @Override
     public void loadNormalViews() {
-        mNormalTitleToolbar.setText(getString(R.string.mpsdk_card_installments_title));
+        mNormalToolbar.setTitle(getString(R.string.mpsdk_card_installments_title));
+        loadToolbarArrow(mNormalToolbar);
         mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);
         mFrontCardView.setSize(CardRepresentationModes.MEDIUM_SIZE);
         mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
@@ -208,6 +214,23 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mFrontCardView.initializeControls();
         mFrontCardView.draw();
     }
+
+    private void loadToolbarArrow(Toolbar toolbar) {
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
+    }
+
 
     private void initializeAdapter() {
         mPayerCostsAdapter = new PayerCostsAdapter(this, mPresenter.getSite().getCurrencyId(), getDpadSelectionCallback());
