@@ -67,6 +67,11 @@ public class InstallmentsPresenter {
 
     public void setToken(Token token) {
         this.mToken = token;
+        if (mToken == null) {
+            mBin = "";
+        } else {
+            mBin = mToken.getFirstSixDigits();
+        }
     }
 
     public void setIssuer(Issuer issuer) {
@@ -125,10 +130,10 @@ public class InstallmentsPresenter {
         return mToken != null && mPaymentMethod != null;
     }
 
-    public void setCardInfo() {
-        if (isCardInfoAvailable()) {
-            mBin = mToken.getFirstSixDigits();
-            mIssuerId = mIssuer.getId();
+//    public void setCardInfo() {
+//        if (isCardInfoAvailable()) {
+//            mBin = mToken.getFirstSixDigits();
+//            mIssuerId = mIssuer.getId();
 //            mCardholder = mToken.getCardholder();
 //            Setting setting = Setting.getSettingByBin(mCurrentPaymentMethod.getSettings(),
 //                    mToken.getFirstSixDigits());
@@ -140,10 +145,10 @@ public class InstallmentsPresenter {
 //                mCardNumberLength = CARD_NUMBER_MAX_LENGTH;
 //                mSecurityCodeLocation = CARD_SIDE_BACK;
 //            }
-        } else {
-            mBin = "";
-        }
-    }
+//        } else {
+//            mBin = "";
+//        }
+//    }
 
     public void initializeMercadoPago() {
         mMercadoPago = new MercadoPago.Builder()

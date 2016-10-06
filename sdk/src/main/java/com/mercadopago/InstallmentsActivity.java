@@ -34,10 +34,10 @@ import com.mercadopago.uicontrollers.card.FrontCardView;
 import com.mercadopago.util.ApiUtil;
 import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
+import com.mercadopago.util.ScaleUtil;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -128,11 +128,10 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     public void analizeLowRes() {
         //falta agregar el chequeo de low res
         if (mPresenter.isCardInfoAvailable()) {
-            this.mLowResActive = false;
+            this.mLowResActive = ScaleUtil.isLowRes(this);
         } else {
             this.mLowResActive = true;
         }
-//        this.mLowResActive = true;
     }
 
     public void loadViews() {
@@ -163,7 +162,6 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
 
     @Override
     public void onValidStart() {
-        mPresenter.setCardInfo();
         mPresenter.initializeMercadoPago();
         initializeViews();
         loadViews();
