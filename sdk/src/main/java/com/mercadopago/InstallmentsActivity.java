@@ -26,6 +26,7 @@ import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.PaymentPreference;
 import com.mercadopago.model.Site;
 import com.mercadopago.model.Token;
+import com.mercadopago.mptracker.MPTracker;
 import com.mercadopago.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.uicontrollers.card.FrontCardView;
 import com.mercadopago.util.ApiUtil;
@@ -46,7 +47,6 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
 
     private InstallmentsPresenter mPresenter;
     private Activity mActivity;
-    private boolean mActivityActive;
 
     //View controls
     private PayerCostsAdapter mPayerCostsAdapter;
@@ -74,15 +74,12 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         }
         mPresenter.setView(this);
         mActivity = this;
-        mActivityActive = true;
         getActivityParameters();
         analizeLowRes();
         setContentView();
         mPresenter.validateActivityParameters();
     }
-
-
-
+    
     private void getActivityParameters() {
         PaymentMethod paymentMethod = JsonUtil.getInstance().fromJson(
                 this.getIntent().getStringExtra("paymentMethod"), PaymentMethod.class);
@@ -128,7 +125,6 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     }
 
     public void analizeLowRes() {
-        //falta agregar el chequeo de low res
         if (mPresenter.isCardInfoAvailable()) {
             this.mLowResActive = ScaleUtil.isLowRes(this);
         } else {
@@ -145,6 +141,8 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     }
 
     public void setContentView() {
+        MPTracker.getInstance().trackScreen("CARD_INSTALLMENTS", 2, mPresenter.getPublicKey(),
+                mPresenter.getSite().getId(), BuildConfig.VERSION_NAME, this);
         if (mLowResActive) {
             setContentViewLowRes();
         } else {
@@ -312,5 +310,28 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         returnIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(payerCost));
         setResult(RESULT_OK, returnIntent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        MPTracker.getInstance().trackEvent("CARD_INSTALLMENTS", "BACK_PRESSED", 2,
+                mPresenter.getPublicKey(), mPresenter.getSite().getId(), BuildConfig.VERSION_NAME, this);
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("backButtonPressed", true);
+        setResult(RESULT_CANCELED, returnIntent);
+        finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ErrorUtil.ERROR_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                mPresenter.recoverFromFailure();
+            } else {
+                setResult(resultCode, data);
+                finish();
+            }
+        }
     }
 }

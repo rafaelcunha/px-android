@@ -1,23 +1,18 @@
 package com.mercadopago;
 
 import android.content.Context;
-import android.view.View;
 
 import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.model.ApiException;
-import com.mercadopago.model.DecorationPreference;
 import com.mercadopago.model.Installment;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PayerCost;
 import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.PaymentPreference;
-import com.mercadopago.model.Setting;
 import com.mercadopago.model.Site;
 import com.mercadopago.model.Token;
-import com.mercadopago.util.ApiUtil;
-import com.mercadopago.util.ErrorUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,6 +25,7 @@ public class InstallmentsPresenter {
 
     private InstallmentsActivityView mView;
     private Context mContext;
+    private FailureRecovery mFailureRecovery;
 
     //Mercado Pago instance
     private MercadoPago mMercadoPago;
@@ -96,6 +92,10 @@ public class InstallmentsPresenter {
         this.mPaymentPreference = paymentPreference;
     }
 
+    private void setFailureRecovery(FailureRecovery failureRecovery) {
+        this.mFailureRecovery = failureRecovery;
+    }
+
     public PaymentMethod getPaymentMethod() {
         return this.mPaymentMethod;
     }
@@ -106,6 +106,10 @@ public class InstallmentsPresenter {
 
     public Site getSite() {
         return mSite;
+    }
+
+    public String getPublicKey() {
+        return mPublicKey;
     }
 
     public void validateActivityParameters() throws IllegalStateException {
@@ -144,38 +148,40 @@ public class InstallmentsPresenter {
         }
     }
 
+    public void recoverFromFailure() {
+        if (mFailureRecovery != null) {
+            mFailureRecovery.recover();
+        }
+    }
+
     private void getInstallmentsAsync() {
         mView.showLoadingView();
         mMercadoPago.getInstallments(mBin, mAmount, mIssuerId, mPaymentMethod.getId(),
             new Callback<List<Installment>>() {
                 @Override
                 public void success(List<Installment> installments) {
-//                  if (isActivityActive()) {
                     mView.stopLoadingView();
                     if (installments.size() == 0) {
                         mView.startErrorView(mContext.getString(R.string.mpsdk_standard_error_message),
-                                "no installments found for an issuer at InstallmentsOldActivity");
+                                "no installments found for an issuer at InstallmentsActivity");
                     } else if (installments.size() == 1) {
                         resolvePayerCosts(installments.get(0).getPayerCosts());
                     } else {
                         mView.startErrorView(mContext.getString(R.string.mpsdk_standard_error_message),
-                                "multiple installments found for an issuer at InstallmentsOldActivity");
+                                "multiple installments found for an issuer at InstallmentsActivity");
                     }
-//                  }
                 }
 
                 @Override
                 public void failure(ApiException apiException) {
-//                  if (isActivityActive()) {
                     mView.stopLoadingView();
-//                  setFailureRecovery(new FailureRecovery() {
-//                        @Override
-//                        public void recover() {
-//                            getInstallmentsAsync();
-//                        }
-//                    });
+                    setFailureRecovery(new FailureRecovery() {
+                        @Override
+                        public void recover() {
+                            getInstallmentsAsync();
+                        }
+                    });
                     mView.showApiExceptionError(apiException);
-//                  }
                 }
             });
     }
@@ -188,7 +194,7 @@ public class InstallmentsPresenter {
             mView.finishWithResult(defaultPayerCost);
         } else if (mPayerCosts.isEmpty()) {
             mView.startErrorView(mContext.getString(R.string.mpsdk_standard_error_message),
-                    "no payer costs found at InstallmentsOldActivity");
+                    "no payer costs found at InstallmentsActivity");
         } else if (mPayerCosts.size() == 1) {
             mView.finishWithResult(payerCosts.get(0));
         } else {
