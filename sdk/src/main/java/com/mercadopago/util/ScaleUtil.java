@@ -14,7 +14,6 @@ public class ScaleUtil {
         return dpAsPixels;
     }
 
-    //int screenSize = context.getResources().getConfiguration().screenLayout;
     //falta landscape? pensar para android tv
 
     public static boolean isLowRes(Context context) {

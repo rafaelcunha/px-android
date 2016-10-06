@@ -1,6 +1,16 @@
 package com.mercadopago.util;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+
+import com.mercadopago.customviews.MPTextView;
+import com.mercadopago.model.DecorationPreference;
 
 /**
  * Created by mreverter on 2/6/16.
@@ -36,4 +46,42 @@ public class ColorsUtil {
                 Math.max((int) (g + ((255 - g) * factor)), 0),
                 Math.max((int) (b + ((255 - b) * factor)), 0));
     }
+
+    public static void decorateLowResToolbar(Toolbar toolbar, MPTextView title,
+                                             DecorationPreference decorationPreference,
+                                             ActionBar actionBar,
+                                             Context context) {
+        toolbar.setBackgroundColor(decorationPreference.getBaseColor());
+        if (decorationPreference.isDarkFontEnabled()) {
+            int darkFont = decorationPreference.getDarkFontColor(context);
+            Drawable upArrow = toolbar.getNavigationIcon();
+            if (upArrow != null && actionBar != null) {
+                upArrow.setColorFilter(darkFont, PorterDuff.Mode.SRC_ATOP);
+                actionBar.setHomeAsUpIndicator(upArrow);
+            }
+            title.setTextColor(decorationPreference.getDarkFontColor(context));
+        }
+    }
+
+    public static void decorateNormalToolbar(Toolbar toolbar,
+                                             DecorationPreference decorationPreference,
+                                             AppBarLayout appBarLayout,
+                                             CollapsingToolbarLayout collapsingToolbarLayout,
+                                             ActionBar actionBar,
+                                             Context context) {
+        toolbar.setBackgroundColor(decorationPreference.getLighterColor());
+        if (decorationPreference.isDarkFontEnabled()) {
+            int darkFont = decorationPreference.getDarkFontColor(context);
+            Drawable upArrow = toolbar.getNavigationIcon();
+            if (upArrow != null && actionBar != null) {
+                upArrow.setColorFilter(darkFont, PorterDuff.Mode.SRC_ATOP);
+                actionBar.setHomeAsUpIndicator(upArrow);
+            }
+            collapsingToolbarLayout.setExpandedTitleColor(darkFont);
+            collapsingToolbarLayout.setCollapsedTitleTextColor(darkFont);
+        }
+        appBarLayout.setBackgroundColor(decorationPreference.getLighterColor());
+        collapsingToolbarLayout.setContentScrimColor(decorationPreference.getLighterColor());
+    }
+
 }

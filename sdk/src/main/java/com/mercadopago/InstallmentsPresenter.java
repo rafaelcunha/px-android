@@ -47,7 +47,6 @@ public class InstallmentsPresenter {
     private Site mSite;
     private List<PayerCost> mPayerCosts;
     private PaymentPreference mPaymentPreference;
-    private DecorationPreference mDecorationPreference;
 
     public InstallmentsPresenter(Context context) {
         this.mContext = context;
@@ -79,10 +78,6 @@ public class InstallmentsPresenter {
         if (mIssuer != null) {
             this.mIssuerId = mIssuer.getId();
         }
-    }
-
-    public void setDecorationPreference(DecorationPreference decorationPreference) {
-        this.mDecorationPreference = decorationPreference;
     }
 
     public void setAmount(BigDecimal amount) {
@@ -129,26 +124,6 @@ public class InstallmentsPresenter {
     public boolean isCardInfoAvailable() {
         return mToken != null && mPaymentMethod != null;
     }
-
-//    public void setCardInfo() {
-//        if (isCardInfoAvailable()) {
-//            mBin = mToken.getFirstSixDigits();
-//            mIssuerId = mIssuer.getId();
-//            mCardholder = mToken.getCardholder();
-//            Setting setting = Setting.getSettingByBin(mCurrentPaymentMethod.getSettings(),
-//                    mToken.getFirstSixDigits());
-//
-//            if (setting != null) {
-//                mCardNumberLength = setting.getCardNumber().getLength();
-//                mSecurityCodeLocation = setting.getSecurityCode().getCardLocation();
-//            } else {
-//                mCardNumberLength = CARD_NUMBER_MAX_LENGTH;
-//                mSecurityCodeLocation = CARD_SIDE_BACK;
-//            }
-//        } else {
-//            mBin = "";
-//        }
-//    }
 
     public void initializeMercadoPago() {
         mMercadoPago = new MercadoPago.Builder()

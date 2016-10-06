@@ -2,18 +2,15 @@ package com.mercadopago;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.google.gson.reflect.TypeToken;
@@ -32,6 +29,7 @@ import com.mercadopago.model.Token;
 import com.mercadopago.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.uicontrollers.card.FrontCardView;
 import com.mercadopago.util.ApiUtil;
+import com.mercadopago.util.ColorsUtil;
 import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
 import com.mercadopago.util.ScaleUtil;
@@ -54,12 +52,15 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     private PayerCostsAdapter mPayerCostsAdapter;
     private RecyclerView mInstallmentsRecyclerView;
     private ProgressBar mProgressBar;
+    private DecorationPreference mDecorationPreference;
     //ViewMode
     private boolean mLowResActive;
     //Low Res View
     private Toolbar mLowResToolbar;
     private MPTextView mLowResTitleToolbar;
     //Normal View
+    private CollapsingToolbarLayout mCollapsingToolbar;
+    private AppBarLayout mAppBar;
     private FrameLayout mCardContainer;
     private Toolbar mNormalToolbar;
     private FrontCardView mFrontCardView;
@@ -107,12 +108,10 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         if (paymentPreference == null) {
             paymentPreference = new PaymentPreference();
         }
-
-        DecorationPreference decorationPreference = null;
+        mDecorationPreference = null;
         if (getIntent().getStringExtra("decorationPreference") != null) {
-            decorationPreference = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("decorationPreference"), DecorationPreference.class);
+            mDecorationPreference = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("decorationPreference"), DecorationPreference.class);
         }
-        payerCosts = null;
 
         mPresenter.setPaymentMethod(paymentMethod);
         mPresenter.setPublicKey(publicKey);
@@ -122,7 +121,10 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mPresenter.setSite(site);
         mPresenter.setPayerCosts(payerCosts);
         mPresenter.setPaymentPreference(paymentPreference);
-        mPresenter.setDecorationPreference(decorationPreference);
+    }
+
+    private boolean isDecorationEnabled() {
+        return mDecorationPreference != null && mDecorationPreference.hasColors();
     }
 
     public void analizeLowRes() {
@@ -165,6 +167,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mPresenter.initializeMercadoPago();
         initializeViews();
         loadViews();
+        decorate();
         initializeAdapter();
         mPresenter.loadPayerCosts();
     }
@@ -184,6 +187,8 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
             mLowResTitleToolbar = (MPTextView) findViewById(R.id.mpsdkTitle);
             mLowResToolbar.setVisibility(View.VISIBLE);
         } else {
+            mCollapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.mpsdkCollapsingToolbar);
+            mAppBar = (AppBarLayout) findViewById(R.id.mpsdkInstallmentesAppBar);
             mCardContainer = (FrameLayout) findViewById(R.id.mpsdkActivityInstallmentsCardContainer);
             mNormalToolbar = (Toolbar) findViewById(R.id.mpsdkRegularToolbar);
             mNormalToolbar.setVisibility(View.VISIBLE);
@@ -193,14 +198,14 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
 
     @Override
     public void loadLowResViews() {
-        mLowResTitleToolbar.setText(getString(R.string.mpsdk_card_installments_title));
         loadToolbarArrow(mLowResToolbar);
+        mLowResTitleToolbar.setText(getString(R.string.mpsdk_card_installments_title));
     }
 
     @Override
     public void loadNormalViews() {
-        mNormalToolbar.setTitle(getString(R.string.mpsdk_card_installments_title));
         loadToolbarArrow(mNormalToolbar);
+        mNormalToolbar.setTitle(getString(R.string.mpsdk_card_installments_title));
         mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);
         mFrontCardView.setSize(CardRepresentationModes.MEDIUM_SIZE);
         mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
@@ -216,6 +221,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     private void loadToolbarArrow(Toolbar toolbar) {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
@@ -229,6 +235,25 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         }
     }
 
+    private void decorate() {
+        if (isDecorationEnabled()) {
+            if (mLowResActive) {
+                decorateLowRes();
+            } else {
+                decorateNormal();
+            }
+        }
+    }
+
+    private void decorateLowRes() {
+        ColorsUtil.decorateLowResToolbar(mLowResToolbar, mLowResTitleToolbar, mDecorationPreference,
+                getSupportActionBar(), this);
+    }
+
+    private void decorateNormal() {
+        ColorsUtil.decorateNormalToolbar(mNormalToolbar, mDecorationPreference, mAppBar,
+                mCollapsingToolbar, getSupportActionBar(), this);
+    }
 
     private void initializeAdapter() {
         mPayerCostsAdapter = new PayerCostsAdapter(this, mPresenter.getSite().getCurrencyId(), getDpadSelectionCallback());
