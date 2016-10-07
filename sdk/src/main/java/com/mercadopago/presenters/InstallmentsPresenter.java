@@ -2,6 +2,7 @@ package com.mercadopago.presenters;
 
 import android.content.Context;
 
+import com.mercadopago.model.Card;
 import com.mercadopago.views.InstallmentsActivityView;
 import com.mercadopago.R;
 import com.mercadopago.callbacks.Callback;
@@ -45,6 +46,7 @@ public class InstallmentsPresenter {
     private Site mSite;
     private List<PayerCost> mPayerCosts;
     private PaymentPreference mPaymentPreference;
+    private Card mCard;
 
     public InstallmentsPresenter(Context context) {
         this.mContext = context;
