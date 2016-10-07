@@ -52,7 +52,7 @@
                 android:background="@color/mpsdk_white_background"
                 android:orientation="vertical">
 
-                <com.mercadopago.views.MPTextView
+                <com.mercadopago.customviews.MPTextView
                     android:id="@+id/mpsdkWhatCanIdo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
                     android:paddingRight="17dp"
                     android:text="@string/mpsdk_text_order_call_for_authorize" />
 
-                <com.mercadopago.views.MPTextView
+                <com.mercadopago.customviews.MPTextView
                     android:id="@+id/mpsdkAuthorizedPaymentMethod"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
                     android:layout_gravity="center_horizontal|bottom" />
 
 
-                <com.mercadopago.views.MPTextView
+                <com.mercadopago.customviews.MPTextView
                     android:id="@+id/mpsdkPaymentNoAuthorized"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
                     android:layout_marginRight="25dp"
                     android:layout_marginBottom="5dp"
                     android:background="@drawable/mpsdk_button_bg_stroke" >
-                    <com.mercadopago.views.MPTextView
+                    <com.mercadopago.customviews.MPTextView
                         android:id="@+id/mpsdkCallForAuthorizeOptionButtonText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -128,7 +128,7 @@
                         android:text="@string/mpsdk_text_pay_with_other_method"/>
                 </FrameLayout>
 
-                <com.mercadopago.views.MPTextView
+                <com.mercadopago.customviews.MPTextView
                     android:id="@+id/mpsdkKeepBuyingCallForAuthorize"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="40dp"

@@ -15,7 +15,6 @@ import com.mercadopago.CongratsActivity;
 import com.mercadopago.CustomerCardsActivity;
 import com.mercadopago.GuessingCardActivity;
 import com.mercadopago.InstallmentsActivity;
-import com.mercadopago.InstallmentsOldActivity;
 import com.mercadopago.InstructionsActivity;
 import com.mercadopago.IssuersActivity;
 import com.mercadopago.PaymentMethodsActivity;

@@ -1,4 +1,4 @@
-package com.mercadopago;
+package com.mercadopago.views;
 
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.PayerCost;

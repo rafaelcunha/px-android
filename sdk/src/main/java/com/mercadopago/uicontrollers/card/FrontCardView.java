@@ -18,13 +18,13 @@ import com.mercadopago.CardInterface;
 import com.mercadopago.R;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.core.MercadoPago;
+import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.Setting;
 import com.mercadopago.util.LayoutUtil;
 import com.mercadopago.util.MPAnimationUtils;
 import com.mercadopago.util.MPCardMaskUtil;
 import com.mercadopago.util.ScaleUtil;
-import com.mercadopago.views.MPTextView;
 
 /**
  * Created by vaserber on 9/29/16.

@@ -33,7 +33,7 @@
                     android:tint="@color/mpsdk_white"
                     android:src="@drawable/icon_ok" />
 
-                <com.mercadopago.views.MPTextView
+                <com.mercadopago.customviews.MPTextView
                     android:id="@+id/mpsdkCongratulationsTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
                 android:background="@color/mpsdk_white_background"
                 android:orientation="vertical">
 
-                    <com.mercadopago.views.MPTextView
+                    <com.mercadopago.customviews.MPTextView
                         android:id="@+id/mpsdkPaymentIdDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
                         android:text="@string/mpsdk_payment_id_description"
                         tools:text="Comprobante\nNº 123456789" />
 
-                    <com.mercadopago.views.MPTextView
+                    <com.mercadopago.customviews.MPTextView
                         android:id="@+id/mpsdkInstallmentsDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
                         android:text="12 de $80 00"
                         tools:text="12x $ 800"/>
 
-                    <com.mercadopago.views.MPTextView
+                    <com.mercadopago.customviews.MPTextView
                         android:id="@+id/mpsdkInterestAmountDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
                         tools:src="@drawable/visa"
                         android:layout_gravity="center_horizontal" />
 
-                    <com.mercadopago.views.MPTextView
+                    <com.mercadopago.customviews.MPTextView
                         android:id="@+id/mpsdkLastFourDigitsDescription"
                         android:layout_marginLeft="10dp"
                         android:layout_marginStart="10dp"
@@ -105,7 +105,7 @@
                         tools:text="Terminada en 3456"
                         android:layout_gravity="center_horizontal" />
 
-                    <com.mercadopago.views.MPTextView
+                    <com.mercadopago.customviews.MPTextView
                         android:id="@+id/mpsdkStateDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -122,7 +122,7 @@
                         android:background="@color/mpsdk_separator"
                         android:layout_gravity="center_horizontal|bottom" />
 
-                    <com.mercadopago.views.MPTextView
+                    <com.mercadopago.customviews.MPTextView
                         android:id="@+id/mpsdkPayerEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -140,7 +140,7 @@
                         android:background="@color/mpsdk_separator"
                         android:layout_gravity="center_horizontal|bottom" />
 
-                    <com.mercadopago.views.MPTextView
+                    <com.mercadopago.customviews.MPTextView
                         android:id="@+id/mpsdkKeepBuyingCongrats"
                         android:layout_marginTop="20dp"
                         android:paddingLeft="40dp"

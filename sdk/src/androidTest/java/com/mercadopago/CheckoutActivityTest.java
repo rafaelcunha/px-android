@@ -1005,7 +1005,7 @@ public class CheckoutActivityTest {
         mTestRule.launchActivity(validStartIntent);
 
         onView(withId(R.id.mpsdkPayerCostLayout)).perform(click());
-        intended(hasComponent(InstallmentsOldActivity.class.getName()));
+        intended(hasComponent(InstallmentsActivity.class.getName()));
     }
 
     @Test
@@ -1031,7 +1031,7 @@ public class CheckoutActivityTest {
         installmentsReturnIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(changedPayerCost));
         Instrumentation.ActivityResult installmentsResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, installmentsReturnIntent);
 
-        intending(hasComponent(InstallmentsOldActivity.class.getName())).respondWith(installmentsResult);
+        intending(hasComponent(InstallmentsActivity.class.getName())).respondWith(installmentsResult);
 
         //Mock API Calls
         CheckoutPreference preference = StaticMock.getCheckoutPreference();
@@ -1053,7 +1053,7 @@ public class CheckoutActivityTest {
         onView(withId(R.id.mpsdkPayerCostLayout)).check(matches(withAnyChildText(payerCostDescription)));
         onView(withId(R.id.mpsdkPayerCostLayout)).check(matches(withAnyChildText(noInterestText)));
 
-        //Start InstallmentsOldActivity
+        //Start InstallmentsActivity
         onView(withId(R.id.mpsdkPayerCostLayout)).perform(click());
 
         //After payer cost change

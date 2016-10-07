@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <com.mercadopago.views.MPTextView
+        <com.mercadopago.customviews.MPTextView
             android:id="@+id/mpsdkInstallmentsText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end">
-            <com.mercadopago.views.MPTextView
+            <com.mercadopago.customviews.MPTextView
                 android:id="@+id/mpsdkInstallmentsZeroRate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
                 android:textSize="16dp"
                 android:visibility="gone"
                 app:fontStyle="regular" />
-            <com.mercadopago.views.MPTextView
+            <com.mercadopago.customviews.MPTextView
                 android:id="@+id/mpsdkInstallmentsWithRate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -126,26 +126,26 @@ public class InstallmentsActivityTest {
         assertFalse(mTestRule.getActivity().isFinishing());
     }
 
-    @Test
-    public void initializeWithoutPayerCostsButWithIssuerIsValid() {
-        String installments = StaticMock.getInstallmentsJson();
-        Type listType = new TypeToken<List<Installment>>(){}.getType();
-        List<Installment> installmentList = JsonUtil.getInstance().getGson().fromJson(installments, listType);
-
-        mFakeAPI.addResponseToQueue(installmentList, 200, "");
-
-        Issuer issuer = StaticMock.getIssuer();
-        validStartIntent.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
-
-        InstallmentsActivity activity = mTestRule.launchActivity(validStartIntent);
-
-        assertEquals(activity.mPresenter.getPublicKey(), mMerchantPublicKey);
-        assertEquals(activity.mPresenter.getPaymentMethod().getId(), mPaymentMethod.getId());
-        assertEquals(activity.mPresenter.getSite().getId(), mSite.getId());
-        assertEquals(activity.mPresenter.getAmount(), new BigDecimal(mAmount));
-        assertEquals(activity.mPresenter.getIssuer().getId(), issuer.getId());
-        assertFalse(mTestRule.getActivity().isFinishing());
-    }
+//    @Test
+//    public void initializeWithoutPayerCostsButWithIssuerIsValid() {
+//        String installments = StaticMock.getInstallmentsJson();
+//        Type listType = new TypeToken<List<Installment>>(){}.getType();
+//        List<Installment> installmentList = JsonUtil.getInstance().getGson().fromJson(installments, listType);
+//
+//        mFakeAPI.addResponseToQueue(installmentList, 200, "");
+//
+//        Issuer issuer = StaticMock.getIssuer();
+//        validStartIntent.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
+//
+//        InstallmentsActivity activity = mTestRule.launchActivity(validStartIntent);
+//
+//        assertEquals(activity.mPresenter.getPublicKey(), mMerchantPublicKey);
+//        assertEquals(activity.mPresenter.getPaymentMethod().getId(), mPaymentMethod.getId());
+//        assertEquals(activity.mPresenter.getSite().getId(), mSite.getId());
+//        assertEquals(activity.mPresenter.getAmount(), new BigDecimal(mAmount));
+//        assertEquals(activity.mPresenter.getIssuer().getId(), issuer.getId());
+//        assertFalse(mTestRule.getActivity().isFinishing());
+//    }
 
     @Test
     public void hideCardWhenNoTokenOrCard() {

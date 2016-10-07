@@ -38,7 +38,7 @@
         app:layout_collapseMode="pin"
         app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-        <com.mercadopago.views.MPTextView
+        <com.mercadopago.customviews.MPTextView
             android:id="@+id/mpsdkTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

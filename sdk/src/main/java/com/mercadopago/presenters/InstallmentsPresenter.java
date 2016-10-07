@@ -1,7 +1,9 @@
-package com.mercadopago;
+package com.mercadopago.presenters;
 
 import android.content.Context;
 
+import com.mercadopago.views.InstallmentsActivityView;
+import com.mercadopago.R;
 import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.core.MercadoPago;

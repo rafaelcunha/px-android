@@ -55,10 +55,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.InfoMercadoPagoTheme.NoActionbar" />
         <activity
-            android:name=".InstallmentsOldActivity"
-            android:screenOrientation="behind"
-            android:theme="@style/Theme.ProcessMercadoPagoTheme.NoActionbar" />
-        <activity
             android:name=".InstallmentsActivity"
             android:screenOrientation="behind"
             android:theme="@style/Theme.ProcessMercadoPagoTheme.NoActionbar" />

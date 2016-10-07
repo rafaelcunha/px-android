@@ -5,12 +5,11 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.mercadopago.R;
+import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.model.PayerCost;
 import com.mercadopago.util.CurrenciesUtil;
-import com.mercadopago.views.MPTextView;
 
 import java.math.BigDecimal;
 
