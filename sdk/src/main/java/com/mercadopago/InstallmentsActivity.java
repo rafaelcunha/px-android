@@ -45,7 +45,7 @@ import java.util.List;
 
 public class InstallmentsActivity extends AppCompatActivity implements InstallmentsActivityView {
 
-    private InstallmentsPresenter mPresenter;
+    protected InstallmentsPresenter mPresenter;
     private Activity mActivity;
 
     //View controls
@@ -54,16 +54,16 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     private ProgressBar mProgressBar;
     private DecorationPreference mDecorationPreference;
     //ViewMode
-    private boolean mLowResActive;
+    protected boolean mLowResActive;
     //Low Res View
-    private Toolbar mLowResToolbar;
+    protected Toolbar mLowResToolbar;
     private MPTextView mLowResTitleToolbar;
     //Normal View
-    private CollapsingToolbarLayout mCollapsingToolbar;
-    private AppBarLayout mAppBar;
-    private FrameLayout mCardContainer;
-    private Toolbar mNormalToolbar;
-    private FrontCardView mFrontCardView;
+    protected CollapsingToolbarLayout mCollapsingToolbar;
+    protected AppBarLayout mAppBar;
+    protected FrameLayout mCardContainer;
+    protected Toolbar mNormalToolbar;
+    protected FrontCardView mFrontCardView;
 
     @Override
 
@@ -251,6 +251,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     private void decorateNormal() {
         ColorsUtil.decorateNormalToolbar(mNormalToolbar, mDecorationPreference, mAppBar,
                 mCollapsingToolbar, getSupportActionBar(), this);
+        mFrontCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
     }
 
     private void initializeAdapter() {

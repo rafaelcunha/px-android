@@ -112,14 +112,31 @@ public class InstallmentsPresenter {
         return mPublicKey;
     }
 
+    public BigDecimal getAmount() {
+        return mAmount;
+    }
+
+    public List<PayerCost> getPayerCosts() {
+        return mPayerCosts;
+    }
+
+    public Issuer getIssuer() {
+        return mIssuer;
+    }
+
     public void validateActivityParameters() throws IllegalStateException {
         if (mAmount == null || mSite == null) {
-            mView.onInvalidStart("");
+            mView.onInvalidStart("amount or site is null");
         } else if (mPayerCosts == null) {
-            if (mIssuer == null) mView.onInvalidStart("issuer is null");
-            if (mPublicKey == null) mView.onInvalidStart("public key not set");
-            if (mPaymentMethod == null) mView.onInvalidStart("payment method is null");
-            else mView.onValidStart();
+            if (mIssuer == null) {
+                mView.onInvalidStart("issuer is null");
+            } else if (mPublicKey == null) {
+                mView.onInvalidStart("public key not set");
+            } else if (mPaymentMethod == null) {
+                mView.onInvalidStart("payment method is null");
+            } else {
+                mView.onValidStart();
+            }
         } else {
             mView.onValidStart();
         }
@@ -130,6 +147,7 @@ public class InstallmentsPresenter {
     }
 
     public void initializeMercadoPago() {
+        if (mPublicKey == null) return;
         mMercadoPago = new MercadoPago.Builder()
                 .setContext(mContext)
                 .setKey(mPublicKey, MercadoPago.KEY_TYPE_PUBLIC)
@@ -155,6 +173,7 @@ public class InstallmentsPresenter {
     }
 
     private void getInstallmentsAsync() {
+        if (mMercadoPago == null) return;
         mView.showLoadingView();
         mMercadoPago.getInstallments(mBin, mAmount, mIssuerId, mPaymentMethod.getId(),
             new Callback<List<Installment>>() {

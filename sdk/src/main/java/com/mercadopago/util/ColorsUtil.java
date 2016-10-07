@@ -70,6 +70,8 @@ public class ColorsUtil {
                                              ActionBar actionBar,
                                              Context context) {
         toolbar.setBackgroundColor(decorationPreference.getLighterColor());
+        appBarLayout.setBackgroundColor(decorationPreference.getLighterColor());
+        collapsingToolbarLayout.setContentScrimColor(decorationPreference.getLighterColor());
         if (decorationPreference.isDarkFontEnabled()) {
             int darkFont = decorationPreference.getDarkFontColor(context);
             Drawable upArrow = toolbar.getNavigationIcon();
@@ -80,8 +82,6 @@ public class ColorsUtil {
             collapsingToolbarLayout.setExpandedTitleColor(darkFont);
             collapsingToolbarLayout.setCollapsedTitleTextColor(darkFont);
         }
-        appBarLayout.setBackgroundColor(decorationPreference.getLighterColor());
-        collapsingToolbarLayout.setContentScrimColor(decorationPreference.getLighterColor());
     }
 
 }
