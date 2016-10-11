@@ -19,6 +19,7 @@ import com.mercadopago.callbacks.OnSelectedCallback;
 import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.listeners.RecyclerItemClickListener;
 import com.mercadopago.model.ApiException;
+import com.mercadopago.model.Card;
 import com.mercadopago.model.DecorationPreference;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PayerCost;
@@ -87,6 +88,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         String publicKey = getIntent().getStringExtra("publicKey");
         Token token = JsonUtil.getInstance().fromJson(
                 this.getIntent().getStringExtra("token"), Token.class);
+        Card card = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("card"), Card.class);
         Issuer issuer = JsonUtil.getInstance().fromJson(this.getIntent().getStringExtra("issuer"), Issuer.class);
         BigDecimal amount = null;
         if (this.getIntent().getStringExtra("amount") != null) {
@@ -114,11 +116,13 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mPresenter.setPaymentMethod(paymentMethod);
         mPresenter.setPublicKey(publicKey);
         mPresenter.setToken(token);
+        mPresenter.setCard(card);
         mPresenter.setIssuer(issuer);
         mPresenter.setAmount(amount);
         mPresenter.setSite(site);
         mPresenter.setPayerCosts(payerCosts);
         mPresenter.setPaymentPreference(paymentPreference);
+        mPresenter.setCardInformation();
     }
 
     private boolean isDecorationEnabled() {
@@ -208,9 +212,9 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);
         mFrontCardView.setSize(CardRepresentationModes.MEDIUM_SIZE);
         mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
-        if (mPresenter.getToken() != null) {
-            mFrontCardView.setCardNumberLength(mPresenter.getToken().getCardNumberLength());
-            mFrontCardView.setLastFourDigits(mPresenter.getToken().getLastFourDigits());
+        if (mPresenter.getCardInformation() != null) {
+            mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
+            mFrontCardView.setLastFourDigits(mPresenter.getCardInformation().getLastFourDigits());
         }
         mFrontCardView.inflateInParent(mCardContainer, true);
         mFrontCardView.initializeControls();
@@ -252,7 +256,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     private void decorateNormal() {
         ColorsUtil.decorateNormalToolbar(mNormalToolbar, mDecorationPreference, mAppBar,
                 mCollapsingToolbar, getSupportActionBar(), this);
-//        mFrontCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
+        mFrontCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
     }
 
     private void initializeAdapter() {

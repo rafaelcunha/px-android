@@ -80,8 +80,6 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
     }
 
     private void getActivityParameters() {
-//        mCard = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("card"), Card.class);
-
         PaymentMethod paymentMethod = JsonUtil.getInstance().fromJson(
                 this.getIntent().getStringExtra("paymentMethod"), PaymentMethod.class);
         String publicKey = getIntent().getStringExtra("publicKey");
@@ -103,14 +101,13 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
         if (getIntent().getStringExtra("decorationPreference") != null) {
             mDecorationPreference = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("decorationPreference"), DecorationPreference.class);
         }
-        //sacar
-        token = null;
 
         mPresenter.setPaymentMethod(paymentMethod);
         mPresenter.setPublicKey(publicKey);
         mPresenter.setToken(token);
         mPresenter.setIssuers(issuers);
         mPresenter.setPaymentPreference(paymentPreference);
+        mPresenter.setCardInformation();
     }
 
     public void analizeLowRes() {
@@ -240,9 +237,9 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
         mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);
         mFrontCardView.setSize(CardRepresentationModes.MEDIUM_SIZE);
         mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
-        if (mPresenter.getToken() != null) {
-            mFrontCardView.setCardNumberLength(mPresenter.getToken().getCardNumberLength());
-            mFrontCardView.setLastFourDigits(mPresenter.getToken().getLastFourDigits());
+        if (mPresenter.getCardInformation() != null) {
+            mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
+            mFrontCardView.setLastFourDigits(mPresenter.getCardInformation().getLastFourDigits());
         }
         mFrontCardView.inflateInParent(mCardContainer, true);
         mFrontCardView.initializeControls();
@@ -288,6 +285,7 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
     private void decorateNormal() {
         ColorsUtil.decorateNormalToolbar(mNormalToolbar, mDecorationPreference, mAppBar,
                 mCollapsingToolbar, getSupportActionBar(), this);
+        mFrontCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
     }
 
     @Override

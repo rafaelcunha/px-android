@@ -5,9 +5,11 @@ import android.content.Context;
 import com.mercadopago.R;
 import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
+import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
+import com.mercadopago.model.CardInformation;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.PaymentPreference;
@@ -40,7 +42,7 @@ public class IssuersPresenter {
     private Token mToken;
     private List<Issuer> mIssuers;
     private PaymentPreference mPaymentPreference;
-    private Card mCard;
+    protected CardInformation mCardInfo;
 
     public IssuersPresenter(Context context) {
         this.mContext = context;
@@ -60,10 +62,18 @@ public class IssuersPresenter {
 
     public void setToken(Token token) {
         this.mToken = token;
-        if (mToken == null) {
+    }
+
+    public void setCardInformation() {
+        setCardInformation(mToken);
+    }
+
+    private void setCardInformation(CardInformation cardInformation) {
+        this.mCardInfo = cardInformation;
+        if (mCardInfo == null) {
             mBin = "";
         } else {
-            mBin = mToken.getFirstSixDigits();
+            mBin = mCardInfo.getFirstSixDigits();
         }
     }
 
@@ -80,7 +90,7 @@ public class IssuersPresenter {
     }
 
     public boolean isCardInfoAvailable() {
-        return mToken != null && mPaymentMethod != null;
+        return mCardInfo != null && mPaymentMethod != null;
     }
 
     public String getPublicKey() {
@@ -93,6 +103,14 @@ public class IssuersPresenter {
 
     public Token getToken() {
         return this.mToken;
+    }
+
+    public CardInformation getCardInformation() {
+        return this.mCardInfo;
+    }
+
+    public Integer getCardNumberLength() {
+        return PaymentMethodGuessingController.getCardNumberLength(mPaymentMethod, mBin);
     }
 
     public void validateActivityParameters() throws IllegalStateException {

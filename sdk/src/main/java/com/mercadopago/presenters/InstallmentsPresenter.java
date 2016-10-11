@@ -2,7 +2,9 @@ package com.mercadopago.presenters;
 
 import android.content.Context;
 
+import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.model.Card;
+import com.mercadopago.model.CardInformation;
 import com.mercadopago.views.InstallmentsActivityView;
 import com.mercadopago.R;
 import com.mercadopago.callbacks.Callback;
@@ -40,13 +42,14 @@ public class InstallmentsPresenter {
     //Activity parameters
     private String mPublicKey;
     private PaymentMethod mPaymentMethod;
-    private Token mToken;
     private Issuer mIssuer;
     private BigDecimal mAmount;
     private Site mSite;
     private List<PayerCost> mPayerCosts;
     private PaymentPreference mPaymentPreference;
+    private CardInformation mCardInfo;
     private Card mCard;
+    private Token mToken;
 
     public InstallmentsPresenter(Context context) {
         this.mContext = context;
@@ -64,13 +67,29 @@ public class InstallmentsPresenter {
         this.mPaymentMethod = paymentMethod;
     }
 
-    public void setToken(Token token) {
-        this.mToken = token;
-        if (mToken == null) {
+    public void setCardInformation() {
+        if(mCard == null && mToken != null) {
+            setCardInformation(mToken);
+        } else if (mCard != null) {
+            setCardInformation(mCard);
+        }
+    }
+
+    private void setCardInformation(CardInformation cardInformation) {
+        this.mCardInfo = cardInformation;
+        if (mCardInfo == null) {
             mBin = "";
         } else {
-            mBin = mToken.getFirstSixDigits();
+            mBin = mCardInfo.getFirstSixDigits();
         }
+    }
+
+    public void setToken(Token token) {
+        this.mToken = token;
+    }
+
+    public void setCard(Card card) {
+        this.mCard = card;
     }
 
     public void setIssuer(Issuer issuer) {
@@ -78,6 +97,10 @@ public class InstallmentsPresenter {
         if (mIssuer != null) {
             this.mIssuerId = mIssuer.getId();
         }
+    }
+
+    public Integer getCardNumberLength() {
+        return PaymentMethodGuessingController.getCardNumberLength(mPaymentMethod, mBin);
     }
 
     public void setAmount(BigDecimal amount) {
@@ -128,6 +151,10 @@ public class InstallmentsPresenter {
         return mIssuer;
     }
 
+    public CardInformation getCardInformation() {
+        return mCardInfo;
+    }
+
     public void validateActivityParameters() throws IllegalStateException {
         if (mAmount == null || mSite == null) {
             mView.onInvalidStart("amount or site is null");
@@ -147,7 +174,7 @@ public class InstallmentsPresenter {
     }
 
     public boolean isCardInfoAvailable() {
-        return mToken != null && mPaymentMethod != null;
+        return mCardInfo != null && mPaymentMethod != null;
     }
 
     public void initializeMercadoPago() {

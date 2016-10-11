@@ -267,6 +267,11 @@ public class InstallmentsActivityTest {
         validStartIntent.putExtra("card", JsonUtil.getInstance().toJson(card));
 
         mTestRule.launchActivity(validStartIntent);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+
+        }
 
         onView(withId(R.id.mpsdkCardNumberTextView)).check(matches(withText(containsString(card.getLastFourDigits()))));
 

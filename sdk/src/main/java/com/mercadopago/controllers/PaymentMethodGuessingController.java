@@ -1,6 +1,7 @@
 package com.mercadopago.controllers;
 
 import com.mercadopago.core.MercadoPago;
+import com.mercadopago.model.CardInformation;
 import com.mercadopago.model.CardNumber;
 import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.Setting;
@@ -90,5 +91,16 @@ public class PaymentMethodGuessingController {
         return setting;
     }
 
+    public static Integer getCardNumberLength(PaymentMethod paymentMethod, String bin) {
+        if (paymentMethod == null) {
+            return CardInformation.CARD_NUMBER_MAX_LENGTH;
+        }
+        Setting setting = PaymentMethodGuessingController.getSettingByPaymentMethodAndBin(paymentMethod, bin);
+        int cardNumberLength = CardInformation.CARD_NUMBER_MAX_LENGTH;
+        if (setting != null) {
+            cardNumberLength = setting.getCardNumber().getLength();
+        }
+        return cardNumberLength;
+    }
 
 }
