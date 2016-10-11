@@ -9,7 +9,7 @@ import com.mercadopago.uicontrollers.CustomViewController;
  */
 
 public interface FrontCardViewController extends CustomViewController {
-    void decorateCardBorder(int borderColor);
+//    void decorateCardBorder(int borderColor);
     void setPaymentMethod(PaymentMethod paymentMethod);
     void setSize(String size);
     void setCardNumberLength(int cardNumberLength);

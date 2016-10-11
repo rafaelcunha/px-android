@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="@dimen/mpsdk_card_size_extra_big_height"
     android:layout_width="@dimen/mpsdk_card_size_extra_big_width">
+
     <FrameLayout
         android:id="@+id/mpsdkCardFrontFragment"
         android:layout_height="match_parent"

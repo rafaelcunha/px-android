@@ -125,12 +125,12 @@ public class FrontCardView implements FrontCardViewController {
         return mView;
     }
 
-    @Override
-    public void decorateCardBorder(int borderColor) {
-        GradientDrawable cardShadowRounded = (GradientDrawable) ContextCompat.getDrawable(mContext, R.drawable.mpsdk_card_shadow_rounded);
-        cardShadowRounded.setStroke(ScaleUtil.getPxFromDp(6, mContext), borderColor);
-        mCardBorder.setImageDrawable(cardShadowRounded);
-    }
+//    @Override
+//    public void decorateCardBorder(int borderColor) {
+//        GradientDrawable cardShadowRounded = (GradientDrawable) ContextCompat.getDrawable(mContext, R.drawable.mpsdk_card_shadow_rounded);
+//        cardShadowRounded.setStroke(ScaleUtil.getPxFromDp(6, mContext), borderColor);
+//        mCardBorder.setImageDrawable(cardShadowRounded);
+//    }
 
     @Override
     public void draw() {

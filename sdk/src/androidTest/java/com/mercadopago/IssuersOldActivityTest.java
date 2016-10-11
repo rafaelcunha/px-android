@@ -59,10 +59,10 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class IssuersActivityTest {
+public class IssuersOldActivityTest {
 
     @Rule
-    public ActivityTestRule<IssuersActivity> mTestRule = new ActivityTestRule<>(IssuersActivity.class, true, false);
+    public ActivityTestRule<IssuersOldActivity> mTestRule = new ActivityTestRule<>(IssuersOldActivity.class, true, false);
     public Intent validStartIntent;
 
     private String mMerchantPublicKey;
@@ -106,7 +106,7 @@ public class IssuersActivityTest {
         Type listType = new TypeToken<List<Issuer>>(){}.getType();
         List<Issuer> issuerList = JsonUtil.getInstance().getGson().fromJson(issuers, listType);
         mFakeAPI.addResponseToQueue(issuerList, 200, "");
-        IssuersActivity activity = mTestRule.launchActivity(validStartIntent);
+        IssuersOldActivity activity = mTestRule.launchActivity(validStartIntent);
         assertEquals(activity.mPublicKey, mMerchantPublicKey);
         assertEquals(activity.mCurrentPaymentMethod.getId(), mPaymentMethod.getId());
     }

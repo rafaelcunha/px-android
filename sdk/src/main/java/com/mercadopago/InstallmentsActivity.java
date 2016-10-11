@@ -253,7 +253,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     private void decorateNormal() {
         ColorsUtil.decorateNormalToolbar(mNormalToolbar, mDecorationPreference, mAppBar,
                 mCollapsingToolbar, getSupportActionBar(), this);
-        mFrontCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
+//        mFrontCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
     }
 
     private void initializeAdapter() {
