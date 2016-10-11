@@ -68,7 +68,6 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     protected FrontCardView mFrontCardView;
 
     @Override
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (mPresenter == null) {
@@ -189,7 +188,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         } else {
             mCollapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.mpsdkCollapsingToolbar);
             mAppBar = (AppBarLayout) findViewById(R.id.mpsdkInstallmentesAppBar);
-            mCardContainer = (FrameLayout) findViewById(R.id.mpsdkActivityInstallmentsCardContainer);
+            mCardContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardContainer);
             mNormalToolbar = (Toolbar) findViewById(R.id.mpsdkRegularToolbar);
             mNormalToolbar.setVisibility(View.VISIBLE);
         }
@@ -265,12 +264,12 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         view.setAdapter(adapter);
         view.setLayoutManager(new LinearLayoutManager(this));
         view.addOnItemTouchListener(new RecyclerItemClickListener(this,
-                new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        mPresenter.onItemSelected(position);
-                    }
-                }));
+            new RecyclerItemClickListener.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    mPresenter.onItemSelected(position);
+                }
+            }));
     }
 
     protected OnSelectedCallback<Integer> getDpadSelectionCallback() {

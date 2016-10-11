@@ -4,12 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="130dp"
     android:padding="10dp">
 
     <FrameLayout
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
         android:background="@drawable/mpsdk_gray_circle">
 
         <ImageView
@@ -25,6 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal"
         android:textSize="18dp"
         android:textColor="@color/mpsdk_base_text"
         app:fontStyle="regular"

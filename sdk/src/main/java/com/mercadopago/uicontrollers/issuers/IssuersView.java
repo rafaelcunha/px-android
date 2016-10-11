@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mercadopago.R;
+import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.model.Issuer;
 
 /**
@@ -14,10 +15,11 @@ import com.mercadopago.model.Issuer;
 
 public class IssuersView implements IssuersViewController {
 
+    private Issuer mIssuer;
+
     private Context mContext;
     private View mView;
-
-    private Issuer mIssuer;
+    private MPTextView mIssuerNameTextView;
 
     public IssuersView(Context context) {
         this.mContext = context;
@@ -25,7 +27,7 @@ public class IssuersView implements IssuersViewController {
 
     @Override
     public void initializeControls() {
-
+        mIssuerNameTextView = (MPTextView) mView.findViewById(R.id.mpsdkIssuerNameTextView);
     }
 
     @Override
@@ -48,5 +50,6 @@ public class IssuersView implements IssuersViewController {
     @Override
     public void drawIssuer(Issuer issuer) {
         this.mIssuer = issuer;
+        mIssuerNameTextView.setText(mIssuer.getName());
     }
 }

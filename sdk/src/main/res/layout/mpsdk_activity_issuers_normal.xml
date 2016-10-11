@@ -9,7 +9,7 @@
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/mpsdkInstallmentesAppBar"
+        android:id="@+id/mpsdkIssuersAppBar"
         android:layout_width="match_parent"
         android:layout_height="240dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
@@ -34,9 +34,11 @@
             android:gravity="center"
             android:visibility="gone"/>
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/mpsdkActivityInstallmentsView"
+            android:id="@+id/mpsdkActivityIssuersView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:descendantFocusability="afterDescendants"/>
     </FrameLayout>

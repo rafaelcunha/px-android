@@ -27,7 +27,7 @@
     <string name="mpsdk_payment_method_groups_label">Otros</string>
 
     <!-- Issuers -->
-    <string name="mpsdk_card_issuers_title">¿Cuál es tu banco?</string>
+    <string name="mpsdk_card_issuers_title">¿Quién emitió tu tarjeta?</string>
 
     <!-- Installments -->
     <string name="mpsdk_card_installments_title">¿En cuántas cuotas?</string>

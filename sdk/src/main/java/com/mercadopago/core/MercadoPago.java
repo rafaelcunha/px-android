@@ -16,6 +16,7 @@ import com.mercadopago.CustomerCardsActivity;
 import com.mercadopago.GuessingCardActivity;
 import com.mercadopago.InstallmentsActivity;
 import com.mercadopago.InstructionsActivity;
+import com.mercadopago.IssuersActivity;
 import com.mercadopago.IssuersOldActivity;
 import com.mercadopago.PaymentMethodsActivity;
 import com.mercadopago.PaymentResultActivity;
@@ -394,7 +395,7 @@ public class MercadoPago {
                                              PaymentMethod paymentMethod, Token token, Card card,
                                              List<Issuer> issuers, DecorationPreference decorationPreference) {
 
-        Intent intent = new Intent(activity, IssuersOldActivity.class);
+        Intent intent = new Intent(activity, IssuersActivity.class);
         intent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
         intent.putExtra("token", JsonUtil.getInstance().toJson(token));
         intent.putExtra("card", JsonUtil.getInstance().toJson(card));
