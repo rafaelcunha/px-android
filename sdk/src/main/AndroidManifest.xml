@@ -63,10 +63,6 @@
             android:screenOrientation="behind"
             android:theme="@style/Theme.ProcessMercadoPagoTheme.NoActionbar" />
         <activity
-            android:name=".CardVaultOldActivity"
-            android:screenOrientation="behind"
-            android:theme="@style/Theme.ProcessMercadoPagoTheme.NoActionbar" />
-        <activity
             android:name=".CardVaultActivity"
             android:screenOrientation="behind"
             android:theme="@style/Theme.ProcessMercadoPagoTheme.NoActionbar" />

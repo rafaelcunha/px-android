@@ -10,7 +10,6 @@ import com.mercadopago.BankDealsActivity;
 import com.mercadopago.BuildConfig;
 import com.mercadopago.CallForAuthorizeActivity;
 import com.mercadopago.CardVaultActivity;
-import com.mercadopago.CardVaultOldActivity;
 import com.mercadopago.CheckoutActivity;
 import com.mercadopago.CongratsActivity;
 import com.mercadopago.CustomerCardsActivity;

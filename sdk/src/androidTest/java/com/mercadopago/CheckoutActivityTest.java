@@ -437,14 +437,14 @@ public class CheckoutActivityTest {
         paymentMethodSelectionResult.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, paymentMethodSelectionResult);
 
-        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(result);
+        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(result);
 
         //Launch activity
         mTestRule.launchActivity(validStartIntent);
 
         onView(withId(R.id.mpsdkPaymentMethodLayout)).perform(click());
 
-        intended(hasComponent(CardVaultOldActivity.class.getName()), times(2));
+        intended(hasComponent(CardVaultActivity.class.getName()), times(2));
     }
 
     // VALIDATIONS TESTS
@@ -565,7 +565,7 @@ public class CheckoutActivityTest {
         guessingFormResultIntent.putExtra("token", JsonUtil.getInstance().toJson(token));
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, guessingFormResultIntent);
 
-        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(result);
+        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(result);
 
         //perform actions
         onView(withId(R.id.mpsdkGroupsList)).perform(
@@ -599,7 +599,7 @@ public class CheckoutActivityTest {
         paymentMethodSelectionResult.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, paymentMethodSelectionResult);
 
-        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(result);
+        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(result);
 
         mTestRule.launchActivity(validStartIntent);
 
@@ -895,7 +895,6 @@ public class CheckoutActivityTest {
     }
 
     //CARD PAYMENT METHOD TESTS
-
     @Test
     public void onCardPaymentMethodSelectedShowPaymentMethodAndInstallmentsWithRate() {
         //Prepare next activity result
@@ -925,8 +924,8 @@ public class CheckoutActivityTest {
         //Data to assert
         String paymentMethodDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + token.getLastFourDigits();
         Bitmap bitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.visa)).getBitmap();
-        String payerCostDescription = "3 " + mTestRule.getActivity().getString(R.string.mpsdk_installments_of) + " $ 39 05";
-        String totalAmountText = "( $ 117 17 )";
+        String payerCostDescription = "3 " + mTestRule.getActivity().getString(R.string.mpsdk_installments_by) + " $ 39 05";
+        String totalAmountText = "($ 117 17)";
 
         //Assertions
 
@@ -965,7 +964,7 @@ public class CheckoutActivityTest {
         //Data to assert
         String paymentMethodDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + token.getLastFourDigits();
         Bitmap bitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.visa)).getBitmap();
-        String payerCostDescription = "3 " + mTestRule.getActivity().getString(R.string.mpsdk_installments_of) + " $ 333 33";
+        String payerCostDescription = "3 " + mTestRule.getActivity().getString(R.string.mpsdk_installments_by) + " $ 333 33";
         String noInterestText = mTestRule.getActivity().getString(R.string.mpsdk_zero_rate);
 
         //Assertions
@@ -1045,7 +1044,7 @@ public class CheckoutActivityTest {
         //Before payer cost change
         String paymentMethodDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + token.getLastFourDigits();
         Bitmap bitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.visa)).getBitmap();
-        String payerCostDescription = "3 " + mTestRule.getActivity().getString(R.string.mpsdk_installments_of) + " $ 333 33";
+        String payerCostDescription = "3 " + mTestRule.getActivity().getString(R.string.mpsdk_installments_by) + " $ 333 33";
         String noInterestText = mTestRule.getActivity().getString(R.string.mpsdk_zero_rate);
 
         onView(withId(R.id.mpsdkPaymentMethodLayout)).check(matches(withAnyChildText(paymentMethodDescription)));
@@ -1059,8 +1058,8 @@ public class CheckoutActivityTest {
         //After payer cost change
         paymentMethodDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + token.getLastFourDigits();
         bitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.visa)).getBitmap();
-        payerCostDescription = "3 " + mTestRule.getActivity().getString(R.string.mpsdk_installments_of) + " $ 39 05";
-        String totalAmountText = "( $ 117 17 )";
+        payerCostDescription = "3 " + mTestRule.getActivity().getString(R.string.mpsdk_installments_by) + " $ 39 05";
+        String totalAmountText = "($ 117 17)";
 
         onView(withId(R.id.mpsdkPaymentMethodLayout)).check(matches(withAnyChildText(paymentMethodDescription)));
         onView(withId(R.id.mpsdkPaymentMethodLayout)).check(matches(withAnyChildImage(bitmap)));
@@ -1098,7 +1097,7 @@ public class CheckoutActivityTest {
         //Before installment screen started
         String paymentMethodDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + token.getLastFourDigits();
         Bitmap bitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.visa)).getBitmap();
-        String payerCostDescription = "3 " + mTestRule.getActivity().getString(R.string.mpsdk_installments_of) + " $ 333 33";
+        String payerCostDescription = "3 " + mTestRule.getActivity().getString(R.string.mpsdk_installments_by) + " $ 333 33";
         String noInterestText = mTestRule.getActivity().getString(R.string.mpsdk_zero_rate);
 
         onView(withId(R.id.mpsdkPaymentMethodLayout)).check(matches(withAnyChildText(paymentMethodDescription)));
@@ -1331,7 +1330,7 @@ public class CheckoutActivityTest {
         mFakeAPI.addResponseToQueue(customer, 200, "");
 
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, new Intent());
-        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(result);
+        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(result);
 
         Intent paymentVaultResultIntent = new Intent();
         final PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
@@ -1520,7 +1519,7 @@ public class CheckoutActivityTest {
 
         onView(withId(R.id.mpsdkPayButton)).perform(click());
 
-        intended(hasComponent(CardVaultOldActivity.class.getName()));
+        intended(hasComponent(CardVaultActivity.class.getName()));
     }
     
     @Test
@@ -1565,7 +1564,7 @@ public class CheckoutActivityTest {
         cardVaultResultIntent.putExtra("token", JsonUtil.getInstance().toJson(token));
         Instrumentation.ActivityResult cardVaultActivityResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, cardVaultResultIntent);
 
-        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(cardVaultActivityResult);
+        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(cardVaultActivityResult);
 
         mTestRule.launchActivity(validStartIntent);
 
@@ -1615,7 +1614,7 @@ public class CheckoutActivityTest {
         cardVaultResultIntent.putExtra("token", JsonUtil.getInstance().toJson(token));
         Instrumentation.ActivityResult cardVaultActivityResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, cardVaultResultIntent);
 
-        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(cardVaultActivityResult);
+        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(cardVaultActivityResult);
 
         mTestRule.launchActivity(validStartIntent);
 
