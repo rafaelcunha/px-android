@@ -471,5 +471,4 @@ public class CardVaultActivityTest {
         intended(hasComponent(InstallmentsActivity.class.getName()));
     }
 
-
 }

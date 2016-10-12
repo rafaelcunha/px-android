@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface CardVaultActivityView {
     void onValidStart();
-    void onInvalidStart(String message) throws IllegalStateException;
+    void onInvalidStart(String message);
     void finishWithResult();
     void startErrorView(String message, String errorDetail);
     void startErrorView(String message);

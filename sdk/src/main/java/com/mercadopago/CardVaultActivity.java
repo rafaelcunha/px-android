@@ -130,8 +130,10 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
     }
 
     @Override
-    public void onInvalidStart(String message) throws IllegalStateException {
-        throw new IllegalStateException();
+    public void onInvalidStart(String message) {
+        Intent returnIntent = new Intent();
+        setResult(RESULT_CANCELED, returnIntent);
+        finish();
     }
 
     private void initializeViews() {
