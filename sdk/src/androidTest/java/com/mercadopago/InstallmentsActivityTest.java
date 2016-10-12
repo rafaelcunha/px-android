@@ -6,8 +6,10 @@ import android.os.Build;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.test.suitebuilder.annotation.LargeTest;
 
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.constants.Sites;
@@ -32,6 +34,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -58,6 +61,8 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by vaserber on 7/12/16.
  */
+@RunWith(AndroidJUnit4.class)
+@LargeTest
 public class InstallmentsActivityTest {
 
     @Rule
@@ -236,6 +241,28 @@ public class InstallmentsActivityTest {
     }
 
     @Test
+    public void initializeCardWhenCardSet() {
+        String payerCosts = StaticMock.getPayerCostsJson();
+        Type listType = new TypeToken<List<PayerCost>>(){}.getType();
+        List<PayerCost> payerCostList = JsonUtil.getInstance().getGson().fromJson(payerCosts, listType);
+        //Visa
+        Card card = StaticMock.getCards().get(1);
+
+        validStartIntent.putExtra("payerCosts", JsonUtil.getInstance().toJson(payerCostList));
+        validStartIntent.putExtra("card", JsonUtil.getInstance().toJson(card));
+
+        mTestRule.launchActivity(validStartIntent);
+
+        onView(withId(R.id.mpsdkCardNumberTextView)).check(matches(withText(containsString(card.getLastFourDigits()))));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            onView(withId(R.id.mpsdkCardLollipopImageView)).check(matches(isDisplayed()));
+        } else {
+            onView(withId(R.id.mpsdkCardLowApiImageView)).check(matches(isDisplayed()));
+        }
+    }
+
+    @Test
     public void initializeCardWhenToken() {
         String payerCosts = StaticMock.getPayerCostsJson();
         Type listType = new TypeToken<List<PayerCost>>(){}.getType();
@@ -248,33 +275,6 @@ public class InstallmentsActivityTest {
         mTestRule.launchActivity(validStartIntent);
 
         onView(withId(R.id.mpsdkCardNumberTextView)).check(matches(withText(containsString(token.getLastFourDigits()))));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            onView(withId(R.id.mpsdkCardLollipopImageView)).check(matches(isDisplayed()));
-        } else {
-            onView(withId(R.id.mpsdkCardLowApiImageView)).check(matches(isDisplayed()));
-        }
-    }
-
-    @Test
-    public void initializeCardWhenCardSet() {
-        String payerCosts = StaticMock.getPayerCostsJson();
-        Type listType = new TypeToken<List<PayerCost>>(){}.getType();
-        List<PayerCost> payerCostList = JsonUtil.getInstance().getGson().fromJson(payerCosts, listType);
-        //Visa
-        Card card = StaticMock.getCards().get(1);
-
-        validStartIntent.putExtra("payerCosts", JsonUtil.getInstance().toJson(payerCostList));
-        validStartIntent.putExtra("card", JsonUtil.getInstance().toJson(card));
-
-        mTestRule.launchActivity(validStartIntent);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-
-        }
-
-        onView(withId(R.id.mpsdkCardNumberTextView)).check(matches(withText(containsString(card.getLastFourDigits()))));
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             onView(withId(R.id.mpsdkCardLollipopImageView)).check(matches(isDisplayed()));
         } else {

@@ -208,7 +208,6 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
             }));
     }
 
-
     @Override
     public void initializeIssuers(List<Issuer> issuersList) {
         mIssuersAdapter.addResults(issuersList);
