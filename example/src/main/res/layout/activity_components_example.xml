@@ -124,6 +124,14 @@
                 android:onClick="onCustomerCardSelectionClicked"
                 style="@style/mpsdk_button_normal"/>
 
+            <com.mercadopago.customviews.MPButton
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/mpsdk_button_height"
+                android:layout_marginTop="15dp"
+                android:text="Reloj regresivo"
+                android:onClick="onClockClicked"
+                style="@style/mpsdk_button_normal"/>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

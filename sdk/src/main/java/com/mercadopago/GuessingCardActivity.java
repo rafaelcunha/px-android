@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.Toolbar;
@@ -66,6 +67,7 @@ import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
 import com.mercadopago.util.LayoutUtil;
 import com.mercadopago.util.MPAnimationUtils;
+import com.mercadopago.views.CountDownClockView;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -121,6 +123,9 @@ public class GuessingCardActivity extends FrontCardActivity {
     private LinearLayout mCardIdNumberInput;
     private View mFrontView;
     private View mBackView;
+
+    //TODO clock
+    private TextView mClockView;
 
     //Card container
     private CardFrontFragment mFrontFragment;
@@ -425,7 +430,13 @@ public class GuessingCardActivity extends FrontCardActivity {
         openKeyboard(mCardNumberEditText);
         mCurrentEditingEditText = CardInterface.CARD_NUMBER_INPUT;
 
-        getBankDealsAsync();
+        //TODO Clock
+        if (true) { //TODO setClockTime == null
+            showCountDownClock();
+        } else {
+            getBankDealsAsync();
+        }
+
 
         if (mPaymentMethodList == null) {
             getPaymentMethodsAsync();
@@ -1019,6 +1030,17 @@ public class GuessingCardActivity extends FrontCardActivity {
                 }
             }
         });
+    }
+
+    //TODO clock
+    protected void showCountDownClock(){
+        CountDownClockView mCountDownClockView = new CountDownClockView();
+
+        mCountDownClockView.setMillisInFuture(3000L);
+        mCountDownClockView.setCountDownInterval(1000L);
+        mCountDownClockView.inflateInParent(mToolbarButton, true);
+        mCountDownClockView.initializeControls();
+        mCountDownClockView.draw();
     }
 
     protected void getBankDealsAsync() {

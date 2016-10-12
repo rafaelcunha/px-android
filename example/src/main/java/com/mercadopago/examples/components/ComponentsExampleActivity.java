@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.mercadopago.views.CountDownClock;
 import com.mercadopago.callbacks.Callback;
 import com.mercadopago.constants.PaymentMethods;
 import com.mercadopago.constants.PaymentTypes;
@@ -195,6 +196,13 @@ public class ComponentsExampleActivity extends AppCompatActivity {
                         mProgressBar.setVisibility(View.GONE);
                     }
                 });
+    }
+
+    //TODO traducir los strings del layout y ponerlo como recurso
+    public void onClockClicked(View view){
+        Intent intent = new Intent(this, CountDownClock.class);
+        startActivity(intent);
+
     }
 
     @Override
