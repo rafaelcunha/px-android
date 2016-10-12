@@ -193,5 +193,4 @@
     <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
         <item name="android:textSize">19dp</item>
     </style>
-
 </resources>

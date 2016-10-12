@@ -257,7 +257,7 @@ public class PaymentVaultActivityTest {
         onView(withId(R.id.mpsdkGroupsList)).perform(
                 actionOnItemAtPosition(0, click()));
 
-        intended(allOf(hasComponent(CardVaultActivity.class.getName()),
+        intended(allOf(hasComponent(CardVaultOldActivity.class.getName()),
                 hasExtra("publicKey", "1234")));
     }
 
@@ -626,7 +626,7 @@ public class PaymentVaultActivityTest {
 
         onView(withId(R.id.mpsdkSavedCards)).perform(actionOnItemAtPosition(0, click()));
 
-        intended(hasComponent(CardVaultActivity.class.getName()));
+        intended(hasComponent(CardVaultOldActivity.class.getName()));
     }
 
     @Test
@@ -670,7 +670,7 @@ public class PaymentVaultActivityTest {
         mFakeAPI.addResponseToQueue(customer, 200, "");
 
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, new Intent());
-        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(result);
+        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(result);
 
 
         validStartIntent.putExtra("merchantBaseUrl", "http://www.api.merchant.com");
@@ -730,7 +730,7 @@ public class PaymentVaultActivityTest {
         onView(withId(R.id.mpsdkGroupsList)).check(matches(isDisplayed()));
     }
 
-    //From CardVaultActivity
+    //From CardVaultOldActivity
 
     @Test
     public void whenReceivedResponseFromCardVaultFinishWithResult() {
@@ -752,7 +752,7 @@ public class PaymentVaultActivityTest {
         guessingFormResultIntent.putExtra("token", JsonUtil.getInstance().toJson(token));
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, guessingFormResultIntent);
 
-        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(result);
+        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(result);
 
         onView(withId(R.id.mpsdkGroupsList)).perform(
                 actionOnItemAtPosition(0, click()));
@@ -774,7 +774,7 @@ public class PaymentVaultActivityTest {
 
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, new Intent());
 
-        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(result);
+        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(result);
 
         onView(withId(R.id.mpsdkGroupsList)).perform(
                 actionOnItemAtPosition(0, click()));
@@ -789,7 +789,7 @@ public class PaymentVaultActivityTest {
         mFakeAPI.addResponseToQueue(paymentMethodSearch, 200, "");
 
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, new Intent());
-        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(result);
+        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(result);
 
         mTestRule.launchActivity(validStartIntent);
 
@@ -807,7 +807,7 @@ public class PaymentVaultActivityTest {
         intent.putExtra("mpException", JsonUtil.getInstance().toJson(mpException));
 
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, intent);
-        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(result);
+        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(result);
 
         mTestRule.launchActivity(validStartIntent);
 
@@ -939,7 +939,7 @@ public class PaymentVaultActivityTest {
         PaymentMethodSearch paymentMethodSearch = StaticMock.getPaymentMethodSearchWithUniqueItemCreditCard();
         mFakeAPI.addResponseToQueue(paymentMethodSearch, 200, "");
         mTestRule.launchActivity(validStartIntent);
-        intended(hasComponent(CardVaultActivity.class.getName()));
+        intended(hasComponent(CardVaultOldActivity.class.getName()));
     }
 
     @Test
@@ -958,7 +958,7 @@ public class PaymentVaultActivityTest {
 
         mTestRule.launchActivity(validStartIntent);
 
-        intended(hasComponent(CardVaultActivity.class.getName()));
+        intended(hasComponent(CardVaultOldActivity.class.getName()));
     }
 
 }

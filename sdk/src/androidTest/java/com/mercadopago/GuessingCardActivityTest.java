@@ -1027,7 +1027,7 @@ public class GuessingCardActivityTest {
         onView(withId(R.id.mpsdkCardIdentificationNumber)).perform(typeText(StaticMock.DUMMY_IDENTIFICATION_NUMBER));
         onView(withId(R.id.mpsdkNextButton)).perform(click());
 
-        intended(hasComponent(IssuersOldActivity.class.getName()));
+        intended(hasComponent(IssuersActivity.class.getName()));
 
         onView(withId(R.id.mpsdkActivityIssuersView)).perform(actionOnItemAtPosition(0, click()));
 
@@ -1358,7 +1358,7 @@ public class GuessingCardActivityTest {
 
         onView(withId(R.id.mpsdkErrorRetry)).perform(click());
 
-        intended(hasComponent(IssuersOldActivity.class.getName()));
+        intended(hasComponent(IssuersActivity.class.getName()));
     }
 
     @Test

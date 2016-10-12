@@ -38,11 +38,11 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by vaserber on 7/29/16.
  */
-public class CardVaultActivityTest {
+public class CardVaultOldActivityTest {
 
 
     @Rule
-    public ActivityTestRule<CardVaultActivity> mTestRule = new ActivityTestRule<>(CardVaultActivity.class, true, false);
+    public ActivityTestRule<CardVaultOldActivity> mTestRule = new ActivityTestRule<>(CardVaultOldActivity.class, true, false);
     public Intent validStartIntent;
 
     private String mMerchantPublicKey;
@@ -81,7 +81,7 @@ public class CardVaultActivityTest {
     @Test
     public void onInstallmentsEnabledMissingAmountAndSiteFinishActivity() {
         validStartIntent.putExtra("installmentsEnabled", true);
-        CardVaultActivity activity = mTestRule.launchActivity(validStartIntent);
+        CardVaultOldActivity activity = mTestRule.launchActivity(validStartIntent);
 
         assertTrue(activity.isFinishing());
     }
@@ -207,7 +207,7 @@ public class CardVaultActivityTest {
         Instrumentation.ActivityResult installmentsResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, installmentsIntent);
         intending(hasComponent(InstallmentsActivity.class.getName())).respondWith(installmentsResult);
 
-        CardVaultActivity activity = mTestRule.launchActivity(validStartIntent);
+        CardVaultOldActivity activity = mTestRule.launchActivity(validStartIntent);
 
         assertTrue(activity.isFinishing());
     }
@@ -243,7 +243,7 @@ public class CardVaultActivityTest {
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, guessingResultIntent);
         intending(hasComponent(GuessingCardActivity.class.getName())).respondWith(result);
 
-        CardVaultActivity activity = mTestRule.launchActivity(validStartIntent);
+        CardVaultOldActivity activity = mTestRule.launchActivity(validStartIntent);
 
         intended(hasComponent(GuessingCardActivity.class.getName()));
 
@@ -282,7 +282,7 @@ public class CardVaultActivityTest {
         Instrumentation.ActivityResult installmentsResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, installmentsIntent);
         intending(hasComponent(InstallmentsActivity.class.getName())).respondWith(installmentsResult);
 
-        CardVaultActivity activity = mTestRule.launchActivity(validStartIntent);
+        CardVaultOldActivity activity = mTestRule.launchActivity(validStartIntent);
 
         intended(hasComponent(InstallmentsActivity.class.getName()));
 
@@ -341,7 +341,7 @@ public class CardVaultActivityTest {
         List<Installment> installmentList = JsonUtil.getInstance().getGson().fromJson(installments, listType);
         mFakeAPI.addResponseToQueue(installmentList, 200, "");
 
-        CardVaultActivity activity = mTestRule.launchActivity(validStartIntent);
+        CardVaultOldActivity activity = mTestRule.launchActivity(validStartIntent);
 
         assertEquals(installmentList.get(0).getPayerCosts().get(0).getInstallments(), activity.mPayerCost.getInstallments());
         assertTrue(activity.isFinishing());
@@ -425,7 +425,7 @@ public class CardVaultActivityTest {
         Instrumentation.ActivityResult installmentsResult = new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, installmentsIntent);
         intending(hasComponent(InstallmentsActivity.class.getName())).respondWith(installmentsResult);
 
-        CardVaultActivity activity = mTestRule.launchActivity(validStartIntent);
+        CardVaultOldActivity activity = mTestRule.launchActivity(validStartIntent);
 
         intended(hasComponent(InstallmentsActivity.class.getName()));
 

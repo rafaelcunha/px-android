@@ -437,14 +437,14 @@ public class CheckoutActivityTest {
         paymentMethodSelectionResult.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, paymentMethodSelectionResult);
 
-        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(result);
+        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(result);
 
         //Launch activity
         mTestRule.launchActivity(validStartIntent);
 
         onView(withId(R.id.mpsdkPaymentMethodLayout)).perform(click());
 
-        intended(hasComponent(CardVaultActivity.class.getName()), times(2));
+        intended(hasComponent(CardVaultOldActivity.class.getName()), times(2));
     }
 
     // VALIDATIONS TESTS
@@ -565,7 +565,7 @@ public class CheckoutActivityTest {
         guessingFormResultIntent.putExtra("token", JsonUtil.getInstance().toJson(token));
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, guessingFormResultIntent);
 
-        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(result);
+        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(result);
 
         //perform actions
         onView(withId(R.id.mpsdkGroupsList)).perform(
@@ -599,7 +599,7 @@ public class CheckoutActivityTest {
         paymentMethodSelectionResult.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, paymentMethodSelectionResult);
 
-        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(result);
+        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(result);
 
         mTestRule.launchActivity(validStartIntent);
 
@@ -1331,7 +1331,7 @@ public class CheckoutActivityTest {
         mFakeAPI.addResponseToQueue(customer, 200, "");
 
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, new Intent());
-        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(result);
+        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(result);
 
         Intent paymentVaultResultIntent = new Intent();
         final PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
@@ -1520,7 +1520,7 @@ public class CheckoutActivityTest {
 
         onView(withId(R.id.mpsdkPayButton)).perform(click());
 
-        intended(hasComponent(CardVaultActivity.class.getName()));
+        intended(hasComponent(CardVaultOldActivity.class.getName()));
     }
     
     @Test
@@ -1565,7 +1565,7 @@ public class CheckoutActivityTest {
         cardVaultResultIntent.putExtra("token", JsonUtil.getInstance().toJson(token));
         Instrumentation.ActivityResult cardVaultActivityResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, cardVaultResultIntent);
 
-        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(cardVaultActivityResult);
+        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(cardVaultActivityResult);
 
         mTestRule.launchActivity(validStartIntent);
 
@@ -1615,7 +1615,7 @@ public class CheckoutActivityTest {
         cardVaultResultIntent.putExtra("token", JsonUtil.getInstance().toJson(token));
         Instrumentation.ActivityResult cardVaultActivityResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, cardVaultResultIntent);
 
-        intending(hasComponent(CardVaultActivity.class.getName())).respondWith(cardVaultActivityResult);
+        intending(hasComponent(CardVaultOldActivity.class.getName())).respondWith(cardVaultActivityResult);
 
         mTestRule.launchActivity(validStartIntent);
 
