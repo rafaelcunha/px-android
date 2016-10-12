@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -30,6 +31,7 @@ import com.mercadopago.uicontrollers.card.FrontCardView;
 import com.mercadopago.util.ApiUtil;
 import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
+import com.mercadopago.util.ScaleUtil;
 import com.mercadopago.views.CardVaultActivityView;
 
 import java.lang.reflect.Type;
@@ -45,10 +47,12 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
     protected Activity mActivity;
     protected CardVaultPresenter mPresenter;
     protected DecorationPreference mDecorationPreference;
+    private boolean mLowResActive;
 
     //View controls
     private ProgressBar mProgressBar;
     private FrameLayout mCardContainer;
+    private FrameLayout mCardBackground;
     protected FrontCardView mFrontCardView;
 
     @Override
@@ -120,6 +124,8 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
     public void onValidStart() {
         mPresenter.initializeMercadoPago();
         initializeViews();
+        analizeLowRes();
+        decorate();
         startGuessingCardActivity();
     }
 
@@ -131,7 +137,24 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
     private void initializeViews() {
         mProgressBar = (ProgressBar) findViewById(R.id.mpsdkProgressLayout);
         mCardContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardContainer);
+        mCardBackground = (FrameLayout) findViewById(R.id.mpsdkActivityBackground);
         mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void analizeLowRes() {
+        mLowResActive = ScaleUtil.isLowRes(this);
+    }
+
+    private void decorate() {
+        if (mLowResActive) {
+            mCardBackground.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.mpsdk_white));
+        } else if (isDecorationEnabled()) {
+            mCardBackground.setBackgroundColor(mDecorationPreference.getLighterColor());
+        }
+    }
+
+    private boolean isDecorationEnabled() {
+        return mDecorationPreference != null && mDecorationPreference.hasColors();
     }
 
     private void startGuessingCardActivity() {
@@ -226,7 +249,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
                 .setSite(mPresenter.getSite())
                 .setDecorationPreference(mDecorationPreference)
                 .startInstallmentsActivity();
-//        overridePendingTransition(R.anim.mpsdk_hold, R.anim.mpsdk_hold);
         overridePendingTransition(R.anim.mpsdk_slide_right_to_left_in, R.anim.mpsdk_slide_right_to_left_out);
     }
 
@@ -262,15 +284,28 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
     }
 
     private void initializeCardView() {
-        mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);
-        mFrontCardView.setSize(CardRepresentationModes.MEDIUM_SIZE);
-        mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
-        if (mPresenter.getCardInformation() != null) {
-            mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
-            mFrontCardView.setLastFourDigits(mPresenter.getCardInformation().getLastFourDigits());
+        if (canShowCard()) {
+            mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);
+            mFrontCardView.setSize(CardRepresentationModes.MEDIUM_SIZE);
+            mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
+            if (mPresenter.getCardInformation() != null) {
+                mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
+                mFrontCardView.setLastFourDigits(mPresenter.getCardInformation().getLastFourDigits());
+            }
+            mFrontCardView.inflateInParent(mCardContainer, true);
+            mFrontCardView.initializeControls();
+            mFrontCardView.draw();
+            decorateCardView();
         }
-        mFrontCardView.inflateInParent(mCardContainer, true);
-        mFrontCardView.initializeControls();
-        mFrontCardView.draw();
+    }
+
+    private boolean canShowCard() {
+        return !mLowResActive;
+    }
+
+    private void decorateCardView() {
+        if (isDecorationEnabled()) {
+            mFrontCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
+        }
     }
 }

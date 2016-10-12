@@ -5,9 +5,8 @@
     android:orientation="vertical"
     android:background="@color/mpsdk_white">
 
-    <include layout="@layout/mpsdk_regular_toolbar"/>
-
     <FrameLayout
+        android:id="@+id/mpsdkActivityBackground"
         android:layout_width="match_parent"
         android:layout_height="216dp"
         android:background="@color/mpsdk_background_blue">
