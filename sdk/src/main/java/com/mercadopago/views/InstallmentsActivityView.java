@@ -16,6 +16,7 @@ public interface InstallmentsActivityView {
     void startErrorView(String message, String errorDetail);
     void showLoadingView();
     void stopLoadingView();
+    void showHeader();
     void showApiExceptionError(ApiException exception);
     void initializeInstallments(List<PayerCost> payerCostList);
 }

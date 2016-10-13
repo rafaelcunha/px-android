@@ -149,10 +149,6 @@ public class CardVaultPresenter {
         return mSite;
     }
 
-    public Boolean getInstallmentsEnabled() {
-        return mInstallmentsEnabled;
-    }
-
     public Card getCard() {
         return mCard;
     }
@@ -186,6 +182,14 @@ public class CardVaultPresenter {
         return PaymentMethodGuessingController.getCardNumberLength(mPaymentMethod, mBin);
     }
 
+    public void checkStartInstallmentsActivity() {
+        if (installmentsRequired()) {
+            mView.startInstallmentsActivity();
+        } else {
+            mView.finishWithResult();
+        }
+    }
+
     private boolean installmentsRequired() {
         return mInstallmentsEnabled && (mPaymentRecovery == null || !mPaymentRecovery.isTokenRecoverable());
     }
@@ -211,64 +215,6 @@ public class CardVaultPresenter {
     public void recoverFromFailure() {
         if (mFailureRecovery != null) {
             mFailureRecovery.recover();
-        }
-    }
-
-    public void checkStartInstallmentsActivity() {
-        if (installmentsRequired()) {
-            getInstallmentsAsync();
-        } else {
-            mView.finishWithResult();
-        }
-    }
-
-    private void getInstallmentsAsync() {
-        if (mPaymentMethod == null || mToken == null || mIssuer == null || mAmount == null) {
-            mView.startErrorView(mContext.getString(R.string.mpsdk_standard_error_message),
-                    "unable to get Installments");
-        } else if (mPaymentMethod.getPaymentTypeId().equals(PaymentTypes.CREDIT_CARD)) {
-            mMercadoPago.getInstallments(mToken.getFirstSixDigits(), mAmount, mIssuer.getId(), mPaymentMethod.getId(),
-                new Callback<List<Installment>>() {
-                    @Override
-                    public void success(List<Installment> installments) {
-                        if (installments.size() == 1) {
-                            resolvePayerCosts(installments.get(0).getPayerCosts());
-                        } else {
-                            mView.startErrorView(mContext.getString(R.string.mpsdk_standard_error_message));
-                        }
-                    }
-
-                    @Override
-                    public void failure(ApiException apiException) {
-                        setFailureRecovery(new FailureRecovery() {
-                            @Override
-                            public void recover() {
-                                getInstallmentsAsync();
-                            }
-                        });
-                        mView.showApiExceptionError(apiException);
-                    }
-                });
-        } else {
-            mView.finishWithResult();
-        }
-    }
-
-    private void resolvePayerCosts(List<PayerCost> payerCosts) {
-        PayerCost defaultPayerCost = mPaymentPreference.getDefaultInstallments(payerCosts);
-        if (defaultPayerCost == null) {
-            if (payerCosts.isEmpty()) {
-                mView.startErrorView(mContext.getString(R.string.mpsdk_standard_error_message),
-                        "no payer costs found at InstallmentsActivity");
-            } else if (payerCosts.size() == 1) {
-                mPayerCost = payerCosts.get(0);
-                mView.finishWithResult();
-            } else {
-                mView.startInstallmentsActivity(payerCosts);
-            }
-        } else {
-            mPayerCost = defaultPayerCost;
-            mView.finishWithResult();
         }
     }
 

@@ -7,6 +7,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.ProgressBar;
 
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.adapters.IssuersAdapter;
+import com.mercadopago.adapters.PayerCostsAdapter;
 import com.mercadopago.callbacks.OnSelectedCallback;
 import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.listeners.RecyclerItemClickListener;
@@ -193,17 +195,15 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
     }
 
     private void initializeAdapterListener(RecyclerView.Adapter adapter, RecyclerView view) {
-        int columns = 2;
         view.setAdapter(adapter);
-        view.addItemDecoration(new GridSpacingItemDecoration(columns, ScaleUtil.getPxFromDp(10, getBaseContext()), false));
-        view.setLayoutManager(new GridLayoutManager(getBaseContext(), columns));
+        view.setLayoutManager(new LinearLayoutManager(this));
         view.addOnItemTouchListener(new RecyclerItemClickListener(this,
-            new RecyclerItemClickListener.OnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    mPresenter.onItemSelected(position);
-                }
-            }));
+                new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        mPresenter.onItemSelected(position);
+                    }
+                }));
     }
 
     @Override
@@ -299,6 +299,7 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
         returnIntent.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
         setResult(RESULT_OK, returnIntent);
         finish();
+        overridePendingTransition(R.anim.mpsdk_hold, R.anim.mpsdk_hold);
     }
 
     @Override

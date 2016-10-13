@@ -168,6 +168,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mPresenter.initializeMercadoPago();
         initializeViews();
         loadViews();
+        hideHeader();
         decorate();
         initializeAdapter();
         mPresenter.loadPayerCosts();
@@ -231,6 +232,23 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
                     finish();
                 }
             });
+        }
+    }
+
+    private void hideHeader() {
+        if (mLowResActive) {
+            mLowResToolbar.setVisibility(View.GONE);
+        } else {
+            mNormalToolbar.setTitle("");
+        }
+    }
+
+    @Override
+    public void showHeader() {
+        if (mLowResActive) {
+            mLowResToolbar.setVisibility(View.VISIBLE);
+        } else {
+            mNormalToolbar.setTitle(getString(R.string.mpsdk_card_installments_title));
         }
     }
 

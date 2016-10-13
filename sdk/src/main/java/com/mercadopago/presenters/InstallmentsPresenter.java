@@ -248,6 +248,7 @@ public class InstallmentsPresenter {
         } else if (mPayerCosts.size() == 1) {
             mView.finishWithResult(payerCosts.get(0));
         } else {
+            mView.showHeader();
             mView.initializeInstallments(mPayerCosts);
         }
     }

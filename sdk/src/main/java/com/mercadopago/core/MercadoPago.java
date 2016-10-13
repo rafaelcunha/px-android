@@ -411,7 +411,7 @@ public class MercadoPago {
                                                   DecorationPreference decorationPreference, List<PaymentMethod> paymentMethodList,
                                                   PaymentRecovery paymentRecovery, Card card) {
 
-        Intent guessingCardIntent = new Intent(activity, FormCardActivity.class);
+        Intent guessingCardIntent = new Intent(activity, GuessingCardActivity.class);
         guessingCardIntent.putExtra("publicKey", key);
 
         if (requireSecurityCode != null) {

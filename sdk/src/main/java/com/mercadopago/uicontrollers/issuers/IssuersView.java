@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.mercadopago.R;
 import com.mercadopago.customviews.MPTextView;
@@ -19,7 +20,7 @@ public class IssuersView implements IssuersViewController {
 
     private Context mContext;
     private View mView;
-    private MPTextView mIssuerNameTextView;
+    private ImageView mIssuerImageView;
 
     public IssuersView(Context context) {
         this.mContext = context;
@@ -27,7 +28,7 @@ public class IssuersView implements IssuersViewController {
 
     @Override
     public void initializeControls() {
-        mIssuerNameTextView = (MPTextView) mView.findViewById(R.id.mpsdkIssuerNameTextView);
+        mIssuerImageView = (ImageView) mView.findViewById(R.id.mpsdkIssuerImageView);
     }
 
     @Override
@@ -50,6 +51,6 @@ public class IssuersView implements IssuersViewController {
     @Override
     public void drawIssuer(Issuer issuer) {
         this.mIssuer = issuer;
-        mIssuerNameTextView.setText(mIssuer.getName());
+//        mIssuerNameTextView.setText(mIssuer.getName());
     }
 }

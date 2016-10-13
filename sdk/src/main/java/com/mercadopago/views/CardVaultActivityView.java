@@ -16,5 +16,5 @@ public interface CardVaultActivityView {
     void startErrorView(String message, String errorDetail);
     void startErrorView(String message);
     void showApiExceptionError(ApiException exception);
-    void startInstallmentsActivity(final List<PayerCost> payerCosts);
+    void startInstallmentsActivity();
 }

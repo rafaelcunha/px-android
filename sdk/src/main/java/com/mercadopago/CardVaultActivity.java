@@ -47,13 +47,9 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
     protected Activity mActivity;
     protected CardVaultPresenter mPresenter;
     protected DecorationPreference mDecorationPreference;
-    private boolean mLowResActive;
 
     //View controls
     private ProgressBar mProgressBar;
-    private FrameLayout mCardContainer;
-    private FrameLayout mCardBackground;
-    protected FrontCardView mFrontCardView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,8 +120,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
     public void onValidStart() {
         mPresenter.initializeMercadoPago();
         initializeViews();
-        analizeLowRes();
-        decorate();
         startGuessingCardActivity();
     }
 
@@ -138,25 +132,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
 
     private void initializeViews() {
         mProgressBar = (ProgressBar) findViewById(R.id.mpsdkProgressLayout);
-        mCardContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardContainer);
-        mCardBackground = (FrameLayout) findViewById(R.id.mpsdkActivityBackground);
         mProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    private void analizeLowRes() {
-        mLowResActive = ScaleUtil.isLowRes(this);
-    }
-
-    private void decorate() {
-        if (mLowResActive) {
-            mCardBackground.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.mpsdk_white));
-        } else if (isDecorationEnabled()) {
-            mCardBackground.setBackgroundColor(mDecorationPreference.getLighterColor());
-        }
-    }
-
-    private boolean isDecorationEnabled() {
-        return mDecorationPreference != null && mDecorationPreference.hasColors();
     }
 
     private void startGuessingCardActivity() {
@@ -176,7 +152,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
             }
         });
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -221,7 +196,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
             mPresenter.setToken(token);
             mPresenter.setIssuer(issuer);
             mPresenter.setCardInformation();
-            initializeCardView();
             mPresenter.checkStartInstallmentsActivity();
         } else if (resultCode == RESULT_CANCELED) {
             if (mPresenter.getSite() == null) {
@@ -237,7 +211,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
     }
 
     @Override
-    public void startInstallmentsActivity(final List<PayerCost> payerCosts) {
+    public void startInstallmentsActivity() {
         new MercadoPago.StartActivityBuilder()
                 .setActivity(mActivity)
                 .setPublicKey(mPresenter.getPublicKey())
@@ -245,13 +219,12 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
                 .setAmount(mPresenter.getAmount())
                 .setToken(mPresenter.getToken())
                 .setCard(mPresenter.getCard())
-                .setPayerCosts(payerCosts)
                 .setIssuer(mPresenter.getIssuer())
                 .setPaymentPreference(mPresenter.getPaymentPreference())
                 .setSite(mPresenter.getSite())
                 .setDecorationPreference(mDecorationPreference)
                 .startInstallmentsActivity();
-        overridePendingTransition(R.anim.mpsdk_slide_right_to_left_in, R.anim.mpsdk_slide_right_to_left_out);
+        overridePendingTransition(R.anim.mpsdk_hold, R.anim.mpsdk_hold);
     }
 
     @Override
@@ -285,29 +258,4 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
         ApiUtil.showApiExceptionError(mActivity, exception);
     }
 
-    private void initializeCardView() {
-        if (canShowCard()) {
-            mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);
-            mFrontCardView.setSize(CardRepresentationModes.MEDIUM_SIZE);
-            mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
-            if (mPresenter.getCardInformation() != null) {
-                mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
-                mFrontCardView.setLastFourDigits(mPresenter.getCardInformation().getLastFourDigits());
-            }
-            mFrontCardView.inflateInParent(mCardContainer, true);
-            mFrontCardView.initializeControls();
-            mFrontCardView.draw();
-            decorateCardView();
-        }
-    }
-
-    private boolean canShowCard() {
-        return !mLowResActive;
-    }
-
-    private void decorateCardView() {
-        if (isDecorationEnabled()) {
-            mFrontCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
-        }
-    }
 }
