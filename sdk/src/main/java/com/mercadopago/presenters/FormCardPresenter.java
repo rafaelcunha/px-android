@@ -2,9 +2,11 @@ package com.mercadopago.presenters;
 
 import android.content.Context;
 
+import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.core.MercadoPago;
+import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
 import com.mercadopago.model.CardInformation;
 import com.mercadopago.model.CardToken;
@@ -15,6 +17,7 @@ import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.PaymentPreference;
 import com.mercadopago.model.PaymentRecovery;
 import com.mercadopago.model.Token;
+import com.mercadopago.util.ApiUtil;
 import com.mercadopago.views.FormCardActivityView;
 
 import java.util.List;
@@ -48,11 +51,14 @@ public class FormCardPresenter {
     private CardInformation mCardInfo;
     private String mBin;
 
+    //Card controller
+    protected PaymentMethodGuessingController mPaymentMethodGuessingController;
+
+
 //    private Issuer mSelectedIssuer;
 //    private IdentificationType mSelectedIdentificationType;
 //    private String mCardSideState;
 //    private String mCurrentEditingEditText;
-//    protected PaymentMethodGuessingController mPaymentMethodGuessingController;
 //    private boolean mIsSecurityCodeRequired;
 //    private int mCardSecurityCodeLength;
 //    private int mCardNumberLength;
@@ -201,5 +207,43 @@ public class FormCardPresenter {
 
     public Integer getCardNumberLength() {
         return PaymentMethodGuessingController.getCardNumberLength(mPaymentMethod, mBin);
+    }
+
+    protected void initializeGuessingCardNumberController() {
+        List<PaymentMethod> supportedPaymentMethods = mPaymentPreference
+                .getSupportedPaymentMethods(mPaymentMethodList);
+        mPaymentMethodGuessingController = new PaymentMethodGuessingController(
+                supportedPaymentMethods, mPaymentPreference.getDefaultPaymentTypeId(),
+                mPaymentPreference.getExcludedPaymentTypes());
+    }
+
+    protected void startGuessingForm() {
+        initializeGuessingCardNumberController();
+        mView.setCardNumberListeners(mPaymentMethodGuessingController);
+    }
+
+    public void loadPaymentMethods() {
+        getPaymentMethodsAsync();
+    }
+
+    protected void getPaymentMethodsAsync() {
+        mMercadoPago.getPaymentMethods(new Callback<List<PaymentMethod>>() {
+            @Override
+            public void success(List<PaymentMethod> paymentMethods) {
+                mPaymentMethodList = paymentMethods;
+                startGuessingForm();
+            }
+
+            @Override
+            public void failure(ApiException apiException) {
+                setFailureRecovery(new FailureRecovery() {
+                    @Override
+                    public void recover() {
+                        getPaymentMethodsAsync();
+                    }
+                });
+//                ApiUtil.showApiExceptionError(mContext, apiException);
+            }
+        });
     }
 }

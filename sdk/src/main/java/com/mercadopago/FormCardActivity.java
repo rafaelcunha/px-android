@@ -9,7 +9,12 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.google.gson.reflect.TypeToken;
+import com.mercadopago.callbacks.CardNumberEditTextCallback;
+import com.mercadopago.callbacks.PaymentMethodSelectionCallback;
+import com.mercadopago.controllers.PaymentMethodGuessingController;
+import com.mercadopago.customviews.MPEditText;
 import com.mercadopago.customviews.MPTextView;
+import com.mercadopago.listeners.card.CardNumberTextWatcher;
 import com.mercadopago.model.Card;
 import com.mercadopago.model.DecorationPreference;
 import com.mercadopago.model.Identification;
@@ -23,6 +28,7 @@ import com.mercadopago.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.uicontrollers.card.FrontCardView;
 import com.mercadopago.util.ColorsUtil;
 import com.mercadopago.util.JsonUtil;
+import com.mercadopago.util.MPCardMaskUtil;
 import com.mercadopago.util.ScaleUtil;
 import com.mercadopago.views.FormCardActivityView;
 
@@ -52,6 +58,9 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     private FrameLayout mCardBackground;
     private FrameLayout mCardContainer;
     private FrontCardView mFrontCardView;
+
+    //Input Views
+    private MPEditText mCardNumberEditText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -148,21 +157,21 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         initializeViews();
         loadViews();
         decorate();
-//        mPresenter.loadIssuers();
+        mPresenter.loadPaymentMethods();
     }
 
     private void initializeViews() {
         if (mLowResActive) {
             mLowResToolbar = (Toolbar) findViewById(R.id.mpsdkLowResToolbar);
             mLowResTitleToolbar = (MPTextView) findViewById(R.id.mpsdkTitle);
-            mBankDealsTextView = (MPTextView) findViewById(R.id.mpsdkBankDealsText);
             mLowResToolbar.setVisibility(View.VISIBLE);
         } else {
             mNormalToolbar = (Toolbar) findViewById(R.id.mpsdkTransparentToolbar);
-            mBankDealsTextView = (MPTextView) findViewById(R.id.mpsdkBankDealsText);
             mCardBackground = (FrameLayout) findViewById(R.id.mpsdkCardBackground);
             mCardContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardContainer);
         }
+        mBankDealsTextView = (MPTextView) findViewById(R.id.mpsdkBankDealsText);
+        mCardNumberEditText = (MPEditText) findViewById(R.id.mpsdkCardNumber);
     }
 
     private void loadViews() {
@@ -237,4 +246,60 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mCardBackground.setBackgroundColor(mDecorationPreference.getLighterColor());
     }
 
+    @Override
+    public void setCardNumberListeners(PaymentMethodGuessingController controller) {
+        mCardNumberEditText.addTextChangedListener(new CardNumberTextWatcher(
+            controller,
+            new PaymentMethodSelectionCallback() {
+                @Override
+                public void onPaymentMethodListSet(List<PaymentMethod> paymentMethodList) {
+
+                }
+
+                @Override
+                public void onPaymentMethodSet(PaymentMethod paymentMethod) {
+
+                }
+
+                @Override
+                public void onPaymentMethodCleared() {
+
+                }
+            },
+            new CardNumberEditTextCallback() {
+                @Override
+                public void openKeyboard() {
+                    //openKeyboard(mCardNumberEditText);
+                }
+
+                @Override
+                public void saveCardNumber(CharSequence s) {
+                    mFrontCardView.drawEditingCardNumber(s.toString());
+                }
+
+                @Override
+                public void appendSpace(CharSequence s) {
+                    if (MPCardMaskUtil.needsMask(s, mPresenter.getCardNumberLength())) {
+                        mCardNumberEditText.append(" ");
+                    }
+                }
+
+                @Override
+                public void deleteChar(CharSequence s) {
+                    if (MPCardMaskUtil.needsMask(s, mPresenter.getCardNumberLength())) {
+                        mCardNumberEditText.getText().delete(s.length() - 1, s.length());
+                    }
+                }
+
+                @Override
+                public void checkChangeErrorView() {
+
+                }
+
+                @Override
+                public void toggleLineColorOnError(boolean toggle) {
+
+                }
+            }));
+    }
 }

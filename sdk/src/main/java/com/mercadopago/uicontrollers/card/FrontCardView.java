@@ -274,7 +274,7 @@ public class FrontCardView implements FrontCardViewController {
         mCardExpiryYearTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, cardExpiryDateSize);
     }
 
-    private void drawEditingCardNumber(String cardNumber) {
+    public void drawEditingCardNumber(String cardNumber) {
         if (cardNumber == null || cardNumber.length() == 0) {
             mCardNumberTextView.setText(BASE_NUMBER_CARDHOLDER);
         } else if (cardNumber.length() < MercadoPago.BIN_LENGTH || mPaymentMethod == null) {

@@ -17,6 +17,13 @@ public class MPCardMaskUtil {
     public static final int LAST_DIGITS_LENGTH = 4;
     public static final char HIDDEN_NUMBER_CHAR = "•".charAt(0);
 
+    public static final int CARD_NUMBER_MAX_LENGTH = 16;
+    public static final int CARD_NUMBER_AMEX_LENGTH = 15;
+    public static final int CARD_NUMBER_DINERS_LENGTH = 14;
+    public static final int CARD_DEFAULT_SECURITY_CODE_LENGTH = 4;
+    public static final int CARD_DEFAULT_AMOUNT_SPACES = 3;
+    public static final int CARD_AMEX_DINERS_AMOUNT_SPACES = 2;
+
     protected MPCardMaskUtil() {
 
     }
@@ -161,6 +168,14 @@ public class MPCardMaskUtil {
             return BASE_FRONT_SECURITY_CODE;
         } else {
             return buildSecurityCode(securityCodeLength, s.toString());
+        }
+    }
+
+    public static boolean needsMask(CharSequence s, int cardNumberLength) {
+        if (cardNumberLength == CARD_NUMBER_AMEX_LENGTH || cardNumberLength == CARD_NUMBER_DINERS_LENGTH) {
+            return s.length() == 4 || s.length() == 11;
+        } else {
+            return s.length() == 4 || s.length() == 9 || s.length() == 14;
         }
     }
 
