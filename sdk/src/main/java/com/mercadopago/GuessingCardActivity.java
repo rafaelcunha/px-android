@@ -8,7 +8,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.Toolbar;
@@ -67,7 +66,7 @@ import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
 import com.mercadopago.util.LayoutUtil;
 import com.mercadopago.util.MPAnimationUtils;
-import com.mercadopago.views.CountDownClockView;
+import com.mercadopago.customviews.CountDownTimerView;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -124,8 +123,8 @@ public class GuessingCardActivity extends FrontCardActivity {
     private View mFrontView;
     private View mBackView;
 
-    //TODO clock
-    private TextView mClockView;
+    //TODO timer
+    private TextView mCountDownTimerTextView;
 
     //Card container
     private CardFrontFragment mFrontFragment;
@@ -231,6 +230,10 @@ public class GuessingCardActivity extends FrontCardActivity {
 
     private void initializeToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.mpsdkToolbar);
+
+        //TODO timer
+        mCountDownTimerTextView = (CountDownTimerView) findViewById(R.id.mpsdkCountDownTimerView);
+
         mToolbarButton = (MPTextView) findViewById(R.id.mpsdkButtonText);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -398,7 +401,7 @@ public class GuessingCardActivity extends FrontCardActivity {
             if (setting != null) {
                 int cvvLength = setting.getSecurityCode().getLength();
                 if ((securityCode == null) || ((cvvLength != 0) && (securityCode.trim().length() != cvvLength))) {
-                    throw new Exception(context.getString(R.string.mpsdk_invalid_cvv_length, cvvLength));
+                    throw new Exception(context.getString(R.string.mpsdk_invalid_cvv_length, String.valueOf(cvvLength)));
                 }
             } else {
                 throw new Exception(context.getString(R.string.mpsdk_invalid_field));
@@ -430,9 +433,9 @@ public class GuessingCardActivity extends FrontCardActivity {
         openKeyboard(mCardNumberEditText);
         mCurrentEditingEditText = CardInterface.CARD_NUMBER_INPUT;
 
-        //TODO Clock
+        //TODO timer
         if (true) { //TODO setClockTime == null
-            showCountDownClock();
+            showCountDownTimer();
         } else {
             getBankDealsAsync();
         }
@@ -1033,15 +1036,42 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     //TODO clock
-    protected void showCountDownClock(){
-        CountDownClockView mCountDownClockView = new CountDownClockView();
+    protected void showCountDownTimer(){
+        //TODO cambiar countDownTimerView a countDownTimerTextView
+        final CountDownTimerView countDownTimerView = (CountDownTimerView) findViewById(R.id.mpsdkCountDownTimerView);
+        //mCountDownTimerTextView = (CountDownTimerView) findViewById(R.id.mpsdkCountDownTimerView);
 
-        mCountDownClockView.setMillisInFuture(3000L);
-        mCountDownClockView.setCountDownInterval(1000L);
-        mCountDownClockView.inflateInParent(mToolbarButton, true);
-        mCountDownClockView.initializeControls();
-        mCountDownClockView.draw();
+        mToolbarButton.setVisibility(View.GONE);
+        countDownTimerView.setVisibility(View.VISIBLE);
+
+        countDownTimerView.setOnTimerListener(new CountDownTimerView.TimerListener() {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                //TODO Cortar flujo
+            }
+        });
+
+        if (mPaymentMethodList == null) {
+            getPaymentMethodsAsync();
+        } else {
+            startGuessingForm();
+        }
     }
+
+    private void setToolbarTime(final String text) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mToolbarButton.setText(text);
+            }
+        });
+    }
+
 
     protected void getBankDealsAsync() {
         mMercadoPago.getBankDeals(new Callback<List<BankDeal>>() {
@@ -1332,7 +1362,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         Setting setting = Setting.getSettingByBin(settings, bin);
 
         if (setting == null) {
-            ApiUtil.showApiExceptionError(getActivity(), null);
+            ErrorUtil.startErrorActivity(getActivity(), getString(R.string.mpsdk_standard_error_message), false);
             return;
         }
         CardNumber cardNumber = setting.getCardNumber();

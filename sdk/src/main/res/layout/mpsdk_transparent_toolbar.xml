@@ -26,5 +26,24 @@
         android:background="@drawable/mpsdk_title_toolbar"
         style="@style/mpsdk_title_text"/>
 
+    <com.mercadopago.customviews.CountDownTimerView
+        android:id="@+id/mpsdkCountDownTimerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:paddingRight="8dp"
+        android:paddingEnd="8dp"
+        android:paddingLeft="8dp"
+        android:paddingStart="8dp"
+        android:paddingBottom="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:paddingTop="10dp"
+        android:textSize="16dp"
+        android:background="@drawable/mpsdk_title_toolbar"
+        android:visibility="gone"
+        app:timeMilliSeconds="50000"
+        style="@style/mpsdk_title_text">
+    </com.mercadopago.customviews.CountDownTimerView>
 </android.support.v7.widget.Toolbar>
 
