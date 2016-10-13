@@ -53,12 +53,7 @@ public class ColorsUtil {
                                              Context context) {
         toolbar.setBackgroundColor(decorationPreference.getBaseColor());
         if (decorationPreference.isDarkFontEnabled()) {
-            int darkFont = decorationPreference.getDarkFontColor(context);
-            Drawable upArrow = toolbar.getNavigationIcon();
-            if (upArrow != null && actionBar != null) {
-                upArrow.setColorFilter(darkFont, PorterDuff.Mode.SRC_ATOP);
-                actionBar.setHomeAsUpIndicator(upArrow);
-            }
+            decorateDarkFontUpArrow(toolbar, decorationPreference, actionBar, context);
             title.setTextColor(decorationPreference.getDarkFontColor(context));
         }
     }
@@ -73,14 +68,41 @@ public class ColorsUtil {
         appBarLayout.setBackgroundColor(decorationPreference.getLighterColor());
         collapsingToolbarLayout.setContentScrimColor(decorationPreference.getLighterColor());
         if (decorationPreference.isDarkFontEnabled()) {
+            decorateDarkFontUpArrow(toolbar, decorationPreference, actionBar, context);
             int darkFont = decorationPreference.getDarkFontColor(context);
-            Drawable upArrow = toolbar.getNavigationIcon();
-            if (upArrow != null && actionBar != null) {
-                upArrow.setColorFilter(darkFont, PorterDuff.Mode.SRC_ATOP);
-                actionBar.setHomeAsUpIndicator(upArrow);
-            }
             collapsingToolbarLayout.setExpandedTitleColor(darkFont);
             collapsingToolbarLayout.setCollapsedTitleTextColor(darkFont);
+        }
+    }
+
+    public static void decorateTransparentToolbar(Toolbar toolbar, MPTextView title,
+                                             DecorationPreference decorationPreference,
+                                             ActionBar actionBar,
+                                             Context context) {
+        if (decorationPreference.isDarkFontEnabled()) {
+            decorateDarkFontUpArrow(toolbar, decorationPreference,
+                    actionBar, context);
+            title.setTextColor(decorationPreference.getDarkFontColor(context));
+        }
+    }
+
+    private static void decorateDarkFontUpArrow(Toolbar toolbar,
+                                                DecorationPreference decorationPreference,
+                                                ActionBar actionBar,
+                                                Context context) {
+        int darkFont = decorationPreference.getDarkFontColor(context);
+        Drawable upArrow = toolbar.getNavigationIcon();
+        if (upArrow != null && actionBar != null) {
+            upArrow.setColorFilter(darkFont, PorterDuff.Mode.SRC_ATOP);
+            actionBar.setHomeAsUpIndicator(upArrow);
+        }
+    }
+
+    public static void decorateTextView(DecorationPreference decorationPreference,
+                                         MPTextView textView,
+                                         Context context) {
+        if (decorationPreference.isDarkFontEnabled()) {
+            textView.setTextColor(decorationPreference.getDarkFontColor(context));
         }
     }
 

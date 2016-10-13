@@ -13,6 +13,7 @@ import com.mercadopago.CardVaultActivity;
 import com.mercadopago.CheckoutActivity;
 import com.mercadopago.CongratsActivity;
 import com.mercadopago.CustomerCardsActivity;
+import com.mercadopago.FormCardActivity;
 import com.mercadopago.GuessingCardActivity;
 import com.mercadopago.InstallmentsActivity;
 import com.mercadopago.InstructionsActivity;
@@ -410,7 +411,7 @@ public class MercadoPago {
                                                   DecorationPreference decorationPreference, List<PaymentMethod> paymentMethodList,
                                                   PaymentRecovery paymentRecovery, Card card) {
 
-        Intent guessingCardIntent = new Intent(activity, GuessingCardActivity.class);
+        Intent guessingCardIntent = new Intent(activity, FormCardActivity.class);
         guessingCardIntent.putExtra("publicKey", key);
 
         if (requireSecurityCode != null) {

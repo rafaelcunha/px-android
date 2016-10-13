@@ -155,12 +155,10 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         }
     }
 
-    @Override
     public void setContentViewLowRes() {
         setContentView(R.layout.mpsdk_activity_installments_lowres);
     }
 
-    @Override
     public void setContentViewNormal() {
         setContentView(R.layout.mpsdk_activity_installments_normal);
     }
@@ -199,13 +197,11 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mProgressBar.setVisibility(View.GONE);
     }
 
-    @Override
     public void loadLowResViews() {
         loadToolbarArrow(mLowResToolbar);
         mLowResTitleToolbar.setText(getString(R.string.mpsdk_card_installments_title));
     }
 
-    @Override
     public void loadNormalViews() {
         loadToolbarArrow(mNormalToolbar);
         mNormalToolbar.setTitle(getString(R.string.mpsdk_card_installments_title));

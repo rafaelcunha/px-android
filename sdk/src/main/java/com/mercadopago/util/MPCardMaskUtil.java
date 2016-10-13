@@ -11,6 +11,7 @@ import java.util.Locale;
  */
 public class MPCardMaskUtil {
 
+    public static final String BASE_FRONT_SECURITY_CODE = "••••";
     public static final int CPF_SEPARATOR_AMOUNT = 3;
     public static final int CNPJ_SEPARATOR_AMOUNT = 4;
     public static final int LAST_DIGITS_LENGTH = 4;
@@ -142,4 +143,25 @@ public class MPCardMaskUtil {
         result = sb.toString();
         return result;
     }
+
+    public static String buildSecurityCode(int securityCodeLength, String s) {
+        StringBuffer sb = new StringBuffer();
+        if (s == null || s.length() == 0) {
+            return BASE_FRONT_SECURITY_CODE;
+        }
+        for (int i = 0; i < securityCodeLength; i++) {
+            char c = getCharOfCard(s, i);
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    public static String buildSecurityCode(int securityCodeLength, CharSequence s) {
+        if (s == null) {
+            return BASE_FRONT_SECURITY_CODE;
+        } else {
+            return buildSecurityCode(securityCodeLength, s.toString());
+        }
+    }
+
 }

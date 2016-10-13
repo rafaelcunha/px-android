@@ -8,7 +8,6 @@ import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.model.ApiException;
-import com.mercadopago.model.Card;
 import com.mercadopago.model.CardInformation;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PaymentMethod;

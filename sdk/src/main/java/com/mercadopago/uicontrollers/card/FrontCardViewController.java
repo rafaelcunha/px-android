@@ -14,5 +14,7 @@ public interface FrontCardViewController extends CustomViewController {
     void setSize(String size);
     void setCardNumberLength(int cardNumberLength);
     void setLastFourDigits(String lastFourDigits);
+    void setSecurityCodeLength(int securityCodeLength);
+    void hasToShowSecurityCode(boolean show);
     void draw();
 }

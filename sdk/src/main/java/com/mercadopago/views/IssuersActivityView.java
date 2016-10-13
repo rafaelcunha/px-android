@@ -10,10 +10,6 @@ import java.util.List;
  */
 
 public interface IssuersActivityView {
-    void loadLowResViews();
-    void loadNormalViews();
-    void setContentViewLowRes();
-    void setContentViewNormal();
     void onValidStart();
     void onInvalidStart(String message);
     void finishWithResult(Issuer issuer);

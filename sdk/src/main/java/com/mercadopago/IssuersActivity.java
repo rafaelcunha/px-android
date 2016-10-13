@@ -145,13 +145,11 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
         finish();
     }
 
-    @Override
-    public void setContentViewLowRes() {
+    private void setContentViewLowRes() {
         setContentView(R.layout.mpsdk_activity_issuers_lowres);
     }
 
-    @Override
-    public void setContentViewNormal() {
+    private void setContentViewNormal() {
         setContentView(R.layout.mpsdk_activity_issuers_normal);
     }
 
@@ -223,14 +221,12 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
         ErrorUtil.startErrorActivity(mActivity, message, errorDetail, false);
     }
 
-    @Override
-    public void loadLowResViews() {
+    private void loadLowResViews() {
         loadToolbarArrow(mLowResToolbar);
         mLowResTitleToolbar.setText(getString(R.string.mpsdk_card_issuers_title));
     }
 
-    @Override
-    public void loadNormalViews() {
+    private void loadNormalViews() {
         loadToolbarArrow(mNormalToolbar);
         mNormalToolbar.setTitle(getString(R.string.mpsdk_card_issuers_title));
         mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);

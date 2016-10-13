@@ -92,7 +92,6 @@
                 </FrameLayout>
 
                 <FrameLayout
-                    android:id="@+id/mpsdkCardSecurityClickableZone"
                     android:layout_width="64dp"
                     android:layout_height="0dp"
                     android:layout_weight="0.2"
@@ -102,7 +101,7 @@
                     android:layout_marginStart="15dp"
                     android:layout_marginTop="-10dp"
                     android:layout_gravity="end"
-                    android:visibility="invisible">
+                    android:visibility="visible">
 
                     <com.mercadopago.customviews.MPTextView
                         android:id="@+id/mpsdkCardSecurityView"
