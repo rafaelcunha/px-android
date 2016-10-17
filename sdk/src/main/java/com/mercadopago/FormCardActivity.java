@@ -1,23 +1,33 @@
 package com.mercadopago;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 import com.google.gson.reflect.TypeToken;
+import com.mercadopago.adapters.IdentificationTypesAdapter;
 import com.mercadopago.callbacks.CardNumberEditTextCallback;
 import com.mercadopago.callbacks.PaymentMethodSelectionCallback;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.customviews.MPEditText;
 import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.listeners.card.CardNumberTextWatcher;
+import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
+import com.mercadopago.model.CardToken;
 import com.mercadopago.model.DecorationPreference;
 import com.mercadopago.model.Identification;
+import com.mercadopago.model.IdentificationType;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.PaymentPreference;
@@ -26,7 +36,9 @@ import com.mercadopago.model.Token;
 import com.mercadopago.presenters.FormCardPresenter;
 import com.mercadopago.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.uicontrollers.card.FrontCardView;
+import com.mercadopago.util.ApiUtil;
 import com.mercadopago.util.ColorsUtil;
+import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
 import com.mercadopago.util.MPCardMaskUtil;
 import com.mercadopago.util.ScaleUtil;
@@ -60,7 +72,12 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     private FrontCardView mFrontCardView;
 
     //Input Views
+    private ProgressBar mProgressBar;
+    private LinearLayout mInputContainer;
+    private Spinner mIdentificationTypeSpinner;
+    private LinearLayout mIdentificationTypeContainer;
     private MPEditText mCardNumberEditText;
+    private MPEditText mSecurityCodeEditText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -170,8 +187,23 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             mCardBackground = (FrameLayout) findViewById(R.id.mpsdkCardBackground);
             mCardContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardContainer);
         }
+        mIdentificationTypeContainer = (LinearLayout) findViewById(R.id.mpsdkCardIdentificationTypeContainer);
+        mIdentificationTypeSpinner = (Spinner) findViewById(R.id.mpsdkCardIdentificationType);
         mBankDealsTextView = (MPTextView) findViewById(R.id.mpsdkBankDealsText);
         mCardNumberEditText = (MPEditText) findViewById(R.id.mpsdkCardNumber);
+        mSecurityCodeEditText = (MPEditText) findViewById(R.id.mpsdkCardSecurityCode);
+        mInputContainer = (LinearLayout) findViewById(R.id.mpsdkInputContainer);
+        mProgressBar = (ProgressBar) findViewById(R.id.mpsdkProgressBar);
+        mInputContainer.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showInputContainer() {
+        mIdentificationTypeContainer.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.GONE);
+        mInputContainer.setVisibility(View.VISIBLE);
+        openKeyboard(mCardNumberEditText);
     }
 
     private void loadViews() {
@@ -246,6 +278,10 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mCardBackground.setBackgroundColor(mDecorationPreference.getLighterColor());
     }
 
+    private String getCardNumberTextTrimmed() {
+        return mCardNumberEditText.getText().toString().replaceAll("\\s", "");
+    }
+
     @Override
     public void setCardNumberListeners(PaymentMethodGuessingController controller) {
         mCardNumberEditText.addTextChangedListener(new CardNumberTextWatcher(
@@ -253,23 +289,43 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             new PaymentMethodSelectionCallback() {
                 @Override
                 public void onPaymentMethodListSet(List<PaymentMethod> paymentMethodList) {
-
+                    if (paymentMethodList.size() == 0 || paymentMethodList.size() > 1) {
+//                        blockCardNumbersInput(mCardNumberEditText);
+//                        setErrorView(getString(R.string.mpsdk_invalid_payment_method));
+                    } else {
+                        onPaymentMethodSet(paymentMethodList.get(0));
+                    }
                 }
 
                 @Override
                 public void onPaymentMethodSet(PaymentMethod paymentMethod) {
-
+                    if (mPresenter.getPaymentMethod() == null) {
+                        mPresenter.setPaymentMethod(paymentMethod);
+                        mPresenter.configureWithSettings();
+                        mPresenter.loadIdentificationTypes();
+                        mFrontCardView.setPaymentMethod(paymentMethod);
+                        mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
+                        mFrontCardView.updateCardNumberMask(getCardNumberTextTrimmed());
+                        mFrontCardView.transitionPaymentMethodSet();
+                    }
                 }
 
                 @Override
                 public void onPaymentMethodCleared() {
-
+//                    clearErrorView();
+                    clearCardNumberInputLength();
+                    if (mPresenter.getPaymentMethod() == null) return;
+                    mPresenter.setPaymentMethod(null);
+                    mSecurityCodeEditText.getText().clear();
+//                    mCardToken = new CardToken("", null, null, "", "", "", "");
+                    mPresenter.setIdentificationNumberRequired(true);
+                    mFrontCardView.transitionClearPaymentMethod();
                 }
             },
             new CardNumberEditTextCallback() {
                 @Override
                 public void openKeyboard() {
-                    //openKeyboard(mCardNumberEditText);
+//                    openKeyboard(mCardNumberEditText);
                 }
 
                 @Override
@@ -301,5 +357,56 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
                 }
             }));
+    }
+
+    @Override
+    public void initializeIdentificationTypes(List<IdentificationType> identificationTypes) {
+        mIdentificationTypeSpinner.setAdapter(new IdentificationTypesAdapter(this, identificationTypes));
+        mIdentificationTypeContainer.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void setSecurityCodeViewLocation(String location) {
+        if (location.equals(FormCardPresenter.CARD_SIDE_FRONT)) {
+            mFrontCardView.hasToShowSecurityCode(true);
+        }
+    }
+
+    @Override
+    public void setSecurityCodeInputMaxLength(int length) {
+        setInputMaxLength(mSecurityCodeEditText, length);
+    }
+
+    @Override
+    public void showApiExceptionError(ApiException exception) {
+        ApiUtil.showApiExceptionError(mActivity, exception);
+    }
+
+    @Override
+    public void startErrorView(String message, String errorDetail) {
+        ErrorUtil.startErrorActivity(mActivity, message, errorDetail, false);
+    }
+
+    @Override
+    public void setCardNumberInputMaxLength(int length) {
+        setInputMaxLength(mCardNumberEditText, length);
+    }
+
+    private void setInputMaxLength(MPEditText text, int maxLength) {
+        InputFilter[] fArray = new InputFilter[1];
+        fArray[0] = new InputFilter.LengthFilter(maxLength);
+        text.setFilters(fArray);
+    }
+
+    private void clearCardNumberInputLength() {
+        int maxLength = CardInterface.CARD_NUMBER_MAX_LENGTH;
+        setInputMaxLength(mCardNumberEditText, maxLength);
+    }
+
+    private void openKeyboard(MPEditText ediText) {
+        ediText.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(ediText, InputMethodManager.SHOW_IMPLICIT);
+//        fullScrollDown();
     }
 }

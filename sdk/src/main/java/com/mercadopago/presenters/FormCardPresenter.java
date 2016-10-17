@@ -1,7 +1,11 @@
 package com.mercadopago.presenters;
 
 import android.content.Context;
+import android.view.View;
 
+import com.mercadopago.CardInterface;
+import com.mercadopago.R;
+import com.mercadopago.adapters.IdentificationTypesAdapter;
 import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
@@ -9,6 +13,7 @@ import com.mercadopago.core.MercadoPago;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
 import com.mercadopago.model.CardInformation;
+import com.mercadopago.model.CardNumber;
 import com.mercadopago.model.CardToken;
 import com.mercadopago.model.Identification;
 import com.mercadopago.model.IdentificationType;
@@ -16,8 +21,12 @@ import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.PaymentPreference;
 import com.mercadopago.model.PaymentRecovery;
+import com.mercadopago.model.SecurityCode;
+import com.mercadopago.model.Setting;
 import com.mercadopago.model.Token;
+import com.mercadopago.uicontrollers.card.FrontCardView;
 import com.mercadopago.util.ApiUtil;
+import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.views.FormCardActivityView;
 
 import java.util.List;
@@ -27,6 +36,11 @@ import java.util.List;
  */
 
 public class FormCardPresenter {
+
+    public static final int CARD_DEFAULT_SECURITY_CODE_LENGTH = 4;
+
+    public static final String CARD_SIDE_FRONT = "front";
+    public static final String CARD_SIDE_BACK = "back";
 
     private FormCardActivityView mView;
     private Context mContext;
@@ -50,6 +64,9 @@ public class FormCardPresenter {
     //Card Info
     private CardInformation mCardInfo;
     private String mBin;
+    private int mSecurityCodeLength;
+    private String mSecurityCodeLocation;
+    private IdentificationType mIdentificationType;
 
     //Card controller
     protected PaymentMethodGuessingController mPaymentMethodGuessingController;
@@ -61,7 +78,6 @@ public class FormCardPresenter {
 //    private String mCurrentEditingEditText;
 //    private boolean mIsSecurityCodeRequired;
 //    private int mCardSecurityCodeLength;
-//    private int mCardNumberLength;
 //    private String mSecurityCodeLocation;
 //    private boolean mIssuerFound;
 //    private CardToken mCardToken;
@@ -122,6 +138,15 @@ public class FormCardPresenter {
 
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.mPaymentMethod = paymentMethod;
+        if (paymentMethod == null) {
+            clearCardSettings();
+        }
+    }
+
+    private void clearCardSettings() {
+        mSecurityCodeLength = CARD_DEFAULT_SECURITY_CODE_LENGTH;
+        mSecurityCodeLocation = CARD_SIDE_BACK;
+        mBin = "";
     }
 
     public Issuer getIssuer() {
@@ -165,7 +190,7 @@ public class FormCardPresenter {
     }
 
     public void setCardInformation() {
-        if(mCard == null && mToken != null) {
+        if (mCard == null && mToken != null) {
             setCardInformation(mToken);
         } else if (mCard != null) {
             setCardInformation(mCard);
@@ -230,6 +255,7 @@ public class FormCardPresenter {
         mMercadoPago.getPaymentMethods(new Callback<List<PaymentMethod>>() {
             @Override
             public void success(List<PaymentMethod> paymentMethods) {
+                mView.showInputContainer();
                 mPaymentMethodList = paymentMethods;
                 startGuessingForm();
             }
@@ -246,4 +272,67 @@ public class FormCardPresenter {
             }
         });
     }
+
+    public void configureWithSettings() {
+        if (mPaymentMethod == null) return;
+        mBin = mPaymentMethodGuessingController.getSavedBin();
+        Setting setting = PaymentMethodGuessingController.getSettingByPaymentMethodAndBin(mPaymentMethod, mBin);
+        if (setting == null) {
+            mView.showApiExceptionError(null);
+        } else {
+            int cardNumberLength = getCardNumberLength();
+            int spaces = FrontCardView.CARD_DEFAULT_AMOUNT_SPACES;
+            if (cardNumberLength == FrontCardView.CARD_NUMBER_DINERS_LENGTH || cardNumberLength == FrontCardView.CARD_NUMBER_AMEX_LENGTH) {
+                spaces = FrontCardView.CARD_AMEX_DINERS_AMOUNT_SPACES;
+            }
+            mView.setCardNumberInputMaxLength(cardNumberLength + spaces);
+            SecurityCode securityCode = setting.getSecurityCode();
+            if (securityCode == null) {
+                mSecurityCodeLength = CARD_DEFAULT_SECURITY_CODE_LENGTH;
+                mSecurityCodeLocation = CARD_SIDE_BACK;
+            } else {
+                mSecurityCodeLength = securityCode.getLength();
+                mSecurityCodeLocation = securityCode.getCardLocation();
+            }
+            mView.setSecurityCodeInputMaxLength(mSecurityCodeLength);
+            mView.setSecurityCodeViewLocation(mSecurityCodeLocation);
+        }
+    }
+
+    public void loadIdentificationTypes() {
+        if (mPaymentMethod == null) return;
+        mIdentificationNumberRequired = getPaymentMethod().isIdentificationNumberRequired();
+        if (mIdentificationNumberRequired) {
+            getIdentificationTypesAsync();
+        }
+    }
+
+    private void getIdentificationTypesAsync() {
+        mMercadoPago.getIdentificationTypes(new Callback<List<IdentificationType>>() {
+            @Override
+            public void success(List<IdentificationType> identificationTypes) {
+                if (identificationTypes.isEmpty()) {
+                    mView.startErrorView(mContext.getString(R.string.mpsdk_standard_error_message),
+                            "identification types call is empty at GuessingCardActivity");
+                } else {
+                    mIdentificationType = identificationTypes.get(0);
+                    mView.initializeIdentificationTypes(identificationTypes);
+                }
+            }
+
+            @Override
+            public void failure(ApiException apiException) {
+                setFailureRecovery(new FailureRecovery() {
+                    @Override
+                    public void recover() {
+                        getIdentificationTypesAsync();
+                    }
+                });
+//                ApiUtil.showApiExceptionError(getActivity(), apiException);
+            }
+        });
+    }
+
+
+
 }

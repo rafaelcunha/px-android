@@ -40,12 +40,10 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:id="@+id/mpsdkNewCardInputContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@color/mpsdk_white"
-                    android:visibility="visible">
+                    android:background="@color/mpsdk_white">
                     <include layout="@layout/mpsdk_form_card_input"/>
                 </LinearLayout>
 
