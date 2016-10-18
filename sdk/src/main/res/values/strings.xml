@@ -175,4 +175,7 @@
     <string name="mpsdk_accreditation_time">Se acreditará en</string>
     <string name="mpsdk_what_can_do">¿Que puedo hacer?</string>
     <string name="mpsdk_form_card_title">Tarjeta de %1$s</string>
+
+    <string name="mpsdk_confirm_prompt_yes">Sí</string>
+    <string name="mpsdk_confirm_prompt_no">No</string>
 </resources>

@@ -78,7 +78,7 @@ public class IssuersActivityTest {
         mPaymentMethod = StaticMock.getPaymentMethodOn();
 
         validStartIntent = new Intent();
-        validStartIntent.putExtra("publicKey", mMerchantPublicKey);
+        validStartIntent.putExtra("merchantPublicKey", mMerchantPublicKey);
         validStartIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(mPaymentMethod));
     }
 
@@ -207,7 +207,7 @@ public class IssuersActivityTest {
         mMerchantPublicKey = StaticMock.DUMMY_MERCHANT_PUBLIC_KEY;
 
         Intent invalidIntent = new Intent();
-        invalidIntent.putExtra("publicKey", mMerchantPublicKey);
+        invalidIntent.putExtra("merchantPublicKey", mMerchantPublicKey);
 
         String issuers = StaticMock.getIssuersJson();
         Type listType = new TypeToken<List<Issuer>>(){}.getType();

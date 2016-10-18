@@ -390,14 +390,14 @@ public class CheckoutActivity extends MercadoPagoActivity {
                 createPayment();
             }
             else{
-                MPTracker.getInstance().trackScreen("REVIEW_AND_CONFIRM", 3, mMerchantPublicKey, mCheckoutPreference.getSiteId(), BuildConfig.VERSION_NAME, this);
+                MPTracker.getInstance().trackScreen("REVIEW_AND_CONFIRM", "3", mMerchantPublicKey, mCheckoutPreference.getSiteId(), BuildConfig.VERSION_NAME, this);
                 showReviewAndConfirm();
                 showRegularLayout();
             }
         } else {
             if (data != null && data.getStringExtra("mpException") != null) {
                 Intent returnIntent = new Intent();
-                MPTracker.getInstance().trackEvent("CARD_VAULT", "CANCELED", 3, mMerchantPublicKey, mCheckoutPreference.getSiteId(), BuildConfig.VERSION_NAME, this);
+                MPTracker.getInstance().trackEvent("CARD_VAULT", "CANCELED", "3", mMerchantPublicKey, mCheckoutPreference.getSiteId(), BuildConfig.VERSION_NAME, this);
                 setResult(RESULT_CANCELED, returnIntent);
                 finish();
             } else {
@@ -413,7 +413,7 @@ public class CheckoutActivity extends MercadoPagoActivity {
             mSelectedPayerCost = JsonUtil.getInstance().fromJson(data.getStringExtra("payerCost"), PayerCost.class);
             mCreatedToken = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
             mSelectedPaymentMethod = JsonUtil.getInstance().fromJson(data.getStringExtra("paymentMethod"), PaymentMethod.class);
-            MPTracker.getInstance().trackScreen("REVIEW_AND_CONFIRM", 3, mMerchantPublicKey, mCheckoutPreference.getSiteId(), BuildConfig.VERSION_NAME, this);
+            MPTracker.getInstance().trackScreen("REVIEW_AND_CONFIRM", "3", mMerchantPublicKey, mCheckoutPreference.getSiteId(), BuildConfig.VERSION_NAME, this);
             showReviewAndConfirm();
             showRegularLayout();
         } else {
@@ -527,7 +527,7 @@ public class CheckoutActivity extends MercadoPagoActivity {
 
         mPaymentMethodRow.inflateInParent(mPaymentMethodLayout, true);
         mPaymentMethodRow.initializeControls();
-        mPaymentMethodRow.drawPaymentMethod();
+        mPaymentMethodRow.draw();
 
         if (!isUniquePaymentMethod()) {
             mPaymentMethodRow.setOnClickListener(new View.OnClickListener() {
@@ -755,7 +755,7 @@ public class CheckoutActivity extends MercadoPagoActivity {
         if (mPaymentMethodSearch == null || isUniquePaymentMethod()) {
             onCancelClicked();
         } else if (mBackPressedOnce) {
-            MPTracker.getInstance().trackEvent("CHECKOUT", "BACK_PRESSED", 3, mMerchantPublicKey, mCheckoutPreference.getSiteId(), BuildConfig.VERSION_NAME, this);
+            MPTracker.getInstance().trackEvent("CHECKOUT", "BACK_PRESSED", "3", mMerchantPublicKey, mCheckoutPreference.getSiteId(), BuildConfig.VERSION_NAME, this);
 
             mSnackbar.dismiss();
             mPaymentMethodEditionRequested = false;

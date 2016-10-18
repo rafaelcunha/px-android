@@ -121,7 +121,7 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
     }
 
     public void setContentView() {
-        MPTracker.getInstance().trackScreen("CARD_ISSUERS", 2, mPresenter.getPublicKey(),
+        MPTracker.getInstance().trackScreen("CARD_ISSUERS", "2", mPresenter.getPublicKey(),
                 BuildConfig.VERSION_NAME, this);
         if (mLowResActive) {
             setContentViewLowRes();
@@ -304,7 +304,7 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
 
     @Override
     public void onBackPressed() {
-        MPTracker.getInstance().trackEvent("CARD_ISSUERS", "BACK_PRESSED", 2, mPresenter.getPublicKey(),
+        MPTracker.getInstance().trackEvent("CARD_ISSUERS", "BACK_PRESSED", "2", mPresenter.getPublicKey(),
                 BuildConfig.VERSION_NAME, this);
         Intent returnIntent = new Intent();
         returnIntent.putExtra("backButtonPressed", true);

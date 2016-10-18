@@ -80,7 +80,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
         Site site = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("site"), Site.class);
         Card card = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("card"), Card.class);
         PaymentRecovery paymentRecovery = JsonUtil.getInstance().fromJson(this.getIntent().getStringExtra("paymentRecovery"), PaymentRecovery.class);
-
         BigDecimal amountValue = null;
         String amount = getIntent().getStringExtra("amount");
         if (amount != null) {
@@ -180,7 +179,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
             mPresenter.setPayerCost(payerCost);
             finishWithResult();
         } else if (resultCode == RESULT_CANCELED) {
-            MPTracker.getInstance().trackEvent("INSTALLMENTS", "CANCELED", 2, mPresenter.getPublicKey(),
+            MPTracker.getInstance().trackEvent("INSTALLMENTS", "CANCELED", "2", mPresenter.getPublicKey(),
                     mPresenter.getSite().getId(), BuildConfig.VERSION_NAME, this);
             setResult(RESULT_CANCELED, data);
             finish();
@@ -199,10 +198,10 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
             mPresenter.checkStartInstallmentsActivity();
         } else if (resultCode == RESULT_CANCELED) {
             if (mPresenter.getSite() == null) {
-                MPTracker.getInstance().trackEvent("GUESSING_CARD", "CANCELED", 2, mPresenter.getPublicKey(),
+                MPTracker.getInstance().trackEvent("GUESSING_CARD", "CANCELED", "2", mPresenter.getPublicKey(),
                         BuildConfig.VERSION_NAME, this);
             } else {
-                MPTracker.getInstance().trackEvent("GUESSING_CARD", "CANCELED", 2, mPresenter.getPublicKey(),
+                MPTracker.getInstance().trackEvent("GUESSING_CARD", "CANCELED", "2", mPresenter.getPublicKey(),
                         mPresenter.getSite().getId(), BuildConfig.VERSION_NAME, this);
             }
             setResult(RESULT_CANCELED, data);

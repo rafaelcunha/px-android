@@ -146,7 +146,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     }
 
     public void setContentView() {
-        MPTracker.getInstance().trackScreen("CARD_INSTALLMENTS", 2, mPresenter.getPublicKey(),
+        MPTracker.getInstance().trackScreen("CARD_INSTALLMENTS", "2", mPresenter.getPublicKey(),
                 mPresenter.getSite().getId(), BuildConfig.VERSION_NAME, this);
         if (mLowResActive) {
             setContentViewLowRes();
@@ -334,7 +334,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
 
     @Override
     public void onBackPressed() {
-        MPTracker.getInstance().trackEvent("CARD_INSTALLMENTS", "BACK_PRESSED", 2,
+        MPTracker.getInstance().trackEvent("CARD_INSTALLMENTS", "BACK_PRESSED", "2",
                 mPresenter.getPublicKey(), mPresenter.getSite().getId(), BuildConfig.VERSION_NAME, this);
         Intent returnIntent = new Intent();
         returnIntent.putExtra("backButtonPressed", true);
