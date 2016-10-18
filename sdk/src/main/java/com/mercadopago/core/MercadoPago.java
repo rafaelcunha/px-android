@@ -13,7 +13,6 @@ import com.mercadopago.CardVaultActivity;
 import com.mercadopago.CheckoutActivity;
 import com.mercadopago.CongratsActivity;
 import com.mercadopago.CustomerCardsActivity;
-import com.mercadopago.FormCardActivity;
 import com.mercadopago.GuessingCardActivity;
 import com.mercadopago.InstallmentsActivity;
 import com.mercadopago.InstructionsActivity;
