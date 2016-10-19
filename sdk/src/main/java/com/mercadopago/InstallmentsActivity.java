@@ -15,6 +15,7 @@ import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.callbacks.OnSelectedCallback;
 import com.mercadopago.core.MercadoPago;
+import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.listeners.RecyclerItemClickListener;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
@@ -55,6 +56,9 @@ public class InstallmentsActivity extends ShowCardActivity {
     protected Issuer mSelectedIssuer;
     protected Card mCard;
     protected Token mToken;
+
+    //TODO timer
+    private MPTextView mToolbarButton;
 
 
     @Override
@@ -145,9 +149,16 @@ public class InstallmentsActivity extends ShowCardActivity {
         } else {
             super.initializeToolbar(getString(R.string.mpsdk_card_installments_title), false);
         }
+        //TODO timer
+        mToolbarButton = (MPTextView) findViewById(R.id.mpsdkButtonTextTimer);
+        mToolbarButton.setText("lalal");
+        mToolbarButton.setVisibility(View.VISIBLE);
     }
 
     protected void showPayerCosts() {
+
+        //TODO timer
+        mToolbarButton.setText("showPayerCosts");
 
         if (werePayerCostsSet()) {
             resolvePayerCosts(mPayerCosts);

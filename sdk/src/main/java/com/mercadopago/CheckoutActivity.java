@@ -9,6 +9,7 @@ import android.text.Spanned;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -44,6 +45,7 @@ import com.mercadopago.uicontrollers.ViewControllerFactory;
 import com.mercadopago.uicontrollers.payercosts.PayerCostViewController;
 import com.mercadopago.uicontrollers.paymentmethods.PaymentMethodViewController;
 import com.mercadopago.util.ApiUtil;
+import com.mercadopago.controllers.CountDownTimerController;
 import com.mercadopago.util.CurrenciesUtil;
 import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
@@ -327,6 +329,16 @@ public class CheckoutActivity extends MercadoPagoActivity {
     }
 
     protected void startPaymentVaultActivity() {
+
+        //TODO timer
+        CountDownTimerController.getInstance().setTime(40L);
+        CountDownTimerController.getInstance().setOnFinishListener(new CountDownTimerController.FinishListener() {
+            @Override
+            public void onFinish() {
+                Toast.makeText(CheckoutActivity.this, "Done", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         new MercadoPago.StartActivityBuilder()
                 .setActivity(this)
                 .setPublicKey(mMerchantPublicKey)
@@ -454,7 +466,6 @@ public class CheckoutActivity extends MercadoPagoActivity {
     }
 
     private void startCardVaultActivity(){
-
         PaymentPreference paymentPreference = mCheckoutPreference.getPaymentPreference();
 
         if (paymentPreference == null) {

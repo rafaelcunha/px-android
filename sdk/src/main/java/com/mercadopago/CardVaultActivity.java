@@ -83,6 +83,7 @@ public class CardVaultActivity extends ShowCardActivity {
                 .setContext(this)
                 .setPublicKey(mPublicKey)
                 .build();
+
         startGuessingCardActivity();
     }
 
@@ -138,6 +139,7 @@ public class CardVaultActivity extends ShowCardActivity {
     protected void initializeToolbar() {
         Toolbar toolbar;
         toolbar = (Toolbar) findViewById(R.id.mpsdkToolbar);
+
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);

@@ -50,6 +50,7 @@ import com.mercadopago.services.BankDealService;
 import com.mercadopago.services.GatewayService;
 import com.mercadopago.services.IdentificationService;
 import com.mercadopago.services.PaymentService;
+import com.mercadopago.controllers.CountDownTimerController;
 import com.mercadopago.util.HttpClientUtil;
 import com.mercadopago.util.JsonUtil;
 
@@ -440,7 +441,8 @@ public class MercadoPago {
 
     private static void startCardVaultActivity(Activity activity, String key, BigDecimal amount, Site site, Boolean installmentsEnabled,
                                                 PaymentPreference paymentPreference, DecorationPreference decorationPreference,
-                                                List<PaymentMethod> paymentMethodList, PaymentRecovery paymentRecovery, Card card) {
+                                                List<PaymentMethod> paymentMethodList, PaymentRecovery paymentRecovery,
+                                               Card card) {
 
         Intent cardVaultIntent = new Intent(activity, CardVaultActivity.class);
         cardVaultIntent.putExtra("merchantPublicKey", key);
@@ -639,6 +641,9 @@ public class MercadoPago {
         private List<String> mSupportedPaymentTypes;
         private List<BankDeal> mBankDeals;
         private Card mCard;
+
+        //TODO timer
+        private CountDownTimerController mCountDownTimerController;
 
         public StartActivityBuilder() {
 
@@ -986,7 +991,8 @@ public class MercadoPago {
             }
 
             MercadoPago.startCardVaultActivity(this.mActivity, this.mKey, this.mAmount, this.mSite, this.mInstallmentsEnabled,
-                    this.mPaymentPreference, this.mDecorationPreference, this.mPaymentMethodList, this.mPaymentRecovery, this.mCard);
+                    this.mPaymentPreference, this.mDecorationPreference, this.mPaymentMethodList, this.mPaymentRecovery,
+                    this.mCard);
         }
 
         public void startPaymentMethodsActivity() {

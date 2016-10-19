@@ -62,6 +62,7 @@ import com.mercadopago.model.Setting;
 import com.mercadopago.model.Token;
 import com.mercadopago.mptracker.MPTracker;
 import com.mercadopago.util.ApiUtil;
+import com.mercadopago.controllers.CountDownTimerController;
 import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
 import com.mercadopago.util.LayoutUtil;
@@ -122,9 +123,6 @@ public class GuessingCardActivity extends FrontCardActivity {
     private LinearLayout mCardIdNumberInput;
     private View mFrontView;
     private View mBackView;
-
-    //TODO timer
-    private TextView mCountDownTimerTextView;
 
     //Card container
     private CardFrontFragment mFrontFragment;
@@ -231,10 +229,7 @@ public class GuessingCardActivity extends FrontCardActivity {
     private void initializeToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.mpsdkToolbar);
 
-        //TODO timer
-        mCountDownTimerTextView = (CountDownTimerView) findViewById(R.id.mpsdkCountDownTimerView);
-
-        mToolbarButton = (MPTextView) findViewById(R.id.mpsdkButtonText);
+        mToolbarButton = (MPTextView) findViewById(R.id.mpsdkButtonTextTimer);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -256,7 +251,6 @@ public class GuessingCardActivity extends FrontCardActivity {
                     decorateToolbar(toolbar);
                 }
             }
-
         }
         LayoutUtil.showProgressLayout(this);
     }
@@ -432,14 +426,6 @@ public class GuessingCardActivity extends FrontCardActivity {
         setListeners();
         openKeyboard(mCardNumberEditText);
         mCurrentEditingEditText = CardInterface.CARD_NUMBER_INPUT;
-
-        //TODO timer
-        if (true) { //TODO setClockTime == null
-            showCountDownTimer();
-        } else {
-            getBankDealsAsync();
-        }
-
 
         if (mPaymentMethodList == null) {
             getPaymentMethodsAsync();
@@ -1035,32 +1021,16 @@ public class GuessingCardActivity extends FrontCardActivity {
         });
     }
 
-    //TODO clock
+    //TODO timer
     protected void showCountDownTimer(){
-        //TODO cambiar countDownTimerView a countDownTimerTextView
-        final CountDownTimerView countDownTimerView = (CountDownTimerView) findViewById(R.id.mpsdkCountDownTimerView);
-        //mCountDownTimerTextView = (CountDownTimerView) findViewById(R.id.mpsdkCountDownTimerView);
-
-        mToolbarButton.setVisibility(View.GONE);
-        countDownTimerView.setVisibility(View.VISIBLE);
-
-        countDownTimerView.setOnTimerListener(new CountDownTimerView.TimerListener() {
+        CountDownTimerController.getInstance().start();
+        mToolbarButton.setVisibility(View.VISIBLE);
+        CountDownTimerController.getInstance().setOnTickListener(new CountDownTimerController.TickListener() {
             @Override
             public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-                //TODO Cortar flujo
+                mToolbarButton.setText(CountDownTimerController.getInstance().displayText());
             }
         });
-
-        if (mPaymentMethodList == null) {
-            getPaymentMethodsAsync();
-        } else {
-            startGuessingForm();
-        }
     }
 
     private void setToolbarTime(final String text) {
@@ -1116,6 +1086,12 @@ public class GuessingCardActivity extends FrontCardActivity {
 
     protected void startGuessingForm() {
         initializeGuessingCardNumberController();
+
+        //TODO timer
+        if (CountDownTimerController.getInstance() != null && CountDownTimerController.getInstance().getMilliSeconds() != null){
+            showCountDownTimer();
+        }
+
         setCardNumberListener();
     }
 
@@ -1306,9 +1282,14 @@ public class GuessingCardActivity extends FrontCardActivity {
     }
 
     private void startIdentificationFragment() {
-        mToolbarButton.setVisibility(View.GONE);
-
         int container = R.id.mpsdkActivityNewCardContainerFront;
+
+        //TODO timer
+        if (CountDownTimerController.getInstance() != null && CountDownTimerController.getInstance().getMilliSeconds() != null) {
+            mToolbarButton.setVisibility(View.VISIBLE);
+        } else {
+            mToolbarButton.setVisibility(View.GONE);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
             if (showingBack()) {

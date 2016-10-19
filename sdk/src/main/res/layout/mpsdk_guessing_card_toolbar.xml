@@ -2,7 +2,7 @@
 <android.support.v7.widget.Toolbar
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mpsdkToolbar"
+    android:id="@+id/mpsdkGuessingCardToolbar"
     app:theme="@style/MPTransparentActionBar"
     android:layout_width="match_parent"
     android:layout_height="45dp"
@@ -10,7 +10,7 @@
     android:background="@android:color/transparent">
 
     <com.mercadopago.customviews.MPTextView
-        android:id="@+id/mpsdkButtonTextTimer"
+        android:id="@+id/mpsdkButtonText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|center_vertical"
@@ -27,4 +27,3 @@
         style="@style/mpsdk_title_text"/>
 
 </android.support.v7.widget.Toolbar>
-
