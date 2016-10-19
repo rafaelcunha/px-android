@@ -163,13 +163,13 @@ public class IssuersPresenter {
                 @Override
                 public void failure(ApiException apiException) {
                     mView.stopLoadingView();
+                    mView.showApiExceptionError(apiException);
                     setFailureRecovery(new FailureRecovery() {
                         @Override
                         public void recover() {
                             getIssuersAsync();
                         }
                     });
-                    mView.showApiExceptionError(apiException);
                 }
             });
     }

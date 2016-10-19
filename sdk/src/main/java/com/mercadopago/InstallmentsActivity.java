@@ -85,7 +85,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     private void getActivityParameters() {
         PaymentMethod paymentMethod = JsonUtil.getInstance().fromJson(
                 this.getIntent().getStringExtra("paymentMethod"), PaymentMethod.class);
-        String publicKey = getIntent().getStringExtra("publicKey");
+        String publicKey = getIntent().getStringExtra("merchantPublicKey");
         Token token = JsonUtil.getInstance().fromJson(
                 this.getIntent().getStringExtra("token"), Token.class);
         Card card = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("card"), Card.class);

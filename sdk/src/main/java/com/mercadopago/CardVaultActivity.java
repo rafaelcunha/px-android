@@ -6,10 +6,8 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import com.google.gson.reflect.TypeToken;
@@ -26,12 +24,9 @@ import com.mercadopago.model.Site;
 import com.mercadopago.model.Token;
 import com.mercadopago.mptracker.MPTracker;
 import com.mercadopago.presenters.CardVaultPresenter;
-import com.mercadopago.uicontrollers.card.CardRepresentationModes;
-import com.mercadopago.uicontrollers.card.FrontCardView;
 import com.mercadopago.util.ApiUtil;
 import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
-import com.mercadopago.util.ScaleUtil;
 import com.mercadopago.views.CardVaultActivityView;
 
 import java.lang.reflect.Type;
@@ -76,7 +71,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
 
     private void getActivityParameters() {
         Boolean installmentsEnabled = getIntent().getBooleanExtra("installmentsEnabled", false);
-        String publicKey = getIntent().getStringExtra("publicKey");
+        String publicKey = getIntent().getStringExtra("merchantPublicKey");
         Site site = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("site"), Site.class);
         Card card = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("card"), Card.class);
         PaymentRecovery paymentRecovery = JsonUtil.getInstance().fromJson(this.getIntent().getStringExtra("paymentRecovery"), PaymentRecovery.class);

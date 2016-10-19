@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,7 +15,6 @@ import android.widget.ProgressBar;
 
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.adapters.IssuersAdapter;
-import com.mercadopago.adapters.PayerCostsAdapter;
 import com.mercadopago.callbacks.OnSelectedCallback;
 import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.listeners.RecyclerItemClickListener;
@@ -28,7 +26,6 @@ import com.mercadopago.model.PaymentPreference;
 import com.mercadopago.model.Token;
 import com.mercadopago.mptracker.MPTracker;
 import com.mercadopago.presenters.IssuersPresenter;
-import com.mercadopago.uicontrollers.GridSpacingItemDecoration;
 import com.mercadopago.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.uicontrollers.card.FrontCardView;
 import com.mercadopago.util.ApiUtil;
@@ -84,7 +81,7 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
     private void getActivityParameters() {
         PaymentMethod paymentMethod = JsonUtil.getInstance().fromJson(
                 this.getIntent().getStringExtra("paymentMethod"), PaymentMethod.class);
-        String publicKey = getIntent().getStringExtra("publicKey");
+        String publicKey = getIntent().getStringExtra("merchantPublicKey");
         Token token = JsonUtil.getInstance().fromJson(
                 this.getIntent().getStringExtra("token"), Token.class);
         List<Issuer> issuers;

@@ -225,13 +225,13 @@ public class InstallmentsPresenter {
                 @Override
                 public void failure(ApiException apiException) {
                     mView.stopLoadingView();
+                    mView.showApiExceptionError(apiException);
                     setFailureRecovery(new FailureRecovery() {
                         @Override
                         public void recover() {
                             getInstallmentsAsync();
                         }
                     });
-                    mView.showApiExceptionError(apiException);
                 }
             });
     }
