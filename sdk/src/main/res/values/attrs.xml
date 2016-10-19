@@ -6,7 +6,4 @@
     <declare-styleable name="MPEditText">
         <attr name="errorColor" format="reference" />
     </declare-styleable>
-    <declare-styleable name="CountDownTimerView">
-        <attr name="timeMilliSeconds" format="string" />
-    </declare-styleable>
 </resources>

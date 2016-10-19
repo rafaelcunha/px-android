@@ -27,10 +27,6 @@ public abstract class ShowCardActivity extends FrontCardActivity {
 
     //Local vars
     protected MPTextView mToolbarTitle;
-
-    //TODO timer
-    protected MPTextView mToolbarButton;
-
     private CardInformation mCardInfo;
     private PaymentMethod mCurrentPaymentMethod;
 
@@ -54,23 +50,11 @@ public abstract class ShowCardActivity extends FrontCardActivity {
         Toolbar toolbar;
         if (transparent) {
             toolbar = (Toolbar) findViewById(R.id.mpsdkToolbar);
-
-            //TODO timer
-            Toast.makeText(this, "mpskToolbar", Toast.LENGTH_SHORT).show();
-
         } else {
             toolbar = (Toolbar) findViewById(R.id.mpsdkRegularToolbar);
             toolbar.setVisibility(View.VISIBLE);
-
-            //TODO timer
-            Toast.makeText(this, "mpskRegular", Toast.LENGTH_SHORT).show();
         }
         mToolbarTitle = (MPTextView) findViewById(R.id.mpsdkTitle);
-
-        //TODO timer
-        mToolbarButton = (MPTextView) findViewById(R.id.mpsdkButtonTextTimer);
-        mToolbarButton.setVisibility(View.VISIBLE);
-        mToolbarButton.setText("lalal");
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {

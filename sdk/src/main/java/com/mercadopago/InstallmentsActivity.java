@@ -3,6 +3,7 @@ package com.mercadopago;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.mercadopago.adapters.PayerCostsAdapter;
 import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.callbacks.OnSelectedCallback;
+import com.mercadopago.controllers.CountDownTimerController;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.listeners.RecyclerItemClickListener;
@@ -102,7 +104,20 @@ public class InstallmentsActivity extends ShowCardActivity {
         }
         initializeAdapter();
         initializeToolbar();
+        showCountDownTimer();
         showPayerCosts();
+    }
+
+    private void showCountDownTimer() {
+        //TODO timer
+        if (CountDownTimerController.getInstance() != null && CountDownTimerController.getInstance().getMilliSeconds() != null){
+            CountDownTimerController.getInstance().setOnTickListener(new CountDownTimerController.TickListener() {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    mToolbarButton.setText(CountDownTimerController.getInstance().displayText());
+                }
+            });
+        }
     }
 
     private void setCardInformation() {
@@ -149,17 +164,14 @@ public class InstallmentsActivity extends ShowCardActivity {
         } else {
             super.initializeToolbar(getString(R.string.mpsdk_card_installments_title), false);
         }
+
         //TODO timer
-        mToolbarButton = (MPTextView) findViewById(R.id.mpsdkButtonTextTimer);
-        mToolbarButton.setText("lalal");
-        mToolbarButton.setVisibility(View.VISIBLE);
+        //mToolbarButton = (MPTextView) findViewById(R.id.mpsdkButtonTextTimer);
+        //mToolbarButton.setText("lalal");
+        //mToolbarButton.setVisibility(View.VISIBLE);
     }
 
     protected void showPayerCosts() {
-
-        //TODO timer
-        mToolbarButton.setText("showPayerCosts");
-
         if (werePayerCostsSet()) {
             resolvePayerCosts(mPayerCosts);
         } else {

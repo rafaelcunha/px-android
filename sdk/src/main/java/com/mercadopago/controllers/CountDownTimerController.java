@@ -1,4 +1,5 @@
 package com.mercadopago.controllers;
+import android.app.Activity;
 import android.os.CountDownTimer;
 
 /**
@@ -16,10 +17,11 @@ public class CountDownTimerController {
 
     private CountDownTimerController.TickListener mTickListener;
     private CountDownTimerController.FinishListener mFinishListener;
-
     private CountDownTimer mCountDownTimer;
 
     private static CountDownTimerController mCountDownTimerInstance;
+
+    private Activity mActivity;
 
     public void setTime(long seconds){
         if (seconds >= 3600L){
@@ -112,7 +114,6 @@ public class CountDownTimerController {
         if (number >= 0 && number < 10) {
             return "0" + number;
         }
-
         return String.valueOf(number);
     }
 

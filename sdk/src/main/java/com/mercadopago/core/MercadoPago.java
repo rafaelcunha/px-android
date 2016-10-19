@@ -50,7 +50,6 @@ import com.mercadopago.services.BankDealService;
 import com.mercadopago.services.GatewayService;
 import com.mercadopago.services.IdentificationService;
 import com.mercadopago.services.PaymentService;
-import com.mercadopago.controllers.CountDownTimerController;
 import com.mercadopago.util.HttpClientUtil;
 import com.mercadopago.util.JsonUtil;
 
@@ -641,9 +640,6 @@ public class MercadoPago {
         private List<String> mSupportedPaymentTypes;
         private List<BankDeal> mBankDeals;
         private Card mCard;
-
-        //TODO timer
-        private CountDownTimerController mCountDownTimerController;
 
         public StartActivityBuilder() {
 

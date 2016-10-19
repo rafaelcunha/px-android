@@ -331,7 +331,7 @@ public class CheckoutActivity extends MercadoPagoActivity {
     protected void startPaymentVaultActivity() {
 
         //TODO timer
-        CountDownTimerController.getInstance().setTime(40L);
+        CountDownTimerController.getInstance().setTime(70L);
         CountDownTimerController.getInstance().setOnFinishListener(new CountDownTimerController.FinishListener() {
             @Override
             public void onFinish() {

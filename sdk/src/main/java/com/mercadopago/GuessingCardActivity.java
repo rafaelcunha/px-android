@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -1287,6 +1288,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         //TODO timer
         if (CountDownTimerController.getInstance() != null && CountDownTimerController.getInstance().getMilliSeconds() != null) {
             mToolbarButton.setVisibility(View.VISIBLE);
+
         } else {
             mToolbarButton.setVisibility(View.GONE);
         }
