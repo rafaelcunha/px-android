@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -142,13 +143,22 @@ public class FrontCardView implements FrontCardViewController {
     }
 
     @Override
+    public void hide() {
+        mCardContainer.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void show() {
+        mCardContainer.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public View inflateInParent(ViewGroup parent, boolean attachToRoot) {
         mView = LayoutInflater.from(mContext)
                 .inflate(R.layout.mpsdk_card_front, parent, attachToRoot);
         return mView;
     }
 
-    @Override
     public View getView() {
         return mView;
     }
@@ -182,10 +192,6 @@ public class FrontCardView implements FrontCardViewController {
         mCardExpiryYearTextView.setText(mContext.getResources().getString(R.string.mpsdk_card_expiry_year_hint));
         mCardSecurityCodeTextView.setText("");
         clearImage();
-//        drawEditingCardNumber("50317");
-//        onPaymentMethodSet();
-//        drawEditingCardHolderName("vale");
-//        drawEditingExpiryMonth("01");
     }
 
     private void clearImage() {
@@ -262,26 +268,27 @@ public class FrontCardView implements FrontCardViewController {
         if (mSize.equals(CardRepresentationModes.MEDIUM_SIZE)) {
             resizeCard(mCardContainer, R.dimen.mpsdk_card_size_medium_height, R.dimen.mpsdk_card_size_medium_width,
                     CardRepresentationModes.CARD_NUMBER_SIZE_MEDIUM, CardRepresentationModes.CARD_HOLDER_NAME_SIZE_MEDIUM,
-                    CardRepresentationModes.CARD_EXPIRY_DATE_SIZE_MEDIUM);
+                    CardRepresentationModes.CARD_EXPIRY_DATE_SIZE_MEDIUM, CardRepresentationModes.CARD_SECURITY_CODE_FRONT_SIZE_MEDIUM);
         } else if (mSize.equals(CardRepresentationModes.BIG_SIZE)) {
             resizeCard(mCardContainer, R.dimen.mpsdk_card_size_big_height, R.dimen.mpsdk_card_size_big_width,
                     CardRepresentationModes.CARD_NUMBER_SIZE_BIG, CardRepresentationModes.CARD_HOLDER_NAME_SIZE_BIG,
-                    CardRepresentationModes.CARD_EXPIRY_DATE_SIZE_BIG);
+                    CardRepresentationModes.CARD_EXPIRY_DATE_SIZE_BIG, CardRepresentationModes.CARD_SECURITY_CODE_FRONT_SIZE_BIG);
         } else if (mSize.equals(CardRepresentationModes.EXTRA_BIG_SIZE)) {
             resizeCard(mCardContainer, R.dimen.mpsdk_card_size_extra_big_height, R.dimen.mpsdk_card_size_extra_big_width,
                     CardRepresentationModes.CARD_NUMBER_SIZE_EXTRA_BIG, CardRepresentationModes.CARD_HOLDER_NAME_SIZE_EXTRA_BIG,
-                    CardRepresentationModes.CARD_EXPIRY_DATE_SIZE_EXTRA_BIG);
+                    CardRepresentationModes.CARD_EXPIRY_DATE_SIZE_EXTRA_BIG, CardRepresentationModes.CARD_SECURITY_CODE_FRONT_SIZE_EXTRA_BIG);
         }
     }
 
     private void resizeCard(ViewGroup cardViewContainer, int cardHeight, int cardWidth, int cardNumberFontSize,
-                            int cardHolderNameFontSize, int cardExpiryDateSize) {
+                            int cardHolderNameFontSize, int cardExpiryDateSize, int cardSecurityCodeSize) {
         LayoutUtil.resizeViewGroupLayoutParams(cardViewContainer, cardHeight, cardWidth, mContext);
         mCardNumberTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, cardNumberFontSize);
         mCardholderNameTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, cardHolderNameFontSize);
         mCardExpiryMonthTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, cardExpiryDateSize);
         mCardDateDividerTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, cardExpiryDateSize);
         mCardExpiryYearTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, cardExpiryDateSize);
+        mCardSecurityCodeTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, cardSecurityCodeSize);
     }
 
     public void drawEditingCardNumber(String cardNumber) {
@@ -319,8 +326,8 @@ public class FrontCardView implements FrontCardViewController {
 
 
 
-    private void drawEditingCardHolderName(String cardholderName) {
-        if (cardholderName == null) {
+    public void drawEditingCardHolderName(String cardholderName) {
+        if (cardholderName == null || cardholderName.length() == 0) {
             mCardholderNameTextView.setText(mContext.getResources().getString(R.string.mpsdk_cardholder_name_short));
         } else {
             mCardholderNameTextView.setText(cardholderName.toUpperCase());
@@ -333,8 +340,8 @@ public class FrontCardView implements FrontCardViewController {
         disableEditingFontColor(mCardSecurityCodeTextView);
     }
 
-    private void drawEditingExpiryMonth(String cardMonth) {
-        if (cardMonth == null) {
+    public void drawEditingExpiryMonth(String cardMonth) {
+        if (cardMonth == null || cardMonth.length() == 0) {
             mCardExpiryMonthTextView.setText(mContext.getResources()
                     .getString(R.string.mpsdk_card_expiry_month_hint));
         } else {
@@ -348,8 +355,8 @@ public class FrontCardView implements FrontCardViewController {
         disableEditingFontColor(mCardSecurityCodeTextView);
     }
 
-    private void drawEditingExpiryYear(String cardYear) {
-        if (cardYear == null) {
+    public void drawEditingExpiryYear(String cardYear) {
+        if (cardYear == null || cardYear.length() == 0) {
             mCardExpiryYearTextView.setText(mContext.getResources().getString(R.string.mpsdk_card_expiry_year_hint));
         } else {
             mCardExpiryYearTextView.setText(cardYear);
@@ -362,7 +369,7 @@ public class FrontCardView implements FrontCardViewController {
         disableEditingFontColor(mCardSecurityCodeTextView);
     }
 
-    private void drawEditingSecurityCode(String securityCode) {
+    public void drawEditingSecurityCode(String securityCode) {
         if (securityCode == null || securityCode.length() == 0) {
             mCardSecurityCodeTextView.setText(BASE_FRONT_SECURITY_CODE);
         } else  {

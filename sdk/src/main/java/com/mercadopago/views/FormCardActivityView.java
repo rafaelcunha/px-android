@@ -21,4 +21,12 @@ public interface FormCardActivityView {
     void setSecurityCodeViewLocation(String location);
     void startErrorView(String message, String errorDetail);
     void initializeIdentificationTypes(List<IdentificationType> identificationTypes);
+    void setNextButtonListeners();
+    void setBackButtonListeners();
+    void hideSecurityCodeInput();
+    void hideIdentificationInput();
+    void showIdentificationInput();
+    void showSecurityCodeInput();
+    void setCardholderNameListeners();
+    void setExpiryDateListeners();
 }

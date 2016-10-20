@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -16,15 +19,18 @@ import android.widget.Spinner;
 
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.adapters.IdentificationTypesAdapter;
-import com.mercadopago.callbacks.CardNumberEditTextCallback;
+import com.mercadopago.callbacks.card.CardExpiryDateEditTextCallback;
+import com.mercadopago.callbacks.card.CardNumberEditTextCallback;
 import com.mercadopago.callbacks.PaymentMethodSelectionCallback;
+import com.mercadopago.callbacks.card.CardholderNameEditTextCallback;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.customviews.MPEditText;
 import com.mercadopago.customviews.MPTextView;
+import com.mercadopago.listeners.card.CardExpiryDateTextWatcher;
 import com.mercadopago.listeners.card.CardNumberTextWatcher;
+import com.mercadopago.listeners.card.CardholderNameTextWatcher;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
-import com.mercadopago.model.CardToken;
 import com.mercadopago.model.DecorationPreference;
 import com.mercadopago.model.Identification;
 import com.mercadopago.model.IdentificationType;
@@ -33,7 +39,9 @@ import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.PaymentPreference;
 import com.mercadopago.model.PaymentRecovery;
 import com.mercadopago.model.Token;
+import com.mercadopago.mptracker.MPTracker;
 import com.mercadopago.presenters.FormCardPresenter;
+import com.mercadopago.uicontrollers.card.BackCardView;
 import com.mercadopago.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.uicontrollers.card.FrontCardView;
 import com.mercadopago.util.ApiUtil;
@@ -53,6 +61,12 @@ import java.util.List;
 
 public class FormCardActivity extends AppCompatActivity implements FormCardActivityView {
 
+    public static final String CARD_NUMBER_INPUT = "cardNumber";
+    public static final String CARDHOLDER_NAME_INPUT = "cardHolderName";
+    public static final String CARD_EXPIRYDATE_INPUT = "cardExpiryDate";
+    public static final String CARD_SECURITYCODE_INPUT = "cardSecurityCode";
+    public static final String CARD_IDENTIFICATION_INPUT = "cardIdentification";
+
     protected FormCardPresenter mPresenter;
     private Activity mActivity;
 
@@ -70,14 +84,29 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     private FrameLayout mCardBackground;
     private FrameLayout mCardContainer;
     private FrontCardView mFrontCardView;
+    private BackCardView mBackCardView;
 
     //Input Views
     private ProgressBar mProgressBar;
     private LinearLayout mInputContainer;
     private Spinner mIdentificationTypeSpinner;
     private LinearLayout mIdentificationTypeContainer;
+    private FrameLayout mNextButton;
+    private FrameLayout mBackButton;
+    private FrameLayout mBackInactiveButton;
+    private LinearLayout mButtonContainer;
     private MPEditText mCardNumberEditText;
+    private MPEditText mCardHolderNameEditText;
+    private MPEditText mCardExpiryDateEditText;
     private MPEditText mSecurityCodeEditText;
+    private LinearLayout mCardNumberInput;
+    private LinearLayout mCardholderNameInput;
+    private LinearLayout mCardExpiryDateInput;
+    private LinearLayout mCardIdentificationInput;
+    private LinearLayout mCardSecurityCodeInput;
+
+    //Input Controls
+    private String mCurrentEditingEditText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -191,9 +220,20 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mIdentificationTypeSpinner = (Spinner) findViewById(R.id.mpsdkCardIdentificationType);
         mBankDealsTextView = (MPTextView) findViewById(R.id.mpsdkBankDealsText);
         mCardNumberEditText = (MPEditText) findViewById(R.id.mpsdkCardNumber);
+        mCardHolderNameEditText = (MPEditText) findViewById(R.id.mpsdkCardholderName);
+        mCardExpiryDateEditText = (MPEditText) findViewById(R.id.mpsdkCardExpiryDate);
         mSecurityCodeEditText = (MPEditText) findViewById(R.id.mpsdkCardSecurityCode);
         mInputContainer = (LinearLayout) findViewById(R.id.mpsdkInputContainer);
         mProgressBar = (ProgressBar) findViewById(R.id.mpsdkProgressBar);
+        mNextButton = (FrameLayout) findViewById(R.id.mpsdkNextButton);
+        mBackButton = (FrameLayout) findViewById(R.id.mpsdkBackButton);
+        mBackInactiveButton = (FrameLayout) findViewById(R.id.mpsdkBackInactiveButton);
+        mButtonContainer = (LinearLayout) findViewById(R.id.mpsdkButtonContainer);
+        mCardNumberInput = (LinearLayout) findViewById(R.id.mpsdkCardNumberInput);
+        mCardholderNameInput = (LinearLayout) findViewById(R.id.mpsdkCardholderNameInput);
+        mCardExpiryDateInput = (LinearLayout) findViewById(R.id.mpsdkExpiryDateInput);
+        mCardIdentificationInput = (LinearLayout) findViewById(R.id.mpsdkCardIdentificationInput);
+        mCardSecurityCodeInput = (LinearLayout) findViewById(R.id.mpsdkCardSecurityCodeContainer);
         mInputContainer.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
@@ -203,7 +243,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mIdentificationTypeContainer.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.GONE);
         mInputContainer.setVisibility(View.VISIBLE);
-        openKeyboard(mCardNumberEditText);
+        requestCardNumberFocus();
     }
 
     private void loadViews() {
@@ -232,6 +272,13 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mFrontCardView.inflateInParent(mCardContainer, true);
         mFrontCardView.initializeControls();
         mFrontCardView.draw();
+
+        mBackCardView = new BackCardView(mActivity);
+        mBackCardView.setSize(CardRepresentationModes.EXTRA_BIG_SIZE);
+        mBackCardView.setPaymentMethod(mPresenter.getPaymentMethod());
+        if (mPresenter.getCardInformation() != null) {
+            mBackCardView.setSecurityCodeLength(mPresenter.getSecurityCodeLength());
+        }
     }
 
     private void loadToolbarArrow(Toolbar toolbar) {
@@ -305,6 +352,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                         mPresenter.loadIdentificationTypes();
                         mFrontCardView.setPaymentMethod(paymentMethod);
                         mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
+                        mFrontCardView.setSecurityCodeLength(mPresenter.getSecurityCodeLength());
                         mFrontCardView.updateCardNumberMask(getCardNumberTextTrimmed());
                         mFrontCardView.transitionPaymentMethodSet();
                     }
@@ -319,6 +367,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                     mSecurityCodeEditText.getText().clear();
 //                    mCardToken = new CardToken("", null, null, "", "", "", "");
                     mPresenter.setIdentificationNumberRequired(true);
+                    mPresenter.setSecurityCodeRequired(true);
                     mFrontCardView.transitionClearPaymentMethod();
                 }
             },
@@ -330,6 +379,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
                 @Override
                 public void saveCardNumber(CharSequence s) {
+                    mPresenter.saveCardNumber(s.toString());
                     mFrontCardView.drawEditingCardNumber(s.toString());
                 }
 
@@ -357,6 +407,96 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
                 }
             }));
+    }
+
+    @Override
+    public void setNextButtonListeners() {
+        mNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                validateCurrentEditText();
+            }
+        });
+    }
+
+    @Override
+    public void setBackButtonListeners() {
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mCurrentEditingEditText.equals(CARD_NUMBER_INPUT)) {
+                    checkIsEmptyOrValid();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void setCardholderNameListeners() {
+        mCardHolderNameEditText.addTextChangedListener(new CardholderNameTextWatcher(new CardholderNameEditTextCallback() {
+            @Override
+            public void openKeyboard() {
+
+            }
+
+            @Override
+            public void saveCardholderName(CharSequence s) {
+                mPresenter.saveCardholderName(s.toString());
+                mFrontCardView.drawEditingCardHolderName(s.toString());
+            }
+
+            @Override
+            public void checkChangeErrorView() {
+
+            }
+
+            @Override
+            public void toggleLineColorOnError(boolean toggle) {
+
+            }
+        }));
+    }
+
+    @Override
+    public void setExpiryDateListeners() {
+        mCardExpiryDateEditText.addTextChangedListener(new CardExpiryDateTextWatcher(new CardExpiryDateEditTextCallback() {
+            @Override
+            public void openKeyboard() {
+
+            }
+
+            @Override
+            public void saveExpiryMonth(CharSequence s) {
+                mPresenter.saveExpiryMonth(s.toString());
+                mFrontCardView.drawEditingExpiryMonth(s.toString());
+            }
+
+            @Override
+            public void saveExpiryYear(CharSequence s) {
+                mPresenter.saveExpiryYear(s.toString());
+                mFrontCardView.drawEditingExpiryYear(s.toString());
+            }
+
+            @Override
+            public void checkChangeErrorView() {
+
+            }
+
+            @Override
+            public void toggleLineColorOnError(boolean toggle) {
+
+            }
+
+            @Override
+            public void appendDivider() {
+                mCardExpiryDateEditText.append("/");
+            }
+
+            @Override
+            public void deleteChar(CharSequence s) {
+                mCardExpiryDateEditText.getText().delete(s.length() - 1, s.length());
+            }
+        }));
     }
 
     @Override
@@ -408,5 +548,239 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(ediText, InputMethodManager.SHOW_IMPLICIT);
 //        fullScrollDown();
+    }
+
+    private void requestCardNumberFocus() {
+        MPTracker.getInstance().trackScreen("CARD_NUMBER", 2, mPresenter.getPublicKey(),
+                BuildConfig.VERSION_NAME, this);
+        disableBackInputButton();
+        mCurrentEditingEditText = CARD_NUMBER_INPUT;
+        openKeyboard(mCardNumberEditText);
+        mFrontCardView.drawEditingCardNumber(mPresenter.getCardNumber());
+    }
+
+    private void requestCardHolderNameFocus() {
+        if (!mPresenter.validateCardNumber()) {
+            return;
+        }
+        MPTracker.getInstance().trackScreen("CARD_HOLDER_NAME", 2, mPresenter.getPublicKey(),
+                BuildConfig.VERSION_NAME, this);
+        enableBackInputButton();
+        mCurrentEditingEditText = CARDHOLDER_NAME_INPUT;
+        openKeyboard(mCardHolderNameEditText);
+        mFrontCardView.drawEditingCardHolderName(mPresenter.getCardholderName());
+    }
+
+    private void requestExpiryDateFocus() {
+        if (!mPresenter.validateCardName()) {
+            return;
+        }
+        MPTracker.getInstance().trackScreen("CARD_EXPIRY_DATE", 2, mPresenter.getPublicKey(),
+                BuildConfig.VERSION_NAME, this);
+        enableBackInputButton();
+        mCurrentEditingEditText = CARD_EXPIRYDATE_INPUT;
+        openKeyboard(mCardExpiryDateEditText);
+        mFrontCardView.drawEditingExpiryMonth(mPresenter.getExpiryMonth());
+        mFrontCardView.drawEditingExpiryYear(mPresenter.getExpiryYear());
+    }
+
+    private void requestSecurityCodeFocus() {
+        if (!mPresenter.validateExpiryDate()) {
+            return;
+        }
+        if (mCurrentEditingEditText.equals(CARD_EXPIRYDATE_INPUT) ||
+                mCurrentEditingEditText.equals(CARD_IDENTIFICATION_INPUT) ||
+                mCurrentEditingEditText.equals(CARD_SECURITYCODE_INPUT)) {
+            MPTracker.getInstance().trackScreen("CARD_SECURITY_CODE", 2, mPresenter.getPublicKey(),
+                    BuildConfig.VERSION_NAME, this);
+            enableBackInputButton();
+            mCurrentEditingEditText = CARD_SECURITYCODE_INPUT;
+            openKeyboard(mSecurityCodeEditText);
+            if (mPresenter.getSecurityCodeLocation().equals(FormCardPresenter.CARD_SIDE_BACK)) {
+                checkFlipCardToBack(true);
+            } else {
+//                checkFlipCardToFront(true);
+            }
+        }
+    }
+
+    private void requestIdentificationFocus() {
+        if ((mPresenter.isSecurityCodeRequired() && !mPresenter.validateSecurityCode()) ||
+                (!mPresenter.isSecurityCodeRequired() && !mPresenter.validateExpiryDate())) {
+            return;
+        }
+        MPTracker.getInstance().trackScreen("IDENTIFICATION_NUMBER", 2, mPresenter.getPublicKey(),
+                BuildConfig.VERSION_NAME, this);
+        enableBackInputButton();
+        mCurrentEditingEditText = CARD_IDENTIFICATION_INPUT;
+        openKeyboard(mCardNumberEditText);
+
+//        +        checkTransitionCardToId();
+    }
+
+    private void disableBackInputButton() {
+        mBackButton.setVisibility(View.GONE);
+        mBackInactiveButton.setVisibility(View.VISIBLE);
+    }
+
+    private void enableBackInputButton() {
+        mBackButton.setVisibility(View.VISIBLE);
+        mBackInactiveButton.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void hideIdentificationInput() {
+        mCardIdentificationInput.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void hideSecurityCodeInput() {
+        mCardSecurityCodeInput.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showIdentificationInput() {
+        mCardIdentificationInput.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showSecurityCodeInput() {
+        mCardSecurityCodeInput.setVisibility(View.VISIBLE);
+    }
+
+    private boolean validateCurrentEditText() {
+        switch (mCurrentEditingEditText) {
+            case CARD_NUMBER_INPUT:
+                if (mPresenter.validateCardNumber()) {
+                    mCardNumberInput.setVisibility(View.GONE);
+                    requestCardHolderNameFocus();
+                    return true;
+                }
+                return false;
+            case CARDHOLDER_NAME_INPUT:
+                if (mPresenter.validateCardName()) {
+                    mCardholderNameInput.setVisibility(View.GONE);
+                    requestExpiryDateFocus();
+                    return true;
+                }
+                return false;
+            case CARD_EXPIRYDATE_INPUT:
+                if (mPresenter.validateExpiryDate()) {
+                    mCardExpiryDateInput.setVisibility(View.GONE);
+                    if (mPresenter.isSecurityCodeRequired()) {
+                        requestSecurityCodeFocus();
+                    } else if (mPresenter.isIdentificationNumberRequired()) {
+                        requestIdentificationFocus();
+                    } else {
+                        finishWithCardToken();
+                    }
+                    return true;
+                }
+                return false;
+            case CARD_SECURITYCODE_INPUT:
+                if (mPresenter.validateSecurityCode()) {
+                    mCardSecurityCodeInput.setVisibility(View.GONE);
+                    if (mPresenter.isIdentificationNumberRequired()) {
+                        requestIdentificationFocus();
+                    } else {
+                        finishWithCardToken();
+                    }
+                    return true;
+                }
+                return false;
+            case CARD_IDENTIFICATION_INPUT:
+                if (mPresenter.validateIdentificationNumber()) {
+                    finishWithCardToken();
+                    return true;
+                }
+                return false;
+        }
+        return false;
+    }
+
+    private boolean checkIsEmptyOrValid() {
+        switch (mCurrentEditingEditText) {
+            case CARDHOLDER_NAME_INPUT:
+                if (mPresenter.checkIsEmptyOrValidCardholderName()) {
+                    mCardNumberInput.setVisibility(View.VISIBLE);
+                    requestCardNumberFocus();
+                    return true;
+                }
+                return false;
+            case CARD_EXPIRYDATE_INPUT:
+                if (mPresenter.checkIsEmptyOrValidExpiryDate()) {
+                    mCardholderNameInput.setVisibility(View.VISIBLE);
+                    requestCardHolderNameFocus();
+                    return true;
+                }
+                return false;
+            case CARD_SECURITYCODE_INPUT:
+                if (mPresenter.checkIsEmptyOrValidSecurityCode()) {
+                    mCardExpiryDateInput.setVisibility(View.VISIBLE);
+                    requestExpiryDateFocus();
+                    return true;
+                }
+                return false;
+            case CARD_IDENTIFICATION_INPUT:
+                if (mPresenter.checkIsEmptyOrValidIdentificationNumber()) {
+                    if (mPresenter.isSecurityCodeRequired()) {
+                        mCardSecurityCodeInput.setVisibility(View.VISIBLE);
+                        requestSecurityCodeFocus();
+                    } else {
+                        mCardExpiryDateInput.setVisibility(View.VISIBLE);
+                        requestExpiryDateFocus();
+                    }
+                    return true;
+                }
+                return false;
+        }
+        return false;
+    }
+
+    private void checkFlipCardToBack(boolean showBankDeals) {
+//        if (showingFront()) {
+            flipCardToBack();
+//        } else if (showingIdentification()) {
+//            getSupportFragmentManager().popBackStack();
+//            mCardSideState = CARD_SIDE_BACK;
+//            if (showBankDeals) {
+//                mToolbarButton.setVisibility(View.VISIBLE);
+//            }
+//        }
+    }
+
+    private void flipCardToBack() {
+
+
+        mBackCardView.setPaymentMethod(mPresenter.getPaymentMethod());
+        if (mPresenter.getCardInformation() != null) {
+            mBackCardView.setSecurityCodeLength(mPresenter.getSecurityCodeLength());
+        }
+
+
+        Animation animFadeIn, animFadeOut;
+        animFadeIn= AnimationUtils.loadAnimation(this, R.anim.mpsdk_to_middle_left);
+        animFadeOut=AnimationUtils.loadAnimation(this, R.anim.mpsdk_to_middle_left);
+
+
+
+        mFrontCardView.getView().startAnimation(animFadeOut);
+
+//        mFrontCardView.hide();
+
+        mBackCardView.inflateInParent(mCardContainer, true);
+        mBackCardView.initializeControls();
+//
+        mBackCardView.draw();
+//        mBackCardView.show();
+
+//        mBackCardView.getView().startAnimation(animFadeIn);
+
+
+    }
+
+    //TODO
+    private void finishWithCardToken() {
+
     }
 }

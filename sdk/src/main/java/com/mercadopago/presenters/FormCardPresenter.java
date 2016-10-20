@@ -1,11 +1,9 @@
 package com.mercadopago.presenters;
 
 import android.content.Context;
-import android.view.View;
+import android.text.TextUtils;
 
-import com.mercadopago.CardInterface;
 import com.mercadopago.R;
-import com.mercadopago.adapters.IdentificationTypesAdapter;
 import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
@@ -13,8 +11,6 @@ import com.mercadopago.core.MercadoPago;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
 import com.mercadopago.model.CardInformation;
-import com.mercadopago.model.CardNumber;
-import com.mercadopago.model.CardToken;
 import com.mercadopago.model.Identification;
 import com.mercadopago.model.IdentificationType;
 import com.mercadopago.model.Issuer;
@@ -25,8 +21,6 @@ import com.mercadopago.model.SecurityCode;
 import com.mercadopago.model.Setting;
 import com.mercadopago.model.Token;
 import com.mercadopago.uicontrollers.card.FrontCardView;
-import com.mercadopago.util.ApiUtil;
-import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.views.FormCardActivityView;
 
 import java.util.List;
@@ -61,12 +55,21 @@ public class FormCardPresenter {
     private boolean mIdentificationNumberRequired;
     private PaymentPreference mPaymentPreference;
 
-    //Card Info
+    //Card Settings
     private CardInformation mCardInfo;
-    private String mBin;
     private int mSecurityCodeLength;
     private String mSecurityCodeLocation;
+    private boolean mIsSecurityCodeRequired;
+
+    //Card Info
+    private String mBin;
+    private String mCardNumber;
+    private String mCardholderName;
+    private String mExpiryMonth;
+    private String mExpiryYear;
+    private String mSecurityCode;
     private IdentificationType mIdentificationType;
+    private String mIdentificationNumber;
 
     //Card controller
     protected PaymentMethodGuessingController mPaymentMethodGuessingController;
@@ -143,10 +146,30 @@ public class FormCardPresenter {
         }
     }
 
+    public boolean isSecurityCodeRequired() {
+        return mIsSecurityCodeRequired;
+    }
+
+    public void setSecurityCodeRequired(boolean required) {
+        this.mIsSecurityCodeRequired = required;
+        if (required) {
+            mView.showSecurityCodeInput();
+        }
+    }
+
     private void clearCardSettings() {
         mSecurityCodeLength = CARD_DEFAULT_SECURITY_CODE_LENGTH;
         mSecurityCodeLocation = CARD_SIDE_BACK;
+        mIsSecurityCodeRequired = true;
         mBin = "";
+    }
+
+    public String getSecurityCodeLocation() {
+        return mSecurityCodeLocation;
+    }
+
+    public int getSecurityCodeLength() {
+        return mSecurityCodeLength;
     }
 
     public Issuer getIssuer() {
@@ -179,6 +202,9 @@ public class FormCardPresenter {
 
     public void setIdentificationNumberRequired(boolean identificationNumberRequired) {
         this.mIdentificationNumberRequired = identificationNumberRequired;
+        if (identificationNumberRequired) {
+            mView.showIdentificationInput();
+        }
     }
 
     public PaymentPreference getPaymentPreference() {
@@ -245,6 +271,10 @@ public class FormCardPresenter {
     protected void startGuessingForm() {
         initializeGuessingCardNumberController();
         mView.setCardNumberListeners(mPaymentMethodGuessingController);
+        mView.setCardholderNameListeners();
+        mView.setExpiryDateListeners();
+        mView.setNextButtonListeners();
+        mView.setBackButtonListeners();
     }
 
     public void loadPaymentMethods() {
@@ -262,13 +292,13 @@ public class FormCardPresenter {
 
             @Override
             public void failure(ApiException apiException) {
+//                ApiUtil.showApiExceptionError(mContext, apiException);
                 setFailureRecovery(new FailureRecovery() {
                     @Override
                     public void recover() {
                         getPaymentMethodsAsync();
                     }
                 });
-//                ApiUtil.showApiExceptionError(mContext, apiException);
             }
         });
     }
@@ -276,6 +306,10 @@ public class FormCardPresenter {
     public void configureWithSettings() {
         if (mPaymentMethod == null) return;
         mBin = mPaymentMethodGuessingController.getSavedBin();
+        mIsSecurityCodeRequired = mPaymentMethod.isSecurityCodeRequired(mBin);
+        if (!mIsSecurityCodeRequired) {
+            mView.hideSecurityCodeInput();
+        }
         Setting setting = PaymentMethodGuessingController.getSettingByPaymentMethodAndBin(mPaymentMethod, mBin);
         if (setting == null) {
             mView.showApiExceptionError(null);
@@ -304,6 +338,8 @@ public class FormCardPresenter {
         mIdentificationNumberRequired = getPaymentMethod().isIdentificationNumberRequired();
         if (mIdentificationNumberRequired) {
             getIdentificationTypesAsync();
+        } else {
+            mView.hideIdentificationInput();
         }
     }
 
@@ -333,6 +369,89 @@ public class FormCardPresenter {
         });
     }
 
+    public void saveCardNumber(String cardNumber) {
+        this.mCardNumber = cardNumber;
+    }
 
+    public void saveCardholderName(String cardholderName) {
+        this.mCardholderName = cardholderName;
+    }
+
+    public void saveExpiryMonth(String expiryMonth) {
+        this.mExpiryMonth = expiryMonth;
+    }
+
+    public void saveExpiryYear(String expiryYear) {
+        this.mExpiryYear = expiryYear;
+    }
+
+    public void saveSecurityCode(String securityCode) {
+        this.mSecurityCode = securityCode;
+    }
+
+    public void saveIdentificationNumber(String identificationNumber) {
+        this.mIdentificationNumber = identificationNumber;
+    }
+
+    public String getCardNumber() {
+        return mCardNumber;
+    }
+
+    public String getCardholderName() {
+        return mCardholderName;
+    }
+
+    public String getExpiryMonth() {
+        return mExpiryMonth;
+    }
+
+    public String getExpiryYear() {
+        return mExpiryYear;
+    }
+
+    public String getSecurityCode() {
+        return mSecurityCode;
+    }
+
+    public String getIdentificationNumber() {
+        return mIdentificationNumber;
+    }
+
+    //TODO
+    public boolean validateCardNumber() {
+        return true;
+    }
+
+    public boolean validateCardName() {
+        return true;
+    }
+
+    public boolean validateExpiryDate() {
+        return true;
+    }
+
+    public boolean validateSecurityCode() {
+        return true;
+    }
+
+    public boolean validateIdentificationNumber() {
+        return true;
+    }
+
+    public boolean checkIsEmptyOrValidCardholderName() {
+        return TextUtils.isEmpty(mCardholderName) || validateCardName();
+    }
+
+    public boolean checkIsEmptyOrValidExpiryDate() {
+        return TextUtils.isEmpty(mExpiryMonth) || validateExpiryDate();
+    }
+
+    public boolean checkIsEmptyOrValidSecurityCode() {
+        return TextUtils.isEmpty(mSecurityCode) || validateSecurityCode();
+    }
+
+    public boolean checkIsEmptyOrValidIdentificationNumber() {
+        return TextUtils.isEmpty(mIdentificationNumber) || validateIdentificationNumber();
+    }
 
 }

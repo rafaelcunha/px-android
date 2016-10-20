@@ -1,4 +1,4 @@
-package com.mercadopago.callbacks;
+package com.mercadopago.callbacks.card;
 
 /**
  * Created by vaserber on 10/13/16.
