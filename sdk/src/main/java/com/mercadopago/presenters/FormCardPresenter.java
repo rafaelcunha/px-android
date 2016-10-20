@@ -244,6 +244,13 @@ public class FormCardPresenter {
         }
     }
 
+    public String getSecurityCodeFront() {
+        if (mSecurityCodeLocation.equals(FormCardPresenter.CARD_SIDE_FRONT)) {
+            return getSecurityCode();
+        }
+        return null;
+    }
+
     public void initializeMercadoPago() {
         if (mPublicKey == null) return;
         mMercadoPago = new MercadoPago.Builder()
@@ -273,6 +280,7 @@ public class FormCardPresenter {
         mView.setCardNumberListeners(mPaymentMethodGuessingController);
         mView.setCardholderNameListeners();
         mView.setExpiryDateListeners();
+        mView.setSecurityCodeListeners();
         mView.setNextButtonListeners();
         mView.setBackButtonListeners();
     }

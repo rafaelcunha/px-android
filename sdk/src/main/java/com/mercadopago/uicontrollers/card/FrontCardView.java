@@ -184,6 +184,18 @@ public class FrontCardView implements FrontCardViewController {
         }
     }
 
+    public void drawEditingCard(String cardNumber, String cardholderName, String expiryMonth,
+                                 String expiryYear, String securityCode) {
+        onPaymentMethodSet();
+        drawEditingCardNumber(cardNumber);
+        drawEditingCardHolderName(cardholderName);
+        if (securityCode != null) {
+            drawEditingSecurityCode(securityCode);
+        }
+        drawEditingExpiryMonth(expiryMonth);
+        drawEditingExpiryYear(expiryYear);
+    }
+
     private void drawEmptyCard() {
         String number = BASE_NUMBER_CARDHOLDER;
         mCardNumberTextView.setText(number);
@@ -405,6 +417,7 @@ public class FrontCardView implements FrontCardViewController {
     }
 
     private void onPaymentMethodSet() {
+        if (mPaymentMethod == null) return;
         setCardColor(getCardColor(mPaymentMethod));
         setCardImage(getCardImage(mPaymentMethod));
         int fontColor = getCardFontColor(mPaymentMethod);

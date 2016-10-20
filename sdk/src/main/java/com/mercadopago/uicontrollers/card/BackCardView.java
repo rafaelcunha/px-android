@@ -7,8 +7,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -65,6 +63,7 @@ public class BackCardView implements BackCardViewController {
         this.mSecurityCodeLength = securityCodeLength;
     }
 
+    @Override
     public void initializeControls() {
         mCardContainer = (FrameLayout) mView.findViewById(R.id.mpsdkCardBackContainer);
         mCardBorder = (ImageView) mView.findViewById(R.id.mpsdkCardShadowBorder);
@@ -94,6 +93,7 @@ public class BackCardView implements BackCardViewController {
         mCardSecurityCodeTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, cardSecurityCodeFontSize);
     }
 
+    @Override
     public View inflateInParent(ViewGroup parent, boolean attachToRoot) {
         mView = LayoutInflater.from(mContext)
                 .inflate(R.layout.mpsdk_card_back, parent, attachToRoot);
@@ -133,6 +133,7 @@ public class BackCardView implements BackCardViewController {
 
     public void clearPaymentMethod() {
         mCardImageView.setBackgroundColor(ContextCompat.getColor(mContext, NEUTRAL_CARD_COLOR));
+        drawEditingSecurityCode(null);
     }
 
     private int getCardColor(PaymentMethod paymentMethod) {

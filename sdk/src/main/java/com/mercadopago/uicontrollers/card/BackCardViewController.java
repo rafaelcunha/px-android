@@ -1,5 +1,8 @@
 package com.mercadopago.uicontrollers.card;
 
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.mercadopago.model.PaymentMethod;
 
 /**
@@ -11,6 +14,8 @@ public interface BackCardViewController {
     void setPaymentMethod(PaymentMethod paymentMethod);
     void setSize(String size);
     void setSecurityCodeLength(int securityCodeLength);
+    void initializeControls();
+    View inflateInParent(ViewGroup parent, boolean attachToRoot);
     void draw();
     void hide();
     void show();

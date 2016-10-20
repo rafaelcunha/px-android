@@ -1225,7 +1225,7 @@ public class GuessingCardActivity extends FrontCardActivity {
             float scale = getResources().getDisplayMetrics().density;
             float cameraDistance = scale * distance;
 
-            MPAnimationUtils.flipToFront(this, cameraDistance, mFrontView, mBackView);
+//            MPAnimationUtils.flipToFront(this, cameraDistance, mFrontView, mBackView);
         } else {
             getSupportFragmentManager().popBackStack();
         }
@@ -1290,7 +1290,7 @@ public class GuessingCardActivity extends FrontCardActivity {
             float scale = getResources().getDisplayMetrics().density;
             float cameraDistance = scale * distance;
 
-            MPAnimationUtils.flipToBack(this, cameraDistance, mFrontView, mBackView);
+//            MPAnimationUtils.flipToBack(this, cameraDistance, mFrontView, mBackView);
 
         } else {
             getSupportFragmentManager()

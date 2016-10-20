@@ -3,14 +3,13 @@ package com.mercadopago;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
-import android.text.TextUtils;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -22,12 +21,14 @@ import com.mercadopago.adapters.IdentificationTypesAdapter;
 import com.mercadopago.callbacks.card.CardExpiryDateEditTextCallback;
 import com.mercadopago.callbacks.card.CardNumberEditTextCallback;
 import com.mercadopago.callbacks.PaymentMethodSelectionCallback;
+import com.mercadopago.callbacks.card.CardSecurityCodeEditTextCallback;
 import com.mercadopago.callbacks.card.CardholderNameEditTextCallback;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.customviews.MPEditText;
 import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.listeners.card.CardExpiryDateTextWatcher;
 import com.mercadopago.listeners.card.CardNumberTextWatcher;
+import com.mercadopago.listeners.card.CardSecurityCodeTextWatcher;
 import com.mercadopago.listeners.card.CardholderNameTextWatcher;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
@@ -48,6 +49,7 @@ import com.mercadopago.util.ApiUtil;
 import com.mercadopago.util.ColorsUtil;
 import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
+import com.mercadopago.util.MPAnimationUtils;
 import com.mercadopago.util.MPCardMaskUtil;
 import com.mercadopago.util.ScaleUtil;
 import com.mercadopago.views.FormCardActivityView;
@@ -67,6 +69,8 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     public static final String CARD_SECURITYCODE_INPUT = "cardSecurityCode";
     public static final String CARD_IDENTIFICATION_INPUT = "cardIdentification";
 
+    public static final String CARD_IDENTIFICATION = "identification";
+
     protected FormCardPresenter mPresenter;
     private Activity mActivity;
 
@@ -82,7 +86,8 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     private Toolbar mNormalToolbar;
     private MPTextView mBankDealsTextView;
     private FrameLayout mCardBackground;
-    private FrameLayout mCardContainer;
+    private FrameLayout mCardFrontContainer;
+    private FrameLayout mCardBackContainer;
     private FrontCardView mFrontCardView;
     private BackCardView mBackCardView;
 
@@ -107,6 +112,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
     //Input Controls
     private String mCurrentEditingEditText;
+    private String mCardSideState;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -214,7 +220,8 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         } else {
             mNormalToolbar = (Toolbar) findViewById(R.id.mpsdkTransparentToolbar);
             mCardBackground = (FrameLayout) findViewById(R.id.mpsdkCardBackground);
-            mCardContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardContainer);
+            mCardFrontContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardFrontContainer);
+            mCardBackContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardBackContainer);
         }
         mIdentificationTypeContainer = (LinearLayout) findViewById(R.id.mpsdkCardIdentificationTypeContainer);
         mIdentificationTypeSpinner = (Spinner) findViewById(R.id.mpsdkCardIdentificationType);
@@ -254,6 +261,10 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         }
     }
 
+    private boolean cardViewsActive() {
+        return !mLowResActive;
+    }
+
     private void loadLowResViews() {
         loadToolbarArrow(mLowResToolbar);
         //TODO poner el payment type, y cambiar el titulo en documento
@@ -269,9 +280,10 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
             mFrontCardView.setLastFourDigits(mPresenter.getCardInformation().getLastFourDigits());
         }
-        mFrontCardView.inflateInParent(mCardContainer, true);
+        mFrontCardView.inflateInParent(mCardFrontContainer, true);
         mFrontCardView.initializeControls();
         mFrontCardView.draw();
+        mCardSideState = FormCardPresenter.CARD_SIDE_FRONT;
 
         mBackCardView = new BackCardView(mActivity);
         mBackCardView.setSize(CardRepresentationModes.EXTRA_BIG_SIZE);
@@ -279,6 +291,10 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         if (mPresenter.getCardInformation() != null) {
             mBackCardView.setSecurityCodeLength(mPresenter.getSecurityCodeLength());
         }
+        mBackCardView.inflateInParent(mCardBackContainer, true);
+        mBackCardView.initializeControls();
+        mBackCardView.draw();
+        mBackCardView.hide();
     }
 
     private void loadToolbarArrow(Toolbar toolbar) {
@@ -322,6 +338,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         ColorsUtil.decorateTransparentToolbar(mNormalToolbar, mBankDealsTextView, mDecorationPreference,
                 getSupportActionBar(), this);
         mFrontCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
+        mBackCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
         mCardBackground.setBackgroundColor(mDecorationPreference.getLighterColor());
     }
 
@@ -350,11 +367,13 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                         mPresenter.setPaymentMethod(paymentMethod);
                         mPresenter.configureWithSettings();
                         mPresenter.loadIdentificationTypes();
-                        mFrontCardView.setPaymentMethod(paymentMethod);
-                        mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
-                        mFrontCardView.setSecurityCodeLength(mPresenter.getSecurityCodeLength());
-                        mFrontCardView.updateCardNumberMask(getCardNumberTextTrimmed());
-                        mFrontCardView.transitionPaymentMethodSet();
+                        if (cardViewsActive()) {
+                            mFrontCardView.setPaymentMethod(paymentMethod);
+                            mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
+                            mFrontCardView.setSecurityCodeLength(mPresenter.getSecurityCodeLength());
+                            mFrontCardView.updateCardNumberMask(getCardNumberTextTrimmed());
+                            mFrontCardView.transitionPaymentMethodSet();
+                        }
                     }
                 }
 
@@ -368,7 +387,10 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 //                    mCardToken = new CardToken("", null, null, "", "", "", "");
                     mPresenter.setIdentificationNumberRequired(true);
                     mPresenter.setSecurityCodeRequired(true);
-                    mFrontCardView.transitionClearPaymentMethod();
+                    if (cardViewsActive()) {
+                        mFrontCardView.transitionClearPaymentMethod();
+                        mBackCardView.clearPaymentMethod();
+                    }
                 }
             },
             new CardNumberEditTextCallback() {
@@ -380,7 +402,9 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                 @Override
                 public void saveCardNumber(CharSequence s) {
                     mPresenter.saveCardNumber(s.toString());
-                    mFrontCardView.drawEditingCardNumber(s.toString());
+                    if (cardViewsActive()) {
+                        mFrontCardView.drawEditingCardNumber(s.toString());
+                    }
                 }
 
                 @Override
@@ -442,7 +466,9 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             @Override
             public void saveCardholderName(CharSequence s) {
                 mPresenter.saveCardholderName(s.toString());
-                mFrontCardView.drawEditingCardHolderName(s.toString());
+                if (cardViewsActive()) {
+                    mFrontCardView.drawEditingCardHolderName(s.toString());
+                }
             }
 
             @Override
@@ -468,13 +494,17 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             @Override
             public void saveExpiryMonth(CharSequence s) {
                 mPresenter.saveExpiryMonth(s.toString());
-                mFrontCardView.drawEditingExpiryMonth(s.toString());
+                if (cardViewsActive()) {
+                    mFrontCardView.drawEditingExpiryMonth(s.toString());
+                }
             }
 
             @Override
             public void saveExpiryYear(CharSequence s) {
                 mPresenter.saveExpiryYear(s.toString());
-                mFrontCardView.drawEditingExpiryYear(s.toString());
+                if (cardViewsActive()) {
+                    mFrontCardView.drawEditingExpiryYear(s.toString());
+                }
             }
 
             @Override
@@ -500,6 +530,38 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     }
 
     @Override
+    public void setSecurityCodeListeners() {
+        mSecurityCodeEditText.addTextChangedListener(new CardSecurityCodeTextWatcher(new CardSecurityCodeEditTextCallback() {
+            @Override
+            public void openKeyboard() {
+
+            }
+
+            @Override
+            public void saveSecurityCode(CharSequence s) {
+                mPresenter.saveSecurityCode(s.toString());
+                if (cardViewsActive()) {
+                    if (mPresenter.getSecurityCodeLocation().equals(FormCardPresenter.CARD_SIDE_FRONT)) {
+                        mFrontCardView.drawEditingSecurityCode(s.toString());
+                    } else {
+                        mBackCardView.drawEditingSecurityCode(s.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void checkChangeErrorView() {
+
+            }
+
+            @Override
+            public void toggleLineColorOnError(boolean toggle) {
+
+            }
+        }));
+    }
+
+    @Override
     public void initializeIdentificationTypes(List<IdentificationType> identificationTypes) {
         mIdentificationTypeSpinner.setAdapter(new IdentificationTypesAdapter(this, identificationTypes));
         mIdentificationTypeContainer.setVisibility(View.VISIBLE);
@@ -508,7 +570,9 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     @Override
     public void setSecurityCodeViewLocation(String location) {
         if (location.equals(FormCardPresenter.CARD_SIDE_FRONT)) {
-            mFrontCardView.hasToShowSecurityCode(true);
+            if (cardViewsActive()) {
+                mFrontCardView.hasToShowSecurityCode(true);
+            }
         }
     }
 
@@ -556,7 +620,9 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         disableBackInputButton();
         mCurrentEditingEditText = CARD_NUMBER_INPUT;
         openKeyboard(mCardNumberEditText);
-        mFrontCardView.drawEditingCardNumber(mPresenter.getCardNumber());
+        if (cardViewsActive()) {
+            mFrontCardView.drawEditingCardNumber(mPresenter.getCardNumber());
+        }
     }
 
     private void requestCardHolderNameFocus() {
@@ -568,7 +634,9 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         enableBackInputButton();
         mCurrentEditingEditText = CARDHOLDER_NAME_INPUT;
         openKeyboard(mCardHolderNameEditText);
-        mFrontCardView.drawEditingCardHolderName(mPresenter.getCardholderName());
+        if (cardViewsActive()) {
+            mFrontCardView.drawEditingCardHolderName(mPresenter.getCardholderName());
+        }
     }
 
     private void requestExpiryDateFocus() {
@@ -580,8 +648,11 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         enableBackInputButton();
         mCurrentEditingEditText = CARD_EXPIRYDATE_INPUT;
         openKeyboard(mCardExpiryDateEditText);
-        mFrontCardView.drawEditingExpiryMonth(mPresenter.getExpiryMonth());
-        mFrontCardView.drawEditingExpiryYear(mPresenter.getExpiryYear());
+        checkFlipCardToFront(true);
+        if (cardViewsActive()) {
+            mFrontCardView.drawEditingExpiryMonth(mPresenter.getExpiryMonth());
+            mFrontCardView.drawEditingExpiryYear(mPresenter.getExpiryYear());
+        }
     }
 
     private void requestSecurityCodeFocus() {
@@ -599,7 +670,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             if (mPresenter.getSecurityCodeLocation().equals(FormCardPresenter.CARD_SIDE_BACK)) {
                 checkFlipCardToBack(true);
             } else {
-//                checkFlipCardToFront(true);
+                checkFlipCardToFront(true);
             }
         }
     }
@@ -737,46 +808,129 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         return false;
     }
 
+    private void checkTransitionCardToId() {
+        if (!mPresenter.isIdentificationNumberRequired()) {
+            return;
+        }
+        if (showingFront() || showingBack()) {
+            transitionToIdentification();
+        }
+    }
+
     private void checkFlipCardToBack(boolean showBankDeals) {
-//        if (showingFront()) {
+        if (showingFront()) {
             flipCardToBack();
-//        } else if (showingIdentification()) {
+        } else if (showingIdentification()) {
 //            getSupportFragmentManager().popBackStack();
 //            mCardSideState = CARD_SIDE_BACK;
 //            if (showBankDeals) {
 //                mToolbarButton.setVisibility(View.VISIBLE);
 //            }
+        }
+    }
+
+    private void checkFlipCardToFront(boolean showBankDeals) {
+        if (showingBack() || showingIdentification()) {
+            if (showingBack()) {
+                flipCardToFrontFromBack();
+            } else if (showingIdentification()) {
+//                getSupportFragmentManager().popBackStack();
+//                mCardSideState = CARD_SIDE_FRONT;
+            }
+            if (showBankDeals) {
+//                mToolbarButton.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    private void transitionToIdentification() {
+//        mToolbarButton.setVisibility(View.GONE);
+
+//        int container = R.id.mpsdkActivityNewCardContainerFront;
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+//            if (showingBack()) {
+//                container = R.id.mpsdkActivityNewCardContainerBack;
+//            } else if (showingFront()) {
+//                container = R.id.mpsdkActivityNewCardContainerFront;
+//            }
 //        }
+        mCardSideState = CARD_IDENTIFICATION;
+
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .setCustomAnimations(R.anim.mpsdk_appear_from_right, R.anim.mpsdk_dissapear_to_left,
+//                        R.anim.mpsdk_appear_from_left, R.anim.mpsdk_dissapear_to_right)
+//                .replace(container, mCardIdentificationFragment, IDENTIFICATION_FRAGMENT_TAG)
+//                .addToBackStack(null)
+//                .commit();
     }
 
     private void flipCardToBack() {
-
-
+        if (mLowResActive) return;
         mBackCardView.setPaymentMethod(mPresenter.getPaymentMethod());
         if (mPresenter.getCardInformation() != null) {
             mBackCardView.setSecurityCodeLength(mPresenter.getSecurityCodeLength());
         }
+        mCardSideState = FormCardPresenter.CARD_SIDE_BACK;
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
 
-        Animation animFadeIn, animFadeOut;
-        animFadeIn= AnimationUtils.loadAnimation(this, R.anim.mpsdk_to_middle_left);
-        animFadeOut=AnimationUtils.loadAnimation(this, R.anim.mpsdk_to_middle_left);
+            float distance = mCardBackground.getResources().getDimension(R.dimen.mpsdk_card_camera_distance);
+            float scale = getResources().getDisplayMetrics().density;
+            float cameraDistance = scale * distance;
 
-
-
-        mFrontCardView.getView().startAnimation(animFadeOut);
-
-//        mFrontCardView.hide();
-
-        mBackCardView.inflateInParent(mCardContainer, true);
-        mBackCardView.initializeControls();
-//
+            MPAnimationUtils.flipToBack(this, cameraDistance, mFrontCardView.getView(), mBackCardView.getView(),
+                    mBackCardView);
+        } else {
+            MPAnimationUtils.flipToBack(this, mFrontCardView, mBackCardView);
+        }
         mBackCardView.draw();
-//        mBackCardView.show();
+        mBackCardView.drawEditingSecurityCode(mPresenter.getSecurityCode());
+    }
 
-//        mBackCardView.getView().startAnimation(animFadeIn);
+    private void flipCardToFrontFromBack() {
+        if (mLowResActive) return;
+        mCardSideState = FormCardPresenter.CARD_SIDE_FRONT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
 
+            float distance = mCardBackground.getResources().getDimension(R.dimen.mpsdk_card_camera_distance);
+            float scale = getResources().getDisplayMetrics().density;
+            float cameraDistance = scale * distance;
 
+            MPAnimationUtils.flipToFront(this, cameraDistance, mFrontCardView.getView(), mBackCardView.getView());
+        } else {
+            MPAnimationUtils.flipToFront(this, mFrontCardView, mBackCardView);
+        }
+        mFrontCardView.drawEditingCard(mPresenter.getCardNumber(), mPresenter.getCardholderName(),
+                mPresenter.getExpiryMonth(), mPresenter.getExpiryYear(), mPresenter.getSecurityCodeFront());
+    }
+
+    private void initCardState() {
+        if (mCardSideState == null) {
+            mCardSideState = FormCardPresenter.CARD_SIDE_FRONT;
+        }
+    }
+
+    private boolean showingIdentification() {
+        initCardState();
+        return mCardSideState.equals(CARD_IDENTIFICATION);
+    }
+
+    private boolean showingBack() {
+        initCardState();
+        return mCardSideState.equals(FormCardPresenter.CARD_SIDE_BACK);
+    }
+
+    private boolean showingFront() {
+        initCardState();
+        return mCardSideState.equals(FormCardPresenter.CARD_SIDE_FRONT);
     }
 
     //TODO

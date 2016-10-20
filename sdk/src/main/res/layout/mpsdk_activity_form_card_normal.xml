@@ -27,7 +27,15 @@
                 <include layout="@layout/mpsdk_form_card_normal_toolbar"/>
 
                 <FrameLayout
-                    android:id="@+id/mpsdkActivityCardContainer"
+                    android:id="@+id/mpsdkActivityCardFrontContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|top"
+                    android:gravity="center_horizontal"
+                    android:layout_marginTop="45dp" />
+
+                <FrameLayout
+                    android:id="@+id/mpsdkActivityCardBackContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|top"
