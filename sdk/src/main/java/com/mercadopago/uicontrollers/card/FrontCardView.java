@@ -14,13 +14,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.mercadopago.CardInterface;
 import com.mercadopago.R;
-import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.model.PaymentMethod;
-import com.mercadopago.model.Setting;
 import com.mercadopago.util.LayoutUtil;
 import com.mercadopago.util.MPAnimationUtils;
 import com.mercadopago.util.MPCardMaskUtil;
@@ -182,10 +179,6 @@ public class FrontCardView implements FrontCardViewController {
         mCardExpiryYearTextView.setText(mContext.getResources().getString(R.string.mpsdk_card_expiry_year_hint));
         mCardSecurityCodeTextView.setText("");
         clearImage();
-//        drawEditingCardNumber("50317");
-//        onPaymentMethodSet();
-//        drawEditingCardHolderName("vale");
-//        drawEditingExpiryMonth("01");
     }
 
     private void clearImage() {
@@ -303,21 +296,6 @@ public class FrontCardView implements FrontCardViewController {
     public void updateCardNumberMask(String cardNumber) {
         mCardNumberTextView.setText(MPCardMaskUtil.buildNumberWithMask(mCardNumberLength, cardNumber));
     }
-
-
-    //            String bin = cardNumber.substring(0, 6);
-//            Setting setting = PaymentMethodGuessingController.getSettingByPaymentMethodAndBin(mPaymentMethod, bin);
-//            int cardNumberLength = CARD_NUMBER_MAX_LENGTH;
-//            if (setting != null) {
-//                cardNumberLength = setting.getCardNumber().getLength();
-//            }
-
-    //            int securityCodeLength = CARD_SECURITY_CODE_DEFAULT_LENGTH;
-//            if (setting != null) {
-//                securityCodeLength = setting.getSecurityCode().getLength();
-//            }
-
-
 
     private void drawEditingCardHolderName(String cardholderName) {
         if (cardholderName == null) {

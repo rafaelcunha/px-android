@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/mpsdk_white_background">
 
@@ -38,10 +38,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="30dp"
-                    android:layout_marginRight="24dp"
-                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
                     android:textColor="@color/mpsdk_white"
                     android:textSize="22dp"
+                    app:fontStyle="regular"
                     android:gravity="bottom|center"
                     tools:text="Debes autorizar ante Visa el pago de $ 6000 a\n Mercado Pago"/>
             </LinearLayout>
@@ -62,6 +65,7 @@
                     android:layout_marginRight="10dp"
                     android:gravity="bottom|center"
                     android:textSize="22dp"
+                    app:fontStyle="regular"
                     android:text="@string/mpsdk_what_can_do" />
 
                 <com.mercadopago.customviews.MPTextView
@@ -70,8 +74,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="12dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
                     android:gravity="bottom|center"
-                    android:textSize="20dp"
+                    android:textSize="18dp"
+                    app:fontStyle="regular"
                     android:paddingLeft="17dp"
                     android:paddingRight="17dp"
                     android:text="@string/mpsdk_text_order_call_for_authorize" />
@@ -85,9 +94,10 @@
                     android:paddingRight="20dp"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
-                    android:textSize="17dp"
+                    android:textSize="16dp"
+                    app:fontStyle="regular"
                     android:text="@string/mpsdk_text_authorized_call_for_authorize"
-                    android:textColor="@color/mpsdk_color_link"
+                    android:textColor="@color/mpsdk_background_blue"
                     tools:text="Ya hablé con Visa y me autorizó"/>
 
                 <View
@@ -106,7 +116,8 @@
                     android:gravity="bottom|center"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="20dp"
-                    android:textSize="18dp"
+                    android:textSize="22dp"
+                    app:fontStyle="regular"
                     android:text="@string/mpsdk_text_question_call_for_authorize" />
 
                 <FrameLayout
@@ -115,6 +126,8 @@
                     android:layout_height="50dp"
                     android:layout_marginLeft="25dp"
                     android:layout_marginRight="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
                     android:layout_marginBottom="5dp"
                     android:background="@drawable/mpsdk_button_bg_stroke" >
                     <com.mercadopago.customviews.MPTextView
@@ -123,7 +136,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:textAllCaps="false"
-                        android:textSize="18dp"
+                        android:textSize="16dp"
+                        app:fontStyle="regular"
                         android:textColor="@color/mpsdk_white_background"
                         android:text="@string/mpsdk_text_pay_with_other_method"/>
                 </FrameLayout>
@@ -139,7 +153,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/mpsdk_text_continue"
-                    android:textColor="@color/mpsdk_color_link"
+                    app:fontStyle="regular"
+                    android:textColor="@color/mpsdk_background_blue"
                     android:textSize="@dimen/mpsdk_small_text"/>
             </LinearLayout>
         </LinearLayout>

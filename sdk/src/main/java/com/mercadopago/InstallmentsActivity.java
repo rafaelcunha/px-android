@@ -49,18 +49,18 @@ import java.util.List;
 public class InstallmentsActivity extends AppCompatActivity implements InstallmentsActivityView {
 
     protected InstallmentsPresenter mPresenter;
-    private Activity mActivity;
+    protected Activity mActivity;
 
     //View controls
-    private PayerCostsAdapter mPayerCostsAdapter;
-    private RecyclerView mInstallmentsRecyclerView;
-    private ProgressBar mProgressBar;
-    private DecorationPreference mDecorationPreference;
+    protected PayerCostsAdapter mPayerCostsAdapter;
+    protected RecyclerView mInstallmentsRecyclerView;
+    protected ProgressBar mProgressBar;
+    protected DecorationPreference mDecorationPreference;
     //ViewMode
     protected boolean mLowResActive;
     //Low Res View
     protected Toolbar mLowResToolbar;
-    private MPTextView mLowResTitleToolbar;
+    protected MPTextView mLowResTitleToolbar;
     //Normal View
     protected CollapsingToolbarLayout mCollapsingToolbar;
     protected AppBarLayout mAppBar;
@@ -77,7 +77,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mPresenter.setView(this);
         mActivity = this;
         getActivityParameters();
-        analizeLowRes();
+        analyzeLowRes();
         setContentView();
         mPresenter.validateActivityParameters();
     }
@@ -129,7 +129,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         return mDecorationPreference != null && mDecorationPreference.hasColors();
     }
 
-    public void analizeLowRes() {
+    public void analyzeLowRes() {
         if (mPresenter.isCardInfoAvailable()) {
             this.mLowResActive = ScaleUtil.isLowRes(this);
         } else {

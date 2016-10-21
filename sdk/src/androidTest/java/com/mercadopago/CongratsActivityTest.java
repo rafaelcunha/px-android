@@ -75,7 +75,7 @@ public class CongratsActivityTest {
         return paymentMethod;
     }
 
-    private Payment getPayment(){
+    private Payment getPayment() {
         TransactionDetails transactionDetails = new TransactionDetails();
         transactionDetails.setInstallmentAmount(new BigDecimal(300));
         transactionDetails.setTotalPaidAmount(new BigDecimal(1800));
@@ -101,33 +101,33 @@ public class CongratsActivityTest {
         return payment;
     }
 
-    private void createIntent(){
+    private void createIntent() {
         validStartIntent = new Intent();
         validStartIntent.putExtra("merchantPublicKey", mMerchantPublicKey);
         validStartIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(mPaymentMethod));
         validStartIntent.putExtra("payment", JsonUtil.getInstance().toJson(mPayment));
     }
 
-    private void createIntentWithNullPayment(){
+    private void createIntentWithNullPayment() {
         nullPaymentIntent = new Intent();
         nullPaymentIntent.putExtra("merchantPublicKey", mMerchantPublicKey);
         nullPaymentIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(mPaymentMethod));
     }
 
-    private void createIntentWithNullPublicKey(){
+    private void createIntentWithNullPublicKey() {
         nullPublicKeyIntent = new Intent();
         nullPublicKeyIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(mPaymentMethod));
         nullPublicKeyIntent.putExtra("payment", JsonUtil.getInstance().toJson(mPayment));
     }
 
-    private void createIntentWithNullPaymentMethod(){
+    private void createIntentWithNullPaymentMethod() {
         nullPaymentMethodIntent = new Intent();
         nullPaymentMethodIntent.putExtra("merchantPublicKey", mMerchantPublicKey);
         nullPaymentMethodIntent.putExtra("payment", JsonUtil.getInstance().toJson(mPayment));
     }
 
     @Test
-    public void displayWithoutInterestWhenApprovedPaymentHasZeroRate(){
+    public void displayWithoutInterestWhenApprovedPaymentHasZeroRate() {
         String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
         Spanned installmentsDescription;
         Bitmap bitmap, paymentBitmap;
@@ -145,8 +145,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installmentsDescription = setInstallmentsDescription();
@@ -157,7 +157,7 @@ public class CongratsActivityTest {
 
         //PaymentMethod image
         ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
             bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
             paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
             assertTrue(bitmap == paymentBitmap);
@@ -195,7 +195,7 @@ public class CongratsActivityTest {
                 mPayment.getCurrencyId(), totalAmountDescription.toString(), true, true);
     }
 
-    private Spanned setInstallmentsDescription(){
+    private Spanned setInstallmentsDescription() {
         StringBuilder installmentsDescription = new StringBuilder();
 
         installmentsDescription.append(mPayment.getInstallments());
@@ -209,7 +209,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void displayTotalAmountWithRateWhenApprovedPaymentHasInterest(){
+    public void displayTotalAmountWithRateWhenApprovedPaymentHasInterest() {
         String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
         Spanned installmentsDescription, totalAmountDescription;
         Bitmap bitmap, paymentBitmap;
@@ -234,8 +234,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installmentsDescription = setInstallmentsDescription();
@@ -243,11 +243,11 @@ public class CongratsActivityTest {
 
         //Total amount description with rate
         totalAmountDescription = setTotalAmountDescription();
-        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(withText(totalAmountDescription.toString())));
+        onView(withId(R.id.mpsdkTotalAmountDescription)).check(matches(withText(totalAmountDescription.toString())));
 
         //PaymentMethod image
         ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
             bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
             paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
             assertTrue(bitmap == paymentBitmap);
@@ -275,7 +275,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void displayWithoutInterestWhenApprovedPaymentHasZeroRateButFeeDetailsSizeIsOne(){
+    public void displayWithoutInterestWhenApprovedPaymentHasZeroRateButFeeDetailsSizeIsOne() {
         String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
         Spanned installmentsDescription;
         Bitmap bitmap, paymentBitmap;
@@ -300,8 +300,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installmentsDescription = setInstallmentsDescription();
@@ -312,7 +312,7 @@ public class CongratsActivityTest {
 
         //PaymentMethod image
         ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
             bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
             paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
             assertTrue(bitmap == paymentBitmap);
@@ -340,7 +340,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void emailIsNotDisplayedWhenPaymentHasNullEmail(){
+    public void emailIsNotDisplayedWhenPaymentHasNullEmail() {
         String paymentIdDescription, lastFourDigitsDescription;
         Spanned installmentsDescription;
         Bitmap bitmap, paymentBitmap;
@@ -362,8 +362,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installmentsDescription = setInstallmentsDescription();
@@ -374,7 +374,7 @@ public class CongratsActivityTest {
 
         //PaymentMethod image
         ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
             bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
             paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
             assertTrue(bitmap == paymentBitmap);
@@ -398,7 +398,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void emailIsNotDisplayedWhenPaymentHasEmptyEmail(){
+    public void emailIsNotDisplayedWhenPaymentHasEmptyEmail() {
         String paymentIdDescription, lastFourDigitsDescription;
         Spanned installmentsDescription;
         Bitmap bitmap, paymentBitmap;
@@ -420,8 +420,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installmentsDescription = setInstallmentsDescription();
@@ -432,7 +432,7 @@ public class CongratsActivityTest {
 
         //PaymentMethod image
         ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
             bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
             paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
             assertTrue(bitmap == paymentBitmap);
@@ -456,7 +456,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void emailIsNotDisplayedWhenPaymentHasNullPayer(){
+    public void emailIsNotDisplayedWhenPaymentHasNullPayer() {
         String paymentIdDescription, lastFourDigitsDescription;
         Spanned installmentsDescription;
         Bitmap bitmap, paymentBitmap;
@@ -475,8 +475,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installmentsDescription = setInstallmentsDescription();
@@ -487,7 +487,7 @@ public class CongratsActivityTest {
 
         //PaymentMethod image
         ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
             bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
             paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
             assertTrue(bitmap == paymentBitmap);
@@ -511,7 +511,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void lastFourDigitsCardAreNotDisplayedWhenPaymentHasNullCard(){
+    public void lastFourDigitsCardAreNotDisplayedWhenPaymentHasNullCard() {
         String payerEmailDescription, paymentIdDescription;
         Spanned installmentsDescription;
 
@@ -529,8 +529,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installmentsDescription = setInstallmentsDescription();
@@ -563,7 +563,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void lastFourDigitsCardAreNotDisplayedWhenPaymentHasNullLastFourDigitsCard(){
+    public void lastFourDigitsCardAreNotDisplayedWhenPaymentHasNullLastFourDigitsCard() {
         String payerEmailDescription, paymentIdDescription;
         Spanned installmentsDescription;
 
@@ -584,8 +584,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installmentsDescription = setInstallmentsDescription();
@@ -618,7 +618,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void lastFourDigitsCardAreNotDisplayedWhenPaymentHasEmptyLastFourDigitsCard(){
+    public void lastFourDigitsCardAreNotDisplayedWhenPaymentHasEmptyLastFourDigitsCard() {
         String payerEmailDescription, paymentIdDescription;
         Spanned installmentsDescription;
 
@@ -639,8 +639,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installmentsDescription = setInstallmentsDescription();
@@ -673,7 +673,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void lastFourDigitsCardAndPaymentMethodImageNotDisplayedWhenPaymentHasNullPaymentMethodId(){
+    public void lastFourDigitsCardAndPaymentMethodImageNotDisplayedWhenPaymentHasNullPaymentMethodId() {
         String payerEmailDescription, paymentIdDescription;
         Spanned installmentsDescription;
 
@@ -692,8 +692,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installmentsDescription = setInstallmentsDescription();
@@ -726,7 +726,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void paymentMethodImageIsNotDisplayedWhenPaymentMethodIdHasNotImage(){
+    public void paymentMethodImageIsNotDisplayedWhenPaymentMethodIdHasNotImage() {
         String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
         Spanned installmentsDescription;
 
@@ -746,8 +746,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installmentsDescription = setInstallmentsDescription();
@@ -781,7 +781,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void lastFourDigitsAndPaymentMethodImageNotDisplayedWhenPaymentMethodIdIsEmpty(){
+    public void lastFourDigitsAndPaymentMethodImageNotDisplayedWhenPaymentMethodIdIsEmpty() {
         String payerEmailDescription, paymentIdDescription;
         Spanned installmentsDescription;
 
@@ -800,8 +800,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installmentsDescription = setInstallmentsDescription();
@@ -834,7 +834,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void lastFourDigitsCardAreNotDisplayedWhenPaymentPaymentMethodIdIsDifferentToPaymentMethodId(){
+    public void lastFourDigitsCardAreNotDisplayedWhenPaymentPaymentMethodIdIsDifferentToPaymentMethodId() {
         String payerEmailDescription, paymentIdDescription;
         Spanned installmentsDescription;
 
@@ -853,8 +853,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installmentsDescription = setInstallmentsDescription();
@@ -887,7 +887,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void installmentsDescriptionIsNotDisplayedWhenPaymentInstallmentsNumberIsNull(){
+    public void installmentsDescriptionIsNotDisplayedWhenPaymentInstallmentsNumberIsNull() {
         String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
         Bitmap bitmap, paymentBitmap;
 
@@ -905,8 +905,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
@@ -916,7 +916,7 @@ public class CongratsActivityTest {
 
         //PaymentMethod image
         ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
             bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
             paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
             assertTrue(bitmap == paymentBitmap);
@@ -944,7 +944,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void installmentsDescriptionIsNotDisplayedWhenPaymentInstallmentsNumberIsNegative(){
+    public void installmentsDescriptionIsNotDisplayedWhenPaymentInstallmentsNumberIsNegative() {
         String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
         Bitmap bitmap, paymentBitmap;
 
@@ -962,8 +962,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
@@ -973,7 +973,7 @@ public class CongratsActivityTest {
 
         //PaymentMethod image
         ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
             bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
             paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
             assertTrue(bitmap == paymentBitmap);
@@ -1001,7 +1001,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void installmentsDescriptionIsNotDisplayedAndTotalAmountIsDisplayedWhenPaymentInstallmentsNumberIsZero(){
+    public void installmentsDescriptionIsNotDisplayedAndTotalAmountIsDisplayedWhenPaymentInstallmentsNumberIsZero() {
         String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
         StringBuilder installments = new StringBuilder();
         Spanned installmentsDescription;
@@ -1021,8 +1021,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description with total amount
         installments.append(CurrenciesUtil.formatNumber(mPayment.getTransactionDetails().getTotalPaidAmount(), mPayment.getCurrencyId()));
@@ -1035,7 +1035,7 @@ public class CongratsActivityTest {
 
         //PaymentMethod image
         ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
             bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
             paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
             assertTrue(bitmap == paymentBitmap);
@@ -1063,7 +1063,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void installmentsDescriptionIsNotDisplayedAndTotalAmountIsDisplayedWhenPaymentInstallmentsNumberIsOne(){
+    public void installmentsDescriptionIsNotDisplayedAndTotalAmountIsDisplayedWhenPaymentInstallmentsNumberIsOne() {
         String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
         StringBuilder installments = new StringBuilder();
         Spanned installmentsDescription;
@@ -1083,8 +1083,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         installments.append(CurrenciesUtil.formatNumber(mPayment.getTransactionDetails().getTotalPaidAmount(), mPayment.getCurrencyId()));
@@ -1097,7 +1097,7 @@ public class CongratsActivityTest {
 
         //PaymentMethod image
         ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
             bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
             paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
             assertTrue(bitmap == paymentBitmap);
@@ -1125,7 +1125,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void installmentsDescriptionIsNotDisplayedWhenPaymentTransactionDetailIsNull(){
+    public void installmentsDescriptionIsNotDisplayedWhenPaymentTransactionDetailIsNull() {
         String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
         Bitmap bitmap, paymentBitmap;
 
@@ -1143,8 +1143,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
@@ -1154,7 +1154,7 @@ public class CongratsActivityTest {
 
         //PaymentMethod image
         ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
             bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
             paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
             assertTrue(bitmap == paymentBitmap);
@@ -1182,7 +1182,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void installmentsDescriptionIsNotDisplayedWhenPaymentInstallmentAmountIsNull(){
+    public void installmentsDescriptionIsNotDisplayedWhenPaymentInstallmentAmountIsNull() {
         String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
         Bitmap bitmap, paymentBitmap;
 
@@ -1204,556 +1204,8 @@ public class CongratsActivityTest {
         onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
 
         //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
-
-        //Installments description
-        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
-
-        //TotalAmount description
-        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
-
-        //PaymentMethod image
-        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
-            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
-            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
-            assertTrue(bitmap == paymentBitmap);
-        }
-
-        //LastFourDigits Card
-        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
-        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
-
-        //State description
-        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
-
-        //Scroll
-        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
-
-        //Payer email description
-        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
-        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
-
-        //Scroll
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
-
-        //Keep buying button isDisplayed
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void installmentsDescriptionIsNotDisplayedWhenPaymentInstallmentAmountIsNegative(){
-        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
-        Bitmap bitmap, paymentBitmap;
-
-        TransactionDetails transactionDetails = new TransactionDetails();
-        transactionDetails.setInstallmentAmount(new BigDecimal(-10));
-        transactionDetails.setTotalPaidAmount(new BigDecimal(1800));
-
-        mPayment.setTransactionDetails(transactionDetails);
-        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
-        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
-
-        createIntent();
-        mTestRule.launchActivity(validStartIntent);
-
-        //Image
-        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
-
-        //Title
-        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
-
-        //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
-
-        //Installments description
-        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
-
-        //TotalAmount description
-        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
-
-        //PaymentMethod image
-        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
-            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
-            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
-            assertTrue(bitmap == paymentBitmap);
-        }
-
-        //LastFourDigits Card
-        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
-        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
-
-        //State description
-        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
-
-        //Scroll
-        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
-
-        //Payer email description
-        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
-        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
-
-        //Scroll
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
-
-        //Keep buying button isDisplayed
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void installmentsDescriptionIsNotDisplayedWhenPaymentInstallmentAmountIsZero(){
-        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
-        Bitmap bitmap, paymentBitmap;
-
-        TransactionDetails transactionDetails = new TransactionDetails();
-        transactionDetails.setInstallmentAmount(new BigDecimal(0));
-        transactionDetails.setTotalPaidAmount(new BigDecimal(1800));
-
-        mPayment.setTransactionDetails(transactionDetails);
-        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
-        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
-
-        createIntent();
-        mTestRule.launchActivity(validStartIntent);
-
-        //Image
-        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
-
-        //Title
-        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
-
-        //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
-
-        //Installments description
-        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
-
-        //TotalAmount description
-        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
-
-        //PaymentMethod image
-        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
-            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
-            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
-            assertTrue(bitmap == paymentBitmap);
-        }
-
-        //LastFourDigits Card
-        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
-        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
-
-        //State description
-        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
-
-        //Scroll
-        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
-
-        //Payer email description
-        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
-        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
-
-        //Scroll
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
-
-        //Keep buying button isDisplayed
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void installmentsDescriptionIsNotDisplayedWhenPaymentCurrencyIdIsNull(){
-        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
-        Bitmap bitmap, paymentBitmap;
-
-        TransactionDetails transactionDetails = new TransactionDetails();
-        transactionDetails.setInstallmentAmount(new BigDecimal(0));
-        transactionDetails.setTotalPaidAmount(new BigDecimal(1800));
-
-        mPayment.setCurrencyId(null);
-        mPayment.setTransactionDetails(transactionDetails);
-        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
-        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
-
-        createIntent();
-        mTestRule.launchActivity(validStartIntent);
-
-        //Image
-        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
-
-        //Title
-        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
-
-        //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
-
-        //Installments description
-        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
-
-        //TotalAmount description
-        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
-
-        //PaymentMethod image
-        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
-            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
-            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
-            assertTrue(bitmap == paymentBitmap);
-        }
-
-        //LastFourDigits Card
-        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
-        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
-
-        //State description
-        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
-
-        //Scroll
-        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
-
-        //Payer email description
-        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
-        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
-
-        //Scroll
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
-
-        //Keep buying button isDisplayed
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void installmentsDescriptionIsNotDisplayedWhenPaymentCurrencyIdIsEmpty(){
-        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
-        Bitmap bitmap, paymentBitmap;
-
-        TransactionDetails transactionDetails = new TransactionDetails();
-        transactionDetails.setInstallmentAmount(new BigDecimal(0));
-        transactionDetails.setTotalPaidAmount(new BigDecimal(1800));
-
-        mPayment.setCurrencyId("");
-        mPayment.setTransactionDetails(transactionDetails);
-        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
-        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
-
-        createIntent();
-        mTestRule.launchActivity(validStartIntent);
-
-        //Image
-        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
-
-        //Title
-        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
-
-        //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
-
-        //Installments description
-        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
-
-        //TotalAmount description
-        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
-
-        //PaymentMethod image
-        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
-            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
-            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
-            assertTrue(bitmap == paymentBitmap);
-        }
-
-        //LastFourDigits Card
-        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
-        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
-
-        //State description
-        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
-
-        //Scroll
-        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
-
-        //Payer email description
-        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
-        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
-
-        //Scroll
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
-
-        //Keep buying button isDisplayed
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void installmentsDescriptionIsNotDisplayedWhenPaymentCurrencyIdNotExist(){
-        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
-        Bitmap bitmap, paymentBitmap;
-
-        TransactionDetails transactionDetails = new TransactionDetails();
-        transactionDetails.setInstallmentAmount(new BigDecimal(0));
-        transactionDetails.setTotalPaidAmount(new BigDecimal(1800));
-
-        mPayment.setCurrencyId("MLA");
-        mPayment.setTransactionDetails(transactionDetails);
-        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
-        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
-
-        createIntent();
-        mTestRule.launchActivity(validStartIntent);
-
-        //Image
-        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
-
-        //Title
-        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
-
-        //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
-
-        //Installments description
-        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
-
-        //TotalAmount description
-        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
-
-        //PaymentMethod image
-        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
-            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
-            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
-            assertTrue(bitmap == paymentBitmap);
-        }
-
-        //LastFourDigits Card
-        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
-        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
-
-        //State description
-        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
-
-        //Scroll
-        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
-
-        //Payer email description
-        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
-        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
-
-        //Scroll
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
-
-        //Keep buying button isDisplayed
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void totalAmountDescriptionIsNotDisplayedWhenPaymentTransactionDetailIsNull(){
-        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
-        Bitmap bitmap, paymentBitmap;
-
-        mPayment.setTransactionDetails(null);
-        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
-        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
-
-        createIntent();
-        mTestRule.launchActivity(validStartIntent);
-
-        //Image
-        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
-
-        //Title
-        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
-
-        //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
-
-        //Installments description
-        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
-
-        //TotalAmount description
-        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
-
-        //PaymentMethod image
-        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
-            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
-            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
-            assertTrue(bitmap == paymentBitmap);
-        }
-
-        //LastFourDigits Card
-        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
-        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
-
-        //State description
-        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
-
-        //Scroll
-        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
-
-        //Payer email description
-        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
-        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
-
-        //Scroll
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
-
-        //Keep buying button isDisplayed
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void totalAmountDescriptionIsNotDisplayedWhenPaymentTotalPaidAmountIsNull(){
-        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
-        Bitmap bitmap, paymentBitmap;
-
-        TransactionDetails transactionDetails = new TransactionDetails();
-        transactionDetails.setInstallmentAmount(new BigDecimal(250));
-        transactionDetails.setTotalPaidAmount(null);
-
-        mPayment.setTransactionDetails(transactionDetails);
-        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
-        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
-
-        createIntent();
-        mTestRule.launchActivity(validStartIntent);
-
-        //Image
-        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
-
-        //Title
-        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
-
-        //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
-
-        //Installments description
-        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
-
-        //TotalAmount description
-        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
-
-        //PaymentMethod image
-        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
-            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
-            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
-            assertTrue(bitmap == paymentBitmap);
-        }
-
-        //LastFourDigits Card
-        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
-        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
-
-        //State description
-        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
-
-        //Scroll
-        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
-
-        //Payer email description
-        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
-        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
-
-        //Scroll
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
-
-        //Keep buying button isDisplayed
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void totalAmountDescriptionIsNotDisplayedWhenPaymentTotalPaidAmountIsNegative(){
-        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
-        Bitmap bitmap, paymentBitmap;
-
-        TransactionDetails transactionDetails = new TransactionDetails();
-        transactionDetails.setInstallmentAmount(new BigDecimal(250));
-        transactionDetails.setTotalPaidAmount(new BigDecimal(-1800));
-
-        mPayment.setTransactionDetails(transactionDetails);
-        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
-        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
-
-        createIntent();
-        mTestRule.launchActivity(validStartIntent);
-
-        //Image
-        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
-
-        //Title
-        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
-
-        //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
-
-        //Installments description
-        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
-
-        //TotalAmount description
-        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
-
-        //PaymentMethod image
-        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
-            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
-            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
-            assertTrue(bitmap == paymentBitmap);
-        }
-
-        //LastFourDigits Card
-        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
-        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
-
-        //State description
-        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
-
-        //Scroll
-        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
-
-        //Payer email description
-        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
-        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
-
-        //Scroll
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
-
-        //Keep buying button isDisplayed
-        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void totalAmountDescriptionIsNotDisplayedWhenPaymentTotalPaidAmountIsZero(){
-        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
-        Bitmap bitmap, paymentBitmap;
-
-        TransactionDetails transactionDetails = new TransactionDetails();
-        transactionDetails.setInstallmentAmount(new BigDecimal(250));
-        transactionDetails.setTotalPaidAmount(new BigDecimal(0));
-
-        mPayment.setTransactionDetails(transactionDetails);
-        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
-        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
-
-        createIntent();
-        mTestRule.launchActivity(validStartIntent);
-
-        //Image
-        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
-
-        //Title
-        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
-
-        //PaymentId description
-        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-        onView(withId(R.id.mpsdkPaymentIdDescription)).check(matches(withText(paymentIdDescription)));
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
 
         //Installments description
         onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
@@ -1791,7 +1243,555 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void paymentIdIsNotDisplayedWhenPaymentIdIsNull(){
+    public void installmentsDescriptionIsNotDisplayedWhenPaymentInstallmentAmountIsNegative() {
+        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
+        Bitmap bitmap, paymentBitmap;
+
+        TransactionDetails transactionDetails = new TransactionDetails();
+        transactionDetails.setInstallmentAmount(new BigDecimal(-10));
+        transactionDetails.setTotalPaidAmount(new BigDecimal(1800));
+
+        mPayment.setTransactionDetails(transactionDetails);
+        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
+        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
+
+        createIntent();
+        mTestRule.launchActivity(validStartIntent);
+
+        //Image
+        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
+
+        //Title
+        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
+
+        //PaymentId description
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
+
+        //Installments description
+        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
+
+        //TotalAmount description
+        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
+
+        //PaymentMethod image
+        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
+            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
+            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
+            assertTrue(bitmap == paymentBitmap);
+        }
+
+        //LastFourDigits Card
+        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
+        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
+
+        //State description
+        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
+
+        //Scroll
+        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
+
+        //Payer email description
+        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
+        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
+
+        //Scroll
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
+
+        //Keep buying button isDisplayed
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void installmentsDescriptionIsNotDisplayedWhenPaymentInstallmentAmountIsZero() {
+        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
+        Bitmap bitmap, paymentBitmap;
+
+        TransactionDetails transactionDetails = new TransactionDetails();
+        transactionDetails.setInstallmentAmount(new BigDecimal(0));
+        transactionDetails.setTotalPaidAmount(new BigDecimal(1800));
+
+        mPayment.setTransactionDetails(transactionDetails);
+        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
+        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
+
+        createIntent();
+        mTestRule.launchActivity(validStartIntent);
+
+        //Image
+        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
+
+        //Title
+        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
+
+        //PaymentId description
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
+
+        //Installments description
+        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
+
+        //TotalAmount description
+        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
+
+        //PaymentMethod image
+        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
+            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
+            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
+            assertTrue(bitmap == paymentBitmap);
+        }
+
+        //LastFourDigits Card
+        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
+        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
+
+        //State description
+        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
+
+        //Scroll
+        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
+
+        //Payer email description
+        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
+        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
+
+        //Scroll
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
+
+        //Keep buying button isDisplayed
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void installmentsDescriptionIsNotDisplayedWhenPaymentCurrencyIdIsNull() {
+        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
+        Bitmap bitmap, paymentBitmap;
+
+        TransactionDetails transactionDetails = new TransactionDetails();
+        transactionDetails.setInstallmentAmount(new BigDecimal(0));
+        transactionDetails.setTotalPaidAmount(new BigDecimal(1800));
+
+        mPayment.setCurrencyId(null);
+        mPayment.setTransactionDetails(transactionDetails);
+        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
+        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
+
+        createIntent();
+        mTestRule.launchActivity(validStartIntent);
+
+        //Image
+        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
+
+        //Title
+        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
+
+        //PaymentId description
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
+
+        //Installments description
+        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
+
+        //TotalAmount description
+        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
+
+        //PaymentMethod image
+        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
+            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
+            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
+            assertTrue(bitmap == paymentBitmap);
+        }
+
+        //LastFourDigits Card
+        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
+        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
+
+        //State description
+        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
+
+        //Scroll
+        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
+
+        //Payer email description
+        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
+        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
+
+        //Scroll
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
+
+        //Keep buying button isDisplayed
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void installmentsDescriptionIsNotDisplayedWhenPaymentCurrencyIdIsEmpty() {
+        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
+        Bitmap bitmap, paymentBitmap;
+
+        TransactionDetails transactionDetails = new TransactionDetails();
+        transactionDetails.setInstallmentAmount(new BigDecimal(0));
+        transactionDetails.setTotalPaidAmount(new BigDecimal(1800));
+
+        mPayment.setCurrencyId("");
+        mPayment.setTransactionDetails(transactionDetails);
+        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
+        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
+
+        createIntent();
+        mTestRule.launchActivity(validStartIntent);
+
+        //Image
+        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
+
+        //Title
+        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
+
+        //PaymentId description
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
+
+        //Installments description
+        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
+
+        //TotalAmount description
+        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
+
+        //PaymentMethod image
+        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
+            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
+            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
+            assertTrue(bitmap == paymentBitmap);
+        }
+
+        //LastFourDigits Card
+        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
+        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
+
+        //State description
+        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
+
+        //Scroll
+        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
+
+        //Payer email description
+        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
+        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
+
+        //Scroll
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
+
+        //Keep buying button isDisplayed
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void installmentsDescriptionIsNotDisplayedWhenPaymentCurrencyIdNotExist() {
+        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
+        Bitmap bitmap, paymentBitmap;
+
+        TransactionDetails transactionDetails = new TransactionDetails();
+        transactionDetails.setInstallmentAmount(new BigDecimal(0));
+        transactionDetails.setTotalPaidAmount(new BigDecimal(1800));
+
+        mPayment.setCurrencyId("MLA");
+        mPayment.setTransactionDetails(transactionDetails);
+        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
+        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
+
+        createIntent();
+        mTestRule.launchActivity(validStartIntent);
+
+        //Image
+        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
+
+        //Title
+        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
+
+        //PaymentId description
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
+
+        //Installments description
+        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
+
+        //TotalAmount description
+        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
+
+        //PaymentMethod image
+        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
+            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
+            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
+            assertTrue(bitmap == paymentBitmap);
+        }
+
+        //LastFourDigits Card
+        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
+        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
+
+        //State description
+        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
+
+        //Scroll
+        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
+
+        //Payer email description
+        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
+        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
+
+        //Scroll
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
+
+        //Keep buying button isDisplayed
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void totalAmountDescriptionIsNotDisplayedWhenPaymentTransactionDetailIsNull() {
+        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
+        Bitmap bitmap, paymentBitmap;
+
+        mPayment.setTransactionDetails(null);
+        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
+        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
+
+        createIntent();
+        mTestRule.launchActivity(validStartIntent);
+
+        //Image
+        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
+
+        //Title
+        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
+
+        //PaymentId description
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
+
+        //Installments description
+        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
+
+        //TotalAmount description
+        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
+
+        //PaymentMethod image
+        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
+            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
+            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
+            assertTrue(bitmap == paymentBitmap);
+        }
+
+        //LastFourDigits Card
+        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
+        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
+
+        //State description
+        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
+
+        //Scroll
+        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
+
+        //Payer email description
+        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
+        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
+
+        //Scroll
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
+
+        //Keep buying button isDisplayed
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void totalAmountDescriptionIsNotDisplayedWhenPaymentTotalPaidAmountIsNull() {
+        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
+        Bitmap bitmap, paymentBitmap;
+
+        TransactionDetails transactionDetails = new TransactionDetails();
+        transactionDetails.setInstallmentAmount(new BigDecimal(250));
+        transactionDetails.setTotalPaidAmount(null);
+
+        mPayment.setTransactionDetails(transactionDetails);
+        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
+        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
+
+        createIntent();
+        mTestRule.launchActivity(validStartIntent);
+
+        //Image
+        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
+
+        //Title
+        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
+
+        //PaymentId description
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
+
+        //Installments description
+        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
+
+        //TotalAmount description
+        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
+
+        //PaymentMethod image
+        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
+            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
+            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
+            assertTrue(bitmap == paymentBitmap);
+        }
+
+        //LastFourDigits Card
+        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
+        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
+
+        //State description
+        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
+
+        //Scroll
+        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
+
+        //Payer email description
+        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
+        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
+
+        //Scroll
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
+
+        //Keep buying button isDisplayed
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void totalAmountDescriptionIsNotDisplayedWhenPaymentTotalPaidAmountIsNegative() {
+        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
+        Bitmap bitmap, paymentBitmap;
+
+        TransactionDetails transactionDetails = new TransactionDetails();
+        transactionDetails.setInstallmentAmount(new BigDecimal(250));
+        transactionDetails.setTotalPaidAmount(new BigDecimal(-1800));
+
+        mPayment.setTransactionDetails(transactionDetails);
+        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
+        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
+
+        createIntent();
+        mTestRule.launchActivity(validStartIntent);
+
+        //Image
+        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
+
+        //Title
+        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
+
+        //PaymentId description
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
+
+        //Installments description
+        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
+
+        //TotalAmount description
+        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
+
+        //PaymentMethod image
+        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
+            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
+            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
+            assertTrue(bitmap == paymentBitmap);
+        }
+
+        //LastFourDigits Card
+        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
+        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
+
+        //State description
+        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
+
+        //Scroll
+        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
+
+        //Payer email description
+        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
+        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
+
+        //Scroll
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
+
+        //Keep buying button isDisplayed
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void totalAmountDescriptionIsNotDisplayedWhenPaymentTotalPaidAmountIsZero() {
+        String payerEmailDescription, paymentIdDescription, lastFourDigitsDescription;
+        Bitmap bitmap, paymentBitmap;
+
+        TransactionDetails transactionDetails = new TransactionDetails();
+        transactionDetails.setInstallmentAmount(new BigDecimal(250));
+        transactionDetails.setTotalPaidAmount(new BigDecimal(0));
+
+        mPayment.setTransactionDetails(transactionDetails);
+        mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
+        mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
+
+        createIntent();
+        mTestRule.launchActivity(validStartIntent);
+
+        //Image
+        onView(withId(R.id.mpsdkIcon)).check(matches(isDisplayed()));
+
+        //Title
+        onView(withId(R.id.mpsdkCongratulationsTitle)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_title_activity_congrat))));
+
+        //PaymentId description
+        paymentIdDescription = mTestRule.getActivity().getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+        onView(withId(R.id.mpsdkPaymentIdDescriptionNumber)).check(matches(withText(paymentIdDescription)));
+
+        //Installments description
+        onView(withId(R.id.mpsdkInstallmentsDescription)).check(matches(not(isDisplayed())));
+
+        //TotalAmount description
+        onView(withId(R.id.mpsdkInterestAmountDescription)).check(matches(not(isDisplayed())));
+
+        //PaymentMethod image
+        ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
+            bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
+            paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
+            assertTrue(bitmap == paymentBitmap);
+        }
+
+        //LastFourDigits Card
+        lastFourDigitsDescription = mTestRule.getActivity().getString(R.string.mpsdk_last_digits_label) + " " + mPayment.getCard().getLastFourDigits();
+        onView(withId(R.id.mpsdkLastFourDigitsDescription)).check(matches(withText(lastFourDigitsDescription)));
+
+        //State description
+        onView(withId(R.id.mpsdkStateDescription)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_state_acount_activity_congrat))));
+
+        //Scroll
+        onView(withId(R.id.mpsdkPayerEmail)).perform(ViewActions.scrollTo());
+
+        //Payer email description
+        payerEmailDescription = String.format(mTestRule.getActivity().getString(R.string.mpsdk_subtitle_action_activity_congrat), mPayment.getPayer().getEmail());
+        onView(withId(R.id.mpsdkPayerEmail)).check(matches(withText(payerEmailDescription)));
+
+        //Scroll
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).perform(ViewActions.scrollTo());
+
+        //Keep buying button isDisplayed
+        onView(withId(R.id.mpsdkKeepBuyingCongrats)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void paymentIdIsNotDisplayedWhenPaymentIdIsNull() {
         String payerEmailDescription, lastFourDigitsDescription;
         Spanned installmentsDescription;
         Bitmap bitmap, paymentBitmap;
@@ -1821,7 +1821,7 @@ public class CongratsActivityTest {
 
         //PaymentMethod image
         ImageView paymentMethodImage = (ImageView) mTestRule.getActivity().findViewById(R.id.mpsdkPaymentMethodImage);
-        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null){
+        if (paymentMethodImage != null && paymentMethodImage.getDrawable() != null) {
             bitmap = ((BitmapDrawable) paymentMethodImage.getDrawable()).getBitmap();
             paymentBitmap = ((BitmapDrawable) ContextCompat.getDrawable(mTestRule.getActivity(), R.drawable.master)).getBitmap();
             assertTrue(bitmap == paymentBitmap);
@@ -1849,7 +1849,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void finishCongratsActivityWhenClickOnKeepBuyingCongrats(){
+    public void finishCongratsActivityWhenClickOnKeepBuyingCongrats() {
         mPayment.setStatus(Payment.StatusCodes.STATUS_APPROVED);
         mPayment.setStatusDetail(Payment.StatusCodes.STATUS_DETAIL_ACCREDITED);
 
@@ -1906,7 +1906,7 @@ public class CongratsActivityTest {
     }
 
     @Test
-    public void noFinishCongratsActivityWhenClickOnBackButton(){
+    public void noFinishCongratsActivityWhenClickOnBackButton() {
         createIntent();
         mTestRule.launchActivity(validStartIntent);
 
@@ -1916,8 +1916,8 @@ public class CongratsActivityTest {
         assertFalse(mTestRule.getActivity().isFinishing());
     }
 
-    @Test (expected = NoActivityResumedException.class)
-    public void finishCongratsActivityWhenClickOnBackButtonTwoTimes(){
+    @Test(expected = NoActivityResumedException.class)
+    public void finishCongratsActivityWhenClickOnBackButtonTwoTimes() {
         createIntent();
         mTestRule.launchActivity(validStartIntent);
 

@@ -45,18 +45,18 @@ import java.util.List;
 public class IssuersActivity extends AppCompatActivity implements IssuersActivityView {
 
     protected IssuersPresenter mPresenter;
-    private Activity mActivity;
+    protected Activity mActivity;
 
     //View controls
-    private IssuersAdapter mIssuersAdapter;
-    private RecyclerView mIssuersRecyclerView;
-    private ProgressBar mProgressBar;
-    private DecorationPreference mDecorationPreference;
+    protected IssuersAdapter mIssuersAdapter;
+    protected RecyclerView mIssuersRecyclerView;
+    protected ProgressBar mProgressBar;
+    protected DecorationPreference mDecorationPreference;
     //ViewMode
     protected boolean mLowResActive;
     //Low Res View
     protected Toolbar mLowResToolbar;
-    private MPTextView mLowResTitleToolbar;
+    protected MPTextView mLowResTitleToolbar;
     //Normal View
     protected CollapsingToolbarLayout mCollapsingToolbar;
     protected AppBarLayout mAppBar;
@@ -73,7 +73,7 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
         mPresenter.setView(this);
         mActivity = this;
         getActivityParameters();
-        analizeLowRes();
+        analyzeLowRes();
         setContentView();
         mPresenter.validateActivityParameters();
     }
@@ -109,7 +109,7 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
         mPresenter.setCardInformation();
     }
 
-    public void analizeLowRes() {
+    public void analyzeLowRes() {
         if (mPresenter.isCardInfoAvailable()) {
             this.mLowResActive = ScaleUtil.isLowRes(this);
         } else {

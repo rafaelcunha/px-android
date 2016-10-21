@@ -331,7 +331,7 @@ public class PaymentResultActivityTest {
         createIntent();
         mTestRule.launchActivity(validStartIntent);
 
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).perform(click());
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).perform(click());
 
         //Result finish
         assertTrue(mTestRule.getActivity().isFinishing());

@@ -18,10 +18,6 @@ android {
         versionName '1.0.0'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        vectorDrawables.useSupportLibrary = true
-    }
-    aaptOptions {
-        additionalParameters "--no-version-vectors"
     }
     packagingOptions {
         exclude 'META-INF/services/com.fasterxml.jackson.core.JsonFactory'
@@ -94,8 +90,6 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
     compile 'com.android.support:percent:24.2.1'
     compile 'com.android.support:support-annotations:24.2.1'
-    compile 'com.android.support:support-vector-drawable:24.2.1'
-    compile 'com.android.support:animated-vector-drawable:24.2.1'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.squareup.okhttp3:okhttp-urlconnection:3.2.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'

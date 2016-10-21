@@ -78,8 +78,8 @@
     <!-- Congrats -->
     <string name="mpsdk_title_activity_congrat">Done, your payment was accredited!</string>
     <string name="mpsdk_subtitle_action_activity_congrat">We will send you the data to\n%1$s</string>
-    <string name="mpsdk_text_state_acount_activity_congrat">On your statement you will see the charge as MERCADOPAGO</string>
-    <string name="mpsdk_payment_id_description">Ticket\nNº</string>
+    <string name="mpsdk_text_state_acount_activity_congrat">On your statement you will see the charge as\n MERCADOPAGO</string>
+    <string name="mpsdk_payment_id_description">Ticket</string>
 
     <!-- CallForAuthorize -->
     <string name="mpsdk_title_activity_call_for_authorize">You must authorize with %1$s the payment of %2$s to Mercado Pago</string>
@@ -90,7 +90,7 @@
     <string name="mpsdk_text_select_other_payment_method">Choose another payment method</string>
 
     <!-- Pending -->
-    <string name="mpsdk_title_pending">We are processing the payment</string>
+    <string name="mpsdk_title_pending">We are processing\n the payment</string>
     <string name="mpsdk_subtitle_pending_contingency">In less than an hour we will send you the result by e-mail.</string>
 
     <!-- Rejection -->

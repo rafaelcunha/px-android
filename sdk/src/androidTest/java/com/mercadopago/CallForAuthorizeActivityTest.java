@@ -150,7 +150,7 @@ public class CallForAuthorizeActivityTest {
 
         //Keep buying button is displayed
         onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     private Spanned getCallForAuthorizeTitle() {
@@ -193,7 +193,7 @@ public class CallForAuthorizeActivityTest {
 
         //Keep buying button is displayed
         onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -230,7 +230,7 @@ public class CallForAuthorizeActivityTest {
 
         //Keep buying button is displayed
         onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -267,7 +267,7 @@ public class CallForAuthorizeActivityTest {
 
         //Keep buying button is displayed
         onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -304,7 +304,7 @@ public class CallForAuthorizeActivityTest {
 
         //Keep buying button is displayed
         onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -341,7 +341,7 @@ public class CallForAuthorizeActivityTest {
 
         //Keep buying button is displayed
         onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -378,7 +378,7 @@ public class CallForAuthorizeActivityTest {
 
         //Keep buying button is displayed
         onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -415,7 +415,7 @@ public class CallForAuthorizeActivityTest {
 
         //Keep buying button is displayed
         onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -454,7 +454,7 @@ public class CallForAuthorizeActivityTest {
 
         //Keep buying button is displayed
         onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -493,7 +493,7 @@ public class CallForAuthorizeActivityTest {
 
         //Keep buying button is displayed
         onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -529,7 +529,7 @@ public class CallForAuthorizeActivityTest {
 
         //Keep buying button is displayed
         onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -565,7 +565,7 @@ public class CallForAuthorizeActivityTest {
 
         //Keep buying button is displayed
         onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -601,7 +601,7 @@ public class CallForAuthorizeActivityTest {
 
         //Keep buying button is displayed
         onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingCallForAuthorize)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test

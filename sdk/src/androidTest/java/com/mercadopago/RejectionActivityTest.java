@@ -149,8 +149,8 @@ public class RejectionActivityTest {
         onView(withId(R.id.mpsdkRejectionOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -183,8 +183,8 @@ public class RejectionActivityTest {
         onView(withId(R.id.mpsdkRejectionOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -220,8 +220,8 @@ public class RejectionActivityTest {
         onView(withId(R.id.mpsdkRejectionOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -254,8 +254,8 @@ public class RejectionActivityTest {
         onView(withId(R.id.mpsdkRejectionOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -286,8 +286,8 @@ public class RejectionActivityTest {
         onView(withId(R.id.mpsdkRejectionOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -320,8 +320,8 @@ public class RejectionActivityTest {
         onView(withId(R.id.mpsdkRejectionOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -354,8 +354,8 @@ public class RejectionActivityTest {
         onView(withId(R.id.mpsdkRejectionOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -388,8 +388,8 @@ public class RejectionActivityTest {
         onView(withId(R.id.mpsdkRejectionOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_enter_again))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_continue))));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_continue))));
     }
 
     @Test
@@ -422,8 +422,8 @@ public class RejectionActivityTest {
         onView(withId(R.id.mpsdkRejectionOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_enter_again))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_continue))));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_continue))));
     }
 
     @Test
@@ -457,8 +457,8 @@ public class RejectionActivityTest {
         onView(withId(R.id.mpsdkRejectionOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_enter_again))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_continue))));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_continue))));
     }
 
     @Test
@@ -491,8 +491,8 @@ public class RejectionActivityTest {
         onView(withId(R.id.mpsdkRejectionOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_enter_again))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_continue))));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_continue))));
     }
 
     @Test
@@ -523,8 +523,8 @@ public class RejectionActivityTest {
         onView(withId(R.id.mpsdkRejectionOptionButtonText)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_pay_with_other_method))));
 
         //Keep buying button
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_continue))));
     }
 
     @Test
@@ -548,10 +548,10 @@ public class RejectionActivityTest {
         mTestRule.launchActivity(validStartIntent);
 
         //Keep buying button isDisplayed
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).check(matches(isDisplayed()));
 
         //Click on keep buying button
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).perform(click());
+        onView(withId(R.id.mpsdkKeepBuyingRejection)).perform(click());
 
         //Rejection finish
         assertTrue(mTestRule.getActivity().isFinishing());

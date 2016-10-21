@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/mpsdk_white">
 
@@ -38,8 +38,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="34dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginLeft="25dp"
                     android:gravity="bottom|center"
-                    android:textSize="24dp"
+                    android:textSize="22dp"
+                    app:fontStyle="regular"
                     android:textColor="@color/mpsdk_white"
                     android:text="@string/mpsdk_title_activity_congrat"/>
 
@@ -54,21 +59,31 @@
                         android:id="@+id/mpsdkPaymentIdDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="24dp"
                         android:layout_marginTop="34dp"
                         android:gravity="center"
                         android:textSize="22dp"
-                        android:text="@string/mpsdk_payment_id_description"
-                        tools:text="Comprobante\nNº 123456789" />
+                        app:fontStyle="regular"
+                        android:text="@string/mpsdk_payment_id_description" />
+
+                    <com.mercadopago.customviews.MPTextView
+                        android:id="@+id/mpsdkPaymentIdDescriptionNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="24dp"
+                        android:gravity="center"
+                        android:textSize="14dp"
+                        app:fontStyle="regular"
+                        tools:text="Nº 123456789" />
 
                     <com.mercadopago.customviews.MPTextView
                         android:id="@+id/mpsdkInstallmentsDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textSize="29dp"
-                        android:text="12 de $80 00"
-                        tools:text="12x $ 800"/>
+                        android:textSize="24dp"
+                        app:fontStyle="regular"
+                        android:textColor="@color/mpsdk_base_text"
+                        tools:text="12 x $ 800"/>
 
                     <com.mercadopago.customviews.MPTextView
                         android:id="@+id/mpsdkInterestAmountDescription"
@@ -77,8 +92,20 @@
                         android:layout_marginLeft="10dp"
                         android:gravity="center"
                         android:textSize="18dp"
+                        app:fontStyle="regular"
                         android:textColor="@color/mpsdk_color_congrats_background"
                         android:text="@string/mpsdk_zero_rate"/>
+
+                    <com.mercadopago.customviews.MPTextView
+                        android:id="@+id/mpsdkTotalAmountDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:gravity="center"
+                        android:textSize="18dp"
+                        app:fontStyle="regular"
+                        android:textColor="@color/mpsdk_base_text"
+                        tools:text="$ 800"/>
 
                     <ImageView
                         android:id="@+id/mpsdkPaymentMethodImage"
@@ -99,9 +126,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:singleLine="true"
-                        android:textSize="20dp"
+                        android:textSize="16dp"
                         android:gravity="center"
                         android:text="@string/mpsdk_last_digits_label"
+                        app:fontStyle="regular"
                         tools:text="Terminada en 3456"
                         android:layout_gravity="center_horizontal" />
 
@@ -111,8 +139,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
                         android:layout_marginBottom="40dp"
+                        android:layout_marginRight="25dp"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginLeft="25dp"
                         android:gravity="center"
-                        android:textSize="15dp"
+                        android:textSize="12dp"
+                        app:fontStyle="regular"
                         android:text="@string/mpsdk_text_state_acount_activity_congrat"/>
 
                     <View
@@ -128,8 +161,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
+                        android:layout_marginRight="25dp"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginLeft="25dp"
                         android:gravity="bottom|center"
-                        android:textSize="15dp"
+                        android:textSize="12dp"
+                        app:fontStyle="regular"
                         android:lineSpacingExtra="3dp"
                         tools:text="Te enviaremos los datos a\n juan.perez@email.com"/>
 
@@ -151,8 +189,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/mpsdk_text_continue"
-                        android:textColor="@color/mpsdk_color_link"
-                        android:textSize="@dimen/mpsdk_small_text" />
+                        android:textColor="@color/mpsdk_background_blue"
+                        android:textSize="16dp" />
             </LinearLayout>
 
 

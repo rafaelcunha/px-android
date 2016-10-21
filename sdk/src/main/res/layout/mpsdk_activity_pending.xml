@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/mpsdk_white">
 
@@ -43,11 +43,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="30dp"
-                        android:paddingLeft="58dp"
-                        android:paddingRight="58dp"
+                        android:layout_marginRight="25dp"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginLeft="25dp"
                         android:gravity="bottom|center"
                         android:textSize="22dp"
                         android:textColor="@color/mpsdk_white"
+                        app:fontStyle="regular"
                         android:text="@string/mpsdk_title_pending" />
                 </LinearLayout>
 
@@ -58,10 +61,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:layout_marginBottom="15dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginLeft="25dp"
                     android:gravity="bottom|center"
-                    android:textSize="21dp"
+                    android:textSize="22dp"
+                    app:fontStyle="regular"
                     android:text="@string/mpsdk_what_can_do" />
 
                 <com.mercadopago.customviews.MPTextView
@@ -70,20 +76,24 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="20dp"
-                    android:paddingLeft="24dp"
-                    android:paddingRight="24dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginLeft="25dp"
                     android:gravity="bottom|center"
-                    android:textSize="18dp"
+                    android:textSize="20dp"
+                    app:fontStyle="regular"
                     android:text="@string/mpsdk_subtitle_pending_contingency" />
 
                 <FrameLayout
                     android:id="@+id/mpsdkPendingOptionButton"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginLeft="25dp"
                     android:layout_marginRight="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginLeft="25dp"
                     android:layout_marginTop="14dp"
-                    android:layout_marginBottom="15dp"
                     android:background="@drawable/mpsdk_button_bg_stroke"
                     android:onClick="onClickPendingOptionButton">
                     <com.mercadopago.customviews.MPTextView
@@ -91,8 +101,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textAllCaps="false"
                         android:textSize="18dp"
+                        app:fontStyle="regular"
                         android:textColor="@color/mpsdk_white_background"
                         android:text="@string/mpsdk_text_pay_with_other_method"/>
                 </FrameLayout>
@@ -107,9 +117,10 @@
                     android:paddingRight="40dp"
                     android:paddingTop="20dp"
                     android:paddingBottom="20dp"
+                    app:fontStyle="regular"
                     android:text="@string/mpsdk_text_continue"
-                    android:textColor="@color/mpsdk_color_link"
-                    android:textSize="@dimen/mpsdk_small_text" />
+                    android:textColor="@color/mpsdk_background_blue"
+                    android:textSize="16dp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

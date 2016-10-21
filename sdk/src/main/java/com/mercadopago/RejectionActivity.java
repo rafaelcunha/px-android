@@ -65,7 +65,7 @@ public class RejectionActivity extends MercadoPagoActivity {
         mRejectionSubtitle = (MPTextView) findViewById(R.id.mpsdkRejectionSubtitle);
         mRejectionOptionButtonText = (MPTextView) findViewById(R.id.mpsdkRejectionOptionButtonText);
         mRejectionOptionButton = (FrameLayout) findViewById(R.id.mpsdkRejectionOptionButton);
-        mKeepBuyingButton = (MPTextView) findViewById(R.id.mpsdkKeepBuyigRejection);
+        mKeepBuyingButton = (MPTextView) findViewById(R.id.mpsdkKeepBuyingRejection);
         mKeepBuyingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

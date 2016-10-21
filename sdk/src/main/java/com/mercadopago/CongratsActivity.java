@@ -25,7 +25,9 @@ public class CongratsActivity extends MercadoPagoActivity {
     protected MPTextView mLastFourDigitsDescription;
     protected MPTextView mInstallmentsDescription;
     protected MPTextView mInterestAmountDescription;
+    protected MPTextView mTotalAmountDescription;
     protected MPTextView mPaymentIdDescription;
+    protected MPTextView mPaymentIdDescriptionNumber;
     protected MPTextView mPayerEmail;
     protected View mTopEmailSeparator;
     protected ImageView mPaymentMethodImage;
@@ -72,7 +74,9 @@ public class CongratsActivity extends MercadoPagoActivity {
         mLastFourDigitsDescription = (MPTextView) findViewById(R.id.mpsdkLastFourDigitsDescription);
         mInstallmentsDescription = (MPTextView) findViewById(R.id.mpsdkInstallmentsDescription);
         mInterestAmountDescription = (MPTextView) findViewById(R.id.mpsdkInterestAmountDescription);
+        mTotalAmountDescription = (MPTextView) findViewById(R.id.mpsdkTotalAmountDescription);
         mPaymentIdDescription = (MPTextView) findViewById(R.id.mpsdkPaymentIdDescription);
+        mPaymentIdDescriptionNumber = (MPTextView) findViewById(R.id.mpsdkPaymentIdDescriptionNumber);
         mTopEmailSeparator = findViewById(R.id.mpsdkTopEmailSeparator);
         mPaymentMethodImage = (ImageView) findViewById(R.id.mpsdkPaymentMethodImage);
         mKeepBuyingButton = (MPTextView) findViewById(R.id.mpsdkKeepBuyingCongrats);
@@ -99,24 +103,28 @@ public class CongratsActivity extends MercadoPagoActivity {
 
     private void setPaymentIdDescription() {
         if (isPaymentIdValid()) {
-            String message = getString(R.string.mpsdk_payment_id_description) + " " + mPayment.getId();
-            mPaymentIdDescription.setText(message);
+            String message = getString(R.string.mpsdk_payment_id_description_number, String.valueOf(mPayment.getId()));
+            mPaymentIdDescriptionNumber.setText(message);
         } else {
             mPaymentIdDescription.setVisibility(View.GONE);
+            mPaymentIdDescriptionNumber.setVisibility(View.GONE);
         }
     }
 
     private void setInterestAmountDescription() {
-        if (hasInterests()) {
-            StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
-            sb.append("( ");
-            sb.append(CurrenciesUtil.formatNumber(mPayment.getTransactionDetails().getTotalPaidAmount(), mPayment.getCurrencyId()));
-            sb.append(" )");
-            mInterestAmountDescription.setText(CurrenciesUtil.formatCurrencyInText(mPayment.getTransactionDetails().getTotalPaidAmount(),
-                    mPayment.getCurrencyId(), sb.toString(), true, true));
+        sb.append("( ");
+        sb.append(CurrenciesUtil.formatNumber(mPayment.getTransactionDetails().getTotalPaidAmount(), mPayment.getCurrencyId()));
+        sb.append(" )");
+        mTotalAmountDescription.setText(CurrenciesUtil.formatCurrencyInText(mPayment.getTransactionDetails().getTotalPaidAmount(),
+                mPayment.getCurrencyId(), sb.toString(), true, true));
+
+        if (hasInterests()) {
+            mInterestAmountDescription.setVisibility(View.GONE);
         } else {
             mInterestAmountDescription.setText(getString(R.string.mpsdk_zero_rate));
+            mInstallmentsDescription.setVisibility(View.VISIBLE);
         }
     }
 

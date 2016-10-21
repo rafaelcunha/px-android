@@ -103,6 +103,16 @@ public class PendingActivity extends MercadoPagoActivity {
         }
     }
 
+    public void onClickPendingOptionButton(View view){
+        MPTracker.getInstance().trackEvent("PENDING", "SELECT_OTHER_PAYMENT_METHOD", "2", mMerchantPublicKey, BuildConfig.VERSION_NAME, this);
+
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("nextAction", PaymentResultAction.SELECT_OTHER_PAYMENT_METHOD);
+        setResult(RESULT_CANCELED, returnIntent);
+        finish();
+    }
+
+
     private void resetBackPressedOnceIn(final int mills) {
         new Thread(new Runnable() {
             @Override
