@@ -389,7 +389,7 @@ public class RejectionActivityTest {
 
         //Keep buying button
         onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_continue))));
     }
 
     @Test
@@ -423,7 +423,7 @@ public class RejectionActivityTest {
 
         //Keep buying button
         onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_continue))));
     }
 
     @Test
@@ -458,7 +458,7 @@ public class RejectionActivityTest {
 
         //Keep buying button
         onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_continue))));
     }
 
     @Test
@@ -492,7 +492,7 @@ public class RejectionActivityTest {
 
         //Keep buying button
         onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(isDisplayed()));
-        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_keep_buying))));
+        onView(withId(R.id.mpsdkKeepBuyigRejection)).check(matches(withText(mTestRule.getActivity().getString(R.string.mpsdk_text_cancel_payment_and_continue))));
     }
 
     @Test
