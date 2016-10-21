@@ -21,7 +21,7 @@ import com.mercadopago.util.ScaleUtil;
  * Created by vaserber on 10/19/16.
  */
 
-public class BackCardView implements BackCardViewController {
+public class BackCardView {
 
     public static final int CARD_SECURITY_CODE_DEFAULT_LENGTH = 3;
 
@@ -48,22 +48,18 @@ public class BackCardView implements BackCardViewController {
         this.mSecurityCodeLength = CARD_SECURITY_CODE_DEFAULT_LENGTH;
     }
 
-    @Override
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.mPaymentMethod = paymentMethod;
     }
 
-    @Override
     public void setSize(String size) {
         this.mSize = size;
     }
 
-    @Override
     public void setSecurityCodeLength(int securityCodeLength) {
         this.mSecurityCodeLength = securityCodeLength;
     }
 
-    @Override
     public void initializeControls() {
         mCardContainer = (FrameLayout) mView.findViewById(R.id.mpsdkCardBackContainer);
         mCardBorder = (ImageView) mView.findViewById(R.id.mpsdkCardShadowBorder);
@@ -71,6 +67,49 @@ public class BackCardView implements BackCardViewController {
         mCardImageView = (ImageView) mView.findViewById(R.id.mpsdkCardImageView);
         if (mSize != null) {
             resize();
+        }
+    }
+
+    public View inflateInParent(ViewGroup parent, boolean attachToRoot) {
+        mView = LayoutInflater.from(mContext)
+                .inflate(R.layout.mpsdk_card_back, parent, attachToRoot);
+        return mView;
+    }
+
+    public View getView() {
+        return mView;
+    }
+
+    public void decorateCardBorder(int borderColor) {
+        GradientDrawable cardShadowRounded = (GradientDrawable) ContextCompat.getDrawable(mContext, R.drawable.mpsdk_card_shadow_rounded);
+        cardShadowRounded.setStroke(ScaleUtil.getPxFromDp(6, mContext), borderColor);
+        mCardBorder.setImageDrawable(cardShadowRounded);
+    }
+
+    public void draw() {
+        showEmptySecurityCode();
+        if (mPaymentMethod == null) return;
+        onPaymentMethodSet();
+    }
+
+    public void hide() {
+        mCardContainer.setVisibility(View.GONE);
+    }
+
+    public void show() {
+        mCardContainer.setVisibility(View.VISIBLE);
+    }
+
+    public void clearPaymentMethod() {
+        mCardImageView.setBackgroundColor(ContextCompat.getColor(mContext, NEUTRAL_CARD_COLOR));
+        drawEditingSecurityCode(null);
+    }
+
+    public void drawEditingSecurityCode(String securityCode) {
+        if (securityCode == null || securityCode.length() == 0) {
+            mCardSecurityCodeTextView.setText(BASE_BACK_SECURITY_CODE);
+        } else  {
+            mCardSecurityCodeTextView.setText(MPCardMaskUtil.buildSecurityCode(mSecurityCodeLength, securityCode));
         }
     }
 
@@ -93,60 +132,13 @@ public class BackCardView implements BackCardViewController {
         mCardSecurityCodeTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, cardSecurityCodeFontSize);
     }
 
-    @Override
-    public View inflateInParent(ViewGroup parent, boolean attachToRoot) {
-        mView = LayoutInflater.from(mContext)
-                .inflate(R.layout.mpsdk_card_back, parent, attachToRoot);
-        return mView;
-    }
-
-    public View getView() {
-        return mView;
-    }
-
-    public void decorateCardBorder(int borderColor) {
-        GradientDrawable cardShadowRounded = (GradientDrawable) ContextCompat.getDrawable(mContext, R.drawable.mpsdk_card_shadow_rounded);
-        cardShadowRounded.setStroke(ScaleUtil.getPxFromDp(6, mContext), borderColor);
-        mCardBorder.setImageDrawable(cardShadowRounded);
-    }
-
-    @Override
-    public void draw() {
-        showEmptySecurityCode();
-        if (mPaymentMethod == null) return;
-        onPaymentMethodSet();
-    }
-
-    @Override
-    public void hide() {
-        mCardContainer.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void show() {
-        mCardContainer.setVisibility(View.VISIBLE);
-    }
-
     private void onPaymentMethodSet() {
         mCardImageView.setBackgroundColor(ContextCompat.getColor(mContext, getCardColor(mPaymentMethod)));
-    }
-
-    public void clearPaymentMethod() {
-        mCardImageView.setBackgroundColor(ContextCompat.getColor(mContext, NEUTRAL_CARD_COLOR));
-        drawEditingSecurityCode(null);
     }
 
     private int getCardColor(PaymentMethod paymentMethod) {
         String colorName = "mpsdk_" + paymentMethod.getId().toLowerCase();
         return mContext.getResources().getIdentifier(colorName, "color", mContext.getPackageName());
-    }
-
-    public void drawEditingSecurityCode(String securityCode) {
-        if (securityCode == null || securityCode.length() == 0) {
-            mCardSecurityCodeTextView.setText(BASE_BACK_SECURITY_CODE);
-        } else  {
-            mCardSecurityCodeTextView.setText(MPCardMaskUtil.buildSecurityCode(mSecurityCodeLength, securityCode));
-        }
     }
 
     private void showEmptySecurityCode() {

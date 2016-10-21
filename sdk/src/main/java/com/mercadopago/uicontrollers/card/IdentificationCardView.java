@@ -16,7 +16,7 @@ import com.mercadopago.util.LayoutUtil;
  * Created by vaserber on 10/20/16.
  */
 
-public class IdentificationCardView implements IdentificationCardViewController {
+public class IdentificationCardView {
 
     private Context mContext;
     private View mView;
@@ -31,14 +31,12 @@ public class IdentificationCardView implements IdentificationCardViewController 
         this.mContext = context;
     }
 
-    @Override
     public View inflateInParent(ViewGroup parent, boolean attachToRoot) {
         mView = LayoutInflater.from(mContext)
                 .inflate(R.layout.mpsdk_card_identification, parent, attachToRoot);
         return mView;
     }
 
-    @Override
     public void initializeControls() {
         mCardContainer = (FrameLayout) mView.findViewById(R.id.mpsdkCardBackContainer);
         mCardBorder = (ImageView) mView.findViewById(R.id.mpsdkCardShadowBorder);
@@ -46,22 +44,18 @@ public class IdentificationCardView implements IdentificationCardViewController 
         mCardIdentificationNumberTextView = (MPTextView) mView.findViewById(R.id.mpsdkIdNumberView);
     }
 
-    @Override
     public void draw() {
 
     }
 
-    @Override
     public void show() {
 
     }
 
-    @Override
     public void hide() {
 
     }
 
-    @Override
     public void decorateCardBorder(int borderColor) {
 
     }

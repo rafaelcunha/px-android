@@ -3,13 +3,11 @@ package com.mercadopago;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -42,14 +40,11 @@ import com.mercadopago.model.PaymentRecovery;
 import com.mercadopago.model.Token;
 import com.mercadopago.mptracker.MPTracker;
 import com.mercadopago.presenters.FormCardPresenter;
-import com.mercadopago.uicontrollers.card.BackCardView;
-import com.mercadopago.uicontrollers.card.CardRepresentationModes;
-import com.mercadopago.uicontrollers.card.FrontCardView;
+import com.mercadopago.uicontrollers.card.CardView;
 import com.mercadopago.util.ApiUtil;
 import com.mercadopago.util.ColorsUtil;
 import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
-import com.mercadopago.util.MPAnimationUtils;
 import com.mercadopago.util.MPCardMaskUtil;
 import com.mercadopago.util.ScaleUtil;
 import com.mercadopago.views.FormCardActivityView;
@@ -86,10 +81,8 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     private Toolbar mNormalToolbar;
     private MPTextView mBankDealsTextView;
     private FrameLayout mCardBackground;
-    private FrameLayout mCardFrontContainer;
-    private FrameLayout mCardBackContainer;
-    private FrontCardView mFrontCardView;
-    private BackCardView mBackCardView;
+    private FrameLayout mCardViewContainer;
+    private CardView mCardView;
 
     //Input Views
     private ProgressBar mProgressBar;
@@ -220,8 +213,9 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         } else {
             mNormalToolbar = (Toolbar) findViewById(R.id.mpsdkTransparentToolbar);
             mCardBackground = (FrameLayout) findViewById(R.id.mpsdkCardBackground);
-            mCardFrontContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardFrontContainer);
-            mCardBackContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardBackContainer);
+            mCardViewContainer = (FrameLayout) findViewById(R.id.mpsdkCardViewContainer);
+//            mCardFrontContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardFrontContainer);
+//            mCardBackContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardBackContainer);
         }
         mIdentificationTypeContainer = (LinearLayout) findViewById(R.id.mpsdkCardIdentificationTypeContainer);
         mIdentificationTypeSpinner = (Spinner) findViewById(R.id.mpsdkCardIdentificationType);
@@ -273,28 +267,11 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
     private void loadNormalViews() {
         loadToolbarArrow(mNormalToolbar);
-        mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.EDIT_FRONT);
-        mFrontCardView.setSize(CardRepresentationModes.EXTRA_BIG_SIZE);
-        mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
-        if (mPresenter.getCardInformation() != null) {
-            mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
-            mFrontCardView.setLastFourDigits(mPresenter.getCardInformation().getLastFourDigits());
-        }
-        mFrontCardView.inflateInParent(mCardFrontContainer, true);
-        mFrontCardView.initializeControls();
-        mFrontCardView.draw();
-        mCardSideState = FormCardPresenter.CARD_SIDE_FRONT;
 
-        mBackCardView = new BackCardView(mActivity);
-        mBackCardView.setSize(CardRepresentationModes.EXTRA_BIG_SIZE);
-        mBackCardView.setPaymentMethod(mPresenter.getPaymentMethod());
-        if (mPresenter.getCardInformation() != null) {
-            mBackCardView.setSecurityCodeLength(mPresenter.getSecurityCodeLength());
-        }
-        mBackCardView.inflateInParent(mCardBackContainer, true);
-        mBackCardView.initializeControls();
-        mBackCardView.draw();
-        mBackCardView.hide();
+        mCardView = new CardView(mActivity);
+        mCardView.inflateInParent(mCardViewContainer, true);
+        mCardView.initializeControls();
+        mCardSideState = FormCardPresenter.CARD_SIDE_FRONT;
     }
 
     private void loadToolbarArrow(Toolbar toolbar) {
@@ -337,8 +314,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     private void decorateNormal() {
         ColorsUtil.decorateTransparentToolbar(mNormalToolbar, mBankDealsTextView, mDecorationPreference,
                 getSupportActionBar(), this);
-        mFrontCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
-        mBackCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
+        mCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
         mCardBackground.setBackgroundColor(mDecorationPreference.getLighterColor());
     }
 
@@ -368,11 +344,12 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                         mPresenter.configureWithSettings();
                         mPresenter.loadIdentificationTypes();
                         if (cardViewsActive()) {
-                            mFrontCardView.setPaymentMethod(paymentMethod);
-                            mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
-                            mFrontCardView.setSecurityCodeLength(mPresenter.getSecurityCodeLength());
-                            mFrontCardView.updateCardNumberMask(getCardNumberTextTrimmed());
-                            mFrontCardView.transitionPaymentMethodSet();
+                            mCardView.setPaymentMethod(paymentMethod);
+                            mCardView.setCardNumberLength(mPresenter.getCardNumberLength());
+                            mCardView.setSecurityCodeLength(mPresenter.getSecurityCodeLength());
+                            mCardView.setSecurityCodeLocation(mPresenter.getSecurityCodeLocation());
+                            mCardView.updateCardNumberMask(getCardNumberTextTrimmed());
+                            mCardView.transitionPaymentMethodSet();
                         }
                     }
                 }
@@ -388,8 +365,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                     mPresenter.setIdentificationNumberRequired(true);
                     mPresenter.setSecurityCodeRequired(true);
                     if (cardViewsActive()) {
-                        mFrontCardView.transitionClearPaymentMethod();
-                        mBackCardView.clearPaymentMethod();
+                        mCardView.clearPaymentMethod();
                     }
                 }
             },
@@ -403,7 +379,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                 public void saveCardNumber(CharSequence s) {
                     mPresenter.saveCardNumber(s.toString());
                     if (cardViewsActive()) {
-                        mFrontCardView.drawEditingCardNumber(s.toString());
+                        mCardView.drawEditingCardNumber(s.toString());
                     }
                 }
 
@@ -467,7 +443,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             public void saveCardholderName(CharSequence s) {
                 mPresenter.saveCardholderName(s.toString());
                 if (cardViewsActive()) {
-                    mFrontCardView.drawEditingCardHolderName(s.toString());
+                    mCardView.drawEditingCardHolderName(s.toString());
                 }
             }
 
@@ -495,7 +471,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             public void saveExpiryMonth(CharSequence s) {
                 mPresenter.saveExpiryMonth(s.toString());
                 if (cardViewsActive()) {
-                    mFrontCardView.drawEditingExpiryMonth(s.toString());
+                    mCardView.drawEditingExpiryMonth(s.toString());
                 }
             }
 
@@ -503,7 +479,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             public void saveExpiryYear(CharSequence s) {
                 mPresenter.saveExpiryYear(s.toString());
                 if (cardViewsActive()) {
-                    mFrontCardView.drawEditingExpiryYear(s.toString());
+                    mCardView.drawEditingExpiryYear(s.toString());
                 }
             }
 
@@ -541,11 +517,8 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             public void saveSecurityCode(CharSequence s) {
                 mPresenter.saveSecurityCode(s.toString());
                 if (cardViewsActive()) {
-                    if (mPresenter.getSecurityCodeLocation().equals(FormCardPresenter.CARD_SIDE_FRONT)) {
-                        mFrontCardView.drawEditingSecurityCode(s.toString());
-                    } else {
-                        mBackCardView.drawEditingSecurityCode(s.toString());
-                    }
+                    mCardView.setSecurityCodeLocation(mPresenter.getSecurityCodeLocation());
+                    mCardView.drawEditingSecurityCode(s.toString());
                 }
             }
 
@@ -571,7 +544,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     public void setSecurityCodeViewLocation(String location) {
         if (location.equals(FormCardPresenter.CARD_SIDE_FRONT)) {
             if (cardViewsActive()) {
-                mFrontCardView.hasToShowSecurityCode(true);
+                mCardView.hasToShowSecurityCodeInFront(true);
             }
         }
     }
@@ -621,7 +594,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mCurrentEditingEditText = CARD_NUMBER_INPUT;
         openKeyboard(mCardNumberEditText);
         if (cardViewsActive()) {
-            mFrontCardView.drawEditingCardNumber(mPresenter.getCardNumber());
+            mCardView.drawEditingCardNumber(mPresenter.getCardNumber());
         }
     }
 
@@ -635,7 +608,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mCurrentEditingEditText = CARDHOLDER_NAME_INPUT;
         openKeyboard(mCardHolderNameEditText);
         if (cardViewsActive()) {
-            mFrontCardView.drawEditingCardHolderName(mPresenter.getCardholderName());
+            mCardView.drawEditingCardHolderName(mPresenter.getCardholderName());
         }
     }
 
@@ -650,8 +623,8 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         openKeyboard(mCardExpiryDateEditText);
         checkFlipCardToFront(true);
         if (cardViewsActive()) {
-            mFrontCardView.drawEditingExpiryMonth(mPresenter.getExpiryMonth());
-            mFrontCardView.drawEditingExpiryYear(mPresenter.getExpiryYear());
+            mCardView.drawEditingExpiryMonth(mPresenter.getExpiryMonth());
+            mCardView.drawEditingExpiryYear(mPresenter.getExpiryYear());
         }
     }
 
@@ -822,7 +795,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             flipCardToBack();
         } else if (showingIdentification()) {
 //            getSupportFragmentManager().popBackStack();
-//            mCardSideState = CARD_SIDE_BACK;
+            mCardSideState = FormCardPresenter.CARD_SIDE_BACK;
 //            if (showBankDeals) {
 //                mToolbarButton.setVisibility(View.VISIBLE);
 //            }
@@ -835,7 +808,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                 flipCardToFrontFromBack();
             } else if (showingIdentification()) {
 //                getSupportFragmentManager().popBackStack();
-//                mCardSideState = CARD_SIDE_FRONT;
+                mCardSideState = FormCardPresenter.CARD_SIDE_FRONT;
             }
             if (showBankDeals) {
 //                mToolbarButton.setVisibility(View.VISIBLE);
@@ -868,48 +841,17 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
     private void flipCardToBack() {
         if (mLowResActive) return;
-        mBackCardView.setPaymentMethod(mPresenter.getPaymentMethod());
-        if (mPresenter.getCardInformation() != null) {
-            mBackCardView.setSecurityCodeLength(mPresenter.getSecurityCodeLength());
-        }
         mCardSideState = FormCardPresenter.CARD_SIDE_BACK;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-            getWindow().setFlags(
-                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-
-            float distance = mCardBackground.getResources().getDimension(R.dimen.mpsdk_card_camera_distance);
-            float scale = getResources().getDisplayMetrics().density;
-            float cameraDistance = scale * distance;
-
-            MPAnimationUtils.flipToBack(this, cameraDistance, mFrontCardView.getView(), mBackCardView.getView(),
-                    mBackCardView);
-        } else {
-            MPAnimationUtils.flipToBack(this, mFrontCardView, mBackCardView);
-        }
-        mBackCardView.draw();
-        mBackCardView.drawEditingSecurityCode(mPresenter.getSecurityCode());
+        mCardView.flipCardToBack(mPresenter.getPaymentMethod(), mPresenter.getSecurityCodeLength(),
+                getWindow(), mCardBackground, mPresenter.getSecurityCode());
     }
 
     private void flipCardToFrontFromBack() {
         if (mLowResActive) return;
         mCardSideState = FormCardPresenter.CARD_SIDE_FRONT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-            getWindow().setFlags(
-                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-
-            float distance = mCardBackground.getResources().getDimension(R.dimen.mpsdk_card_camera_distance);
-            float scale = getResources().getDisplayMetrics().density;
-            float cameraDistance = scale * distance;
-
-            MPAnimationUtils.flipToFront(this, cameraDistance, mFrontCardView.getView(), mBackCardView.getView());
-        } else {
-            MPAnimationUtils.flipToFront(this, mFrontCardView, mBackCardView);
-        }
-        mFrontCardView.drawEditingCard(mPresenter.getCardNumber(), mPresenter.getCardholderName(),
-                mPresenter.getExpiryMonth(), mPresenter.getExpiryYear(), mPresenter.getSecurityCodeFront());
+        mCardView.flipCardToFrontFromBack(getWindow(), mCardBackground, mPresenter.getCardNumber(),
+                mPresenter.getCardholderName(), mPresenter.getExpiryMonth(), mPresenter.getExpiryYear(),
+                mPresenter.getSecurityCodeFront());
     }
 
     private void initCardState() {
