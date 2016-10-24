@@ -3,7 +3,6 @@ package com.mercadopago.listeners.card;
 import android.text.Editable;
 import android.text.TextWatcher;
 
-import com.mercadopago.R;
 import com.mercadopago.callbacks.card.CardExpiryDateEditTextCallback;
 
 /**
@@ -28,7 +27,7 @@ public class CardExpiryDateTextWatcher implements TextWatcher {
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        mEditTextCallback.openKeyboard();
+        mEditTextCallback.checkOpenKeyboard();
         if (s.length() == 2 && before == 0) {
             mEditTextCallback.appendDivider();
         }
@@ -54,7 +53,7 @@ public class CardExpiryDateTextWatcher implements TextWatcher {
         } else if (s.length() == 0) {
             mEditTextCallback.saveExpiryMonth("");
         }
-        mEditTextCallback.checkChangeErrorView();
+        mEditTextCallback.changeErrorView();
         mEditTextCallback.toggleLineColorOnError(false);
     }
 }

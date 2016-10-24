@@ -13,6 +13,8 @@ import com.mercadopago.model.ApiException;
 import com.mercadopago.model.BankDeal;
 import com.mercadopago.model.Card;
 import com.mercadopago.model.CardInformation;
+import com.mercadopago.model.CardToken;
+import com.mercadopago.model.Cardholder;
 import com.mercadopago.model.Identification;
 import com.mercadopago.model.IdentificationType;
 import com.mercadopago.model.Issuer;
@@ -72,6 +74,8 @@ public class FormCardPresenter {
     private String mSecurityCode;
     private IdentificationType mIdentificationType;
     private String mIdentificationNumber;
+    private CardToken mCardToken;
+
 
     //Extra info
     private List<BankDeal> mBankDealsList;
@@ -88,7 +92,6 @@ public class FormCardPresenter {
 //    private int mCardSecurityCodeLength;
 //    private String mSecurityCodeLocation;
 //    private boolean mIssuerFound;
-//    private CardToken mCardToken;
 
 //    private PaymentMethod mCurrentPaymentMethod;
 
@@ -235,6 +238,10 @@ public class FormCardPresenter {
         } else {
             mBin = mCardInfo.getFirstSixDigits();
         }
+    }
+
+    public void initializeCardToken() {
+        mCardToken = new CardToken("", null, null, "", "", "", "");
     }
 
     public boolean isCardInfoAvailable() {
@@ -487,23 +494,93 @@ public class FormCardPresenter {
 
     //TODO
     public boolean validateCardNumber() {
-        return true;
+        mCardToken.setCardNumber(getCardNumber());
+        try {
+            if (mPaymentMethod == null) {
+                if (getCardNumber() == null || getCardNumber().length() < MercadoPago.BIN_LENGTH) {
+                    throw new RuntimeException(mContext.getString(R.string.mpsdk_invalid_card_number_incomplete));
+                } else if (getCardNumber().length() == MercadoPago.BIN_LENGTH) {
+                    throw new RuntimeException(mContext.getString(R.string.mpsdk_invalid_payment_method));
+                } else {
+                    throw new RuntimeException(mContext.getString(R.string.mpsdk_invalid_payment_method));
+                }
+            }
+            mCardToken.validateCardNumber(mContext, mPaymentMethod);
+            mView.clearErrorView();
+            return true;
+        } catch (Exception e) {
+            mView.setErrorView(e.getMessage());
+            mView.setErrorCardNumber();
+            return false;
+        }
     }
 
     public boolean validateCardName() {
-        return true;
+        Cardholder cardHolder = new Cardholder();
+        cardHolder.setName(getCardholderName());
+        cardHolder.setIdentification(mIdentification);
+        mCardToken.setCardholder(cardHolder);
+        if (mCardToken.validateCardholderName()) {
+            mView.clearErrorView();
+            return true;
+        } else {
+            mView.setErrorView(mContext.getString(R.string.mpsdk_invalid_empty_name));
+            mView.setErrorCardholderName();
+            return false;
+        }
     }
 
     public boolean validateExpiryDate() {
-        return true;
+        Integer month = getExpiryMonth() == null ? null : Integer.valueOf(getExpiryMonth());
+        Integer year = getExpiryYear() == null ? null : Integer.valueOf(getExpiryYear());
+        mCardToken.setExpirationMonth(month);
+        mCardToken.setExpirationYear(year);
+        if (mCardToken.validateExpiryDate()) {
+            mView.clearErrorView();
+            return true;
+        } else {
+            mView.setErrorView(mContext.getString(R.string.mpsdk_invalid_expiry_date));
+            mView.setErrorExpiryDate();
+            return false;
+        }
     }
 
     public boolean validateSecurityCode() {
-        return true;
+        mCardToken.setSecurityCode(getSecurityCode());
+        try {
+            mCardToken.validateSecurityCode(mContext, mPaymentMethod);
+            mView.clearErrorView();
+            return true;
+        } catch (Exception e) {
+            setCardSecurityCodeErrorView(e.getMessage());
+            return false;
+        }
+    }
+
+    private void setCardSecurityCodeErrorView(String message) {
+        if (!isSecurityCodeRequired()) {
+            return;
+        }
+        mView.setErrorView(message);
+        mView.setErrorSecurityCode();
     }
 
     public boolean validateIdentificationNumber() {
-        return true;
+        mIdentification.setNumber(getIdentificationNumber());
+        mCardToken.getCardholder().setIdentification(mIdentification);
+        boolean ans = mCardToken.validateIdentificationNumber(mIdentificationType);
+        if (ans) {
+            mView.clearErrorView();
+            mView.clearErrorIdentificationNumber();
+        } else {
+            setCardIdentificationErrorView(mContext.getString(R.string.mpsdk_invalid_identification_number));
+        }
+        return ans;
+    }
+
+    private void setCardIdentificationErrorView(String message) {
+        mView.setErrorView(message);
+        mView.setErrorIdentificationNumber();
     }
 
     public boolean checkIsEmptyOrValidCardholderName() {

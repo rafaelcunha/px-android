@@ -15,9 +15,6 @@ import com.mercadopago.util.MPCardMaskUtil;
 
 public class CardIdentificationNumberTextWatcher implements TextWatcher {
 
-    private static final int MONTH_LENGTH = 2;
-    private static final int YEAR_START_INDEX = 3;
-
     private CardIdentificationNumberEditTextCallback mEditTextCallback;
 
     public CardIdentificationNumberTextWatcher(CardIdentificationNumberEditTextCallback editTextCallback) {
@@ -31,13 +28,13 @@ public class CardIdentificationNumberTextWatcher implements TextWatcher {
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        mEditTextCallback.openKeyboard();
+        mEditTextCallback.checkOpenKeyboard();
         mEditTextCallback.saveIdentificationNumber(s);
     }
 
     @Override
     public void afterTextChanged(Editable s) {
-        mEditTextCallback.checkChangeErrorView();
+        mEditTextCallback.changeErrorView();
         mEditTextCallback.toggleLineColorOnError(false);
         if (s.length() == 0) {
             mEditTextCallback.saveIdentificationNumber("");

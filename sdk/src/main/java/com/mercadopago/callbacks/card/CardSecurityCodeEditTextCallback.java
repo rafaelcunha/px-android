@@ -5,8 +5,8 @@ package com.mercadopago.callbacks.card;
  */
 
 public interface CardSecurityCodeEditTextCallback {
-    void openKeyboard();
+    void checkOpenKeyboard();
     void saveSecurityCode(CharSequence s);
-    void checkChangeErrorView();
+    void changeErrorView();
     void toggleLineColorOnError(boolean toggle);
 }

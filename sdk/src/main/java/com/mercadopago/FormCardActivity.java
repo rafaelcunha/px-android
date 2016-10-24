@@ -13,11 +13,13 @@ import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -62,6 +64,7 @@ import com.mercadopago.util.ScaleUtil;
 import com.mercadopago.views.FormCardActivityView;
 
 import java.lang.reflect.Type;
+import java.security.Key;
 import java.util.List;
 
 /**
@@ -75,14 +78,17 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     public static final String CARD_EXPIRYDATE_INPUT = "cardExpiryDate";
     public static final String CARD_SECURITYCODE_INPUT = "cardSecurityCode";
     public static final String CARD_IDENTIFICATION_INPUT = "cardIdentification";
-
     public static final String CARD_IDENTIFICATION = "identification";
+
+    public static final String ERROR_STATE = "textview_error";
+    public static final String NORMAL_STATE = "textview_normal";
 
     protected FormCardPresenter mPresenter;
     private Activity mActivity;
 
     //View controls
     private DecorationPreference mDecorationPreference;
+    private ScrollView mScrollView;
 
     //ViewMode
     protected boolean mLowResActive;
@@ -117,6 +123,9 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     private LinearLayout mCardExpiryDateInput;
     private LinearLayout mCardIdentificationInput;
     private LinearLayout mCardSecurityCodeInput;
+    private FrameLayout mErrorContainer;
+    private MPTextView mErrorTextView;
+    private String mErrorState;
 
     //Input Controls
     private String mCurrentEditingEditText;
@@ -143,10 +152,10 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         Card card = null;
         PaymentMethod paymentMethod = null;
         Issuer issuer = null;
-        if (paymentRecovery == null){
+        if (paymentRecovery == null) {
             token = JsonUtil.getInstance().fromJson(this.getIntent().getStringExtra("token"), Token.class);
             card = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("card"), Card.class);
-            if(card != null) {
+            if (card != null) {
                 paymentMethod = card.getPaymentMethod();
             }
         } else {
@@ -214,6 +223,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     @Override
     public void onValidStart() {
         mPresenter.initializeMercadoPago();
+        mPresenter.initializeCardToken();
         initializeViews();
         loadViews();
         decorate();
@@ -251,9 +261,13 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mCardExpiryDateInput = (LinearLayout) findViewById(R.id.mpsdkExpiryDateInput);
         mCardIdentificationInput = (LinearLayout) findViewById(R.id.mpsdkCardIdentificationInput);
         mCardSecurityCodeInput = (LinearLayout) findViewById(R.id.mpsdkCardSecurityCodeContainer);
+        mErrorContainer = (FrameLayout) findViewById(R.id.mpsdkErrorContainer);
+        mErrorTextView = (MPTextView) findViewById(R.id.mpsdkErrorTextView);
+        mScrollView = (ScrollView) findViewById(R.id.mpsdkScrollViewContainer);
         mBankDealsTextView.setVisibility(View.GONE);
         mInputContainer.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
+        fullScrollDown();
     }
 
     @Override
@@ -289,6 +303,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mCardView.inflateInParent(mCardViewContainer, true);
         mCardView.initializeControls();
         mCardSideState = CardView.CARD_SIDE_FRONT;
+        mErrorState = NORMAL_STATE;
 
         mIdentificationCardView = new IdentificationCardView(mActivity);
         mIdentificationCardView.inflateInParent(mIdentificationCardContainer, true);
@@ -375,14 +390,27 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
     @Override
     public void setCardNumberListeners(PaymentMethodGuessingController controller) {
+        mCardNumberEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                return onNextKey(actionId, event);
+            }
+        });
+        mCardNumberEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                onTouchEditText(mCardNumberEditText, event);
+                return true;
+            }
+        });
         mCardNumberEditText.addTextChangedListener(new CardNumberTextWatcher(
             controller,
             new PaymentMethodSelectionCallback() {
                 @Override
                 public void onPaymentMethodListSet(List<PaymentMethod> paymentMethodList) {
                     if (paymentMethodList.size() == 0 || paymentMethodList.size() > 1) {
-//                        blockCardNumbersInput(mCardNumberEditText);
-//                        setErrorView(getString(R.string.mpsdk_invalid_payment_method));
+                        setInputMaxLength(mCardNumberEditText, MercadoPago.BIN_LENGTH);
+                        setErrorView(getString(R.string.mpsdk_invalid_payment_method));
                     } else {
                         onPaymentMethodSet(paymentMethodList.get(0));
                     }
@@ -407,12 +435,12 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
                 @Override
                 public void onPaymentMethodCleared() {
-//                    clearErrorView();
+                    clearErrorView();
                     clearCardNumberInputLength();
                     if (mPresenter.getPaymentMethod() == null) return;
                     mPresenter.setPaymentMethod(null);
                     mSecurityCodeEditText.getText().clear();
-//                    mCardToken = new CardToken("", null, null, "", "", "", "");
+                    mPresenter.initializeCardToken();
                     mPresenter.setIdentificationNumberRequired(true);
                     mPresenter.setSecurityCodeRequired(true);
                     if (cardViewsActive()) {
@@ -422,8 +450,8 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             },
             new CardNumberEditTextCallback() {
                 @Override
-                public void openKeyboard() {
-//                    openKeyboard(mCardNumberEditText);
+                public void checkOpenKeyboard() {
+                    openKeyboard(mCardNumberEditText);
                 }
 
                 @Override
@@ -449,13 +477,13 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                 }
 
                 @Override
-                public void checkChangeErrorView() {
-
+                public void changeErrorView() {
+                    checkChangeErrorView();
                 }
 
                 @Override
                 public void toggleLineColorOnError(boolean toggle) {
-
+                    mCardNumberEditText.toggleLineColorOnError(toggle);
                 }
             }));
     }
@@ -484,10 +512,24 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
     @Override
     public void setCardholderNameListeners() {
+        mCardHolderNameEditText.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+        mCardHolderNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                return onNextKey(actionId, event);
+            }
+        });
+        mCardHolderNameEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                onTouchEditText(mCardHolderNameEditText, event);
+                return true;
+            }
+        });
         mCardHolderNameEditText.addTextChangedListener(new CardholderNameTextWatcher(new CardholderNameEditTextCallback() {
             @Override
-            public void openKeyboard() {
-
+            public void checkOpenKeyboard() {
+                openKeyboard(mCardHolderNameEditText);
             }
 
             @Override
@@ -499,23 +541,36 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             }
 
             @Override
-            public void checkChangeErrorView() {
-
+            public void changeErrorView() {
+                checkChangeErrorView();
             }
 
             @Override
             public void toggleLineColorOnError(boolean toggle) {
-
+                mCardHolderNameEditText.toggleLineColorOnError(toggle);
             }
         }));
     }
 
     @Override
     public void setExpiryDateListeners() {
+        mCardExpiryDateEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                return onNextKey(actionId, event);
+            }
+        });
+        mCardExpiryDateEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                onTouchEditText(mCardExpiryDateEditText, event);
+                return true;
+            }
+        });
         mCardExpiryDateEditText.addTextChangedListener(new CardExpiryDateTextWatcher(new CardExpiryDateEditTextCallback() {
             @Override
-            public void openKeyboard() {
-
+            public void checkOpenKeyboard() {
+                openKeyboard(mCardExpiryDateEditText);
             }
 
             @Override
@@ -535,13 +590,13 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             }
 
             @Override
-            public void checkChangeErrorView() {
-
+            public void changeErrorView() {
+                checkChangeErrorView();
             }
 
             @Override
             public void toggleLineColorOnError(boolean toggle) {
-
+                mCardExpiryDateEditText.toggleLineColorOnError(toggle);
             }
 
             @Override
@@ -558,10 +613,23 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
     @Override
     public void setSecurityCodeListeners() {
+        mSecurityCodeEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                return onNextKey(actionId, event);
+            }
+        });
+        mSecurityCodeEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                onTouchEditText(mSecurityCodeEditText, event);
+                return true;
+            }
+        });
         mSecurityCodeEditText.addTextChangedListener(new CardSecurityCodeTextWatcher(new CardSecurityCodeEditTextCallback() {
             @Override
-            public void openKeyboard() {
-
+            public void checkOpenKeyboard() {
+                openKeyboard(mSecurityCodeEditText);
             }
 
             @Override
@@ -574,13 +642,13 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             }
 
             @Override
-            public void checkChangeErrorView() {
-
+            public void changeErrorView() {
+                checkChangeErrorView();
             }
 
             @Override
             public void toggleLineColorOnError(boolean toggle) {
-
+                mSecurityCodeEditText.toggleLineColorOnError(toggle);
             }
         }));
     }
@@ -616,27 +684,20 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mIdentificationNumberEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                if (isNextKey(actionId, event)) {
-                    validateCurrentEditText();
-                    return true;
-//                }
-//                return false;
+                return onNextKey(actionId, event);
             }
         });
         mIdentificationNumberEditText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                int action = MotionEventCompat.getActionMasked(event);
-                if (action == MotionEvent.ACTION_DOWN) {
-                    openKeyboard(mIdentificationNumberEditText);
-                }
+                onTouchEditText(mIdentificationNumberEditText, event);
                 return true;
             }
         });
         mIdentificationNumberEditText.addTextChangedListener(new CardIdentificationNumberTextWatcher(new CardIdentificationNumberEditTextCallback() {
             @Override
-            public void openKeyboard() {
-
+            public void checkOpenKeyboard() {
+                openKeyboard(mIdentificationNumberEditText);
             }
 
             @Override
@@ -655,13 +716,13 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             }
 
             @Override
-            public void checkChangeErrorView() {
-
+            public void changeErrorView() {
+                checkChangeErrorView();
             }
 
             @Override
             public void toggleLineColorOnError(boolean toggle) {
-
+                mIdentificationNumberEditText.toggleLineColorOnError(toggle);
             }
         }));
     }
@@ -692,6 +753,27 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                 mCardView.hasToShowSecurityCodeInFront(true);
             }
         }
+    }
+
+    private void onTouchEditText(MPEditText editText, MotionEvent event) {
+        int action = MotionEventCompat.getActionMasked(event);
+        if (action == MotionEvent.ACTION_DOWN) {
+            openKeyboard(editText);
+        }
+    }
+
+    private boolean onNextKey(int actionId, KeyEvent event) {
+        if (isNextKey(actionId, event)) {
+            validateCurrentEditText();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isNextKey(int actionId, KeyEvent event) {
+        return actionId == EditorInfo.IME_ACTION_NEXT ||
+                (event != null && event.getAction() == KeyEvent.ACTION_DOWN
+                        && event.getKeyCode() == KeyEvent.KEYCODE_ENTER);
     }
 
     @Override
@@ -729,7 +811,17 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         ediText.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(ediText, InputMethodManager.SHOW_IMPLICIT);
-//        fullScrollDown();
+        fullScrollDown();
+    }
+
+    private void fullScrollDown() {
+        Runnable r = new Runnable() {
+            public void run() {
+                mScrollView.fullScroll(View.FOCUS_DOWN);
+            }
+        };
+        mScrollView.post(r);
+        r.run();
     }
 
     private void requestCardNumberFocus() {
@@ -834,6 +926,67 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     @Override
     public void showSecurityCodeInput() {
         mCardSecurityCodeInput.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void setErrorView(String message) {
+        mButtonContainer.setVisibility(View.GONE);
+        mErrorContainer.setVisibility(View.VISIBLE);
+        mErrorTextView.setText(message);
+        setErrorState(CardInterface.ERROR_STATE);
+    }
+
+    @Override
+    public void clearErrorView() {
+        mButtonContainer.setVisibility(View.VISIBLE);
+        mErrorContainer.setVisibility(View.GONE);
+        mErrorTextView.setText("");
+        setErrorState(CardInterface.NORMAL_STATE);
+    }
+
+    @Override
+    public void setErrorCardNumber() {
+        mCardNumberEditText.toggleLineColorOnError(true);
+        mCardNumberEditText.requestFocus();
+    }
+
+    @Override
+    public void setErrorCardholderName() {
+        mCardHolderNameEditText.toggleLineColorOnError(true);
+        mCardHolderNameEditText.requestFocus();
+    }
+
+    @Override
+    public void setErrorExpiryDate() {
+        mCardExpiryDateEditText.toggleLineColorOnError(true);
+        mCardExpiryDateEditText.requestFocus();
+    }
+
+    @Override
+    public void setErrorSecurityCode() {
+        mSecurityCodeEditText.toggleLineColorOnError(true);
+        mSecurityCodeEditText.requestFocus();
+    }
+
+    @Override
+    public void setErrorIdentificationNumber() {
+        mIdentificationNumberEditText.toggleLineColorOnError(true);
+        mIdentificationNumberEditText.requestFocus();
+    }
+
+    @Override
+    public void clearErrorIdentificationNumber() {
+        mIdentificationNumberEditText.toggleLineColorOnError(false);
+    }
+
+    private void setErrorState(String mErrorState) {
+        this.mErrorState = mErrorState;
+    }
+
+    private void checkChangeErrorView() {
+        if (mErrorState.equals(ERROR_STATE)) {
+            clearErrorView();
+        }
     }
 
     private boolean validateCurrentEditText() {

@@ -37,7 +37,7 @@ public class CardNumberTextWatcher implements TextWatcher {
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        mEditTextCallback.openKeyboard();
+        mEditTextCallback.checkOpenKeyboard();
         mEditTextCallback.saveCardNumber(s.toString().replaceAll("\\s", ""));
         if (before == 0) {
             mEditTextCallback.appendSpace(s);
@@ -49,7 +49,7 @@ public class CardNumberTextWatcher implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
-        mEditTextCallback.checkChangeErrorView();
+        mEditTextCallback.changeErrorView();
         mEditTextCallback.toggleLineColorOnError(false);
         if (mController == null) return;
         String number = s.toString().replaceAll("\\s", "");

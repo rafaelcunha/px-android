@@ -24,13 +24,13 @@ public class CardSecurityCodeTextWatcher implements TextWatcher {
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        mEditTextCallback.openKeyboard();
+        mEditTextCallback.checkOpenKeyboard();
         mEditTextCallback.saveSecurityCode(s.toString());
     }
 
     @Override
     public void afterTextChanged(Editable s) {
-        mEditTextCallback.checkChangeErrorView();
+        mEditTextCallback.changeErrorView();
         mEditTextCallback.toggleLineColorOnError(false);
     }
 }

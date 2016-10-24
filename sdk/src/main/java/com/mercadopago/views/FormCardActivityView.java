@@ -35,4 +35,12 @@ public interface FormCardActivityView {
     void setIdentificationNumberRestrictions(String type);
     void hideBankDeals();
     void showBankDeals();
+    void clearErrorView();
+    void setErrorView(String mErrorState);
+    void setErrorCardNumber();
+    void setErrorCardholderName();
+    void setErrorExpiryDate();
+    void setErrorSecurityCode();
+    void setErrorIdentificationNumber();
+    void clearErrorIdentificationNumber();
 }
