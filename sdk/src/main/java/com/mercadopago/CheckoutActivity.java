@@ -331,11 +331,12 @@ public class CheckoutActivity extends MercadoPagoActivity {
     protected void startPaymentVaultActivity() {
 
         //TODO timer
-        CountDownTimerController.getInstance().setTime(70L);
-        CountDownTimerController.getInstance().setOnFinishListener(new CountDownTimerController.FinishListener() {
+        CountDownTimerController.getInstance().setTime(40L);
+        CountDownTimerController.getInstance().setOnFinishMerchantListener(new CountDownTimerController.FinishMerchantListener() {
             @Override
-            public void onFinish() {
+            public void onFinishMerchantListener() {
                 Toast.makeText(CheckoutActivity.this, "Done", Toast.LENGTH_SHORT).show();
+                CountDownTimerController.getInstance().finishTrackedActivities();
             }
         });
 

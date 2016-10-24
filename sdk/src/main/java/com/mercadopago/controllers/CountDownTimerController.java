@@ -2,6 +2,9 @@ package com.mercadopago.controllers;
 import android.app.Activity;
 import android.os.CountDownTimer;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by mromar on 10/17/16.
  */
@@ -11,17 +14,20 @@ public class CountDownTimerController {
     private long mHours = 0;
     private long mMinutes = 0;
     private long mSeconds = 0;
-    private long mMilliSeconds = 0;
+    private Long mMilliSeconds = 0L;
 
     private boolean mShowHours = false;
 
     private CountDownTimerController.TickListener mTickListener;
     private CountDownTimerController.FinishListener mFinishListener;
+    private CountDownTimerController.FinishMerchantListener mFinishMerchantListener;
     private CountDownTimer mCountDownTimer;
+
+    private Boolean isCountDownTimerOn = false;
 
     private static CountDownTimerController mCountDownTimerInstance;
 
-    private Activity mActivity;
+    private Set<Activity> mTrackedActivities = new HashSet<>();
 
     public void setTime(long seconds){
         if (seconds >= 3600L){
@@ -53,13 +59,23 @@ public class CountDownTimerController {
         void onFinish();
     }
 
+    public interface FinishMerchantListener {
+        void onFinishMerchantListener();
+    }
+
     public void start(){
+        if (isCountDownTimerOn){
+            mCountDownTimer.cancel();
+        }
+        
+        isCountDownTimerOn = true;
         if (mCountDownTimer != null) {
             mCountDownTimer.start();
         }
     }
 
     public void stop(){
+        isCountDownTimerOn = false;
         if (mCountDownTimer != null) {
             mCountDownTimer.cancel();
         }
@@ -80,6 +96,7 @@ public class CountDownTimerController {
                 calculateTime(0);
                 if (mFinishListener != null) {
                     mFinishListener.onFinish();
+                    mFinishMerchantListener.onFinishMerchantListener();
                 }
             }
         };
@@ -117,12 +134,31 @@ public class CountDownTimerController {
         return String.valueOf(number);
     }
 
+    public void finishTrackedActivities(){
+        if (mTrackedActivities != null){
+            for (Activity activity : mTrackedActivities){
+                if (activity != null){
+                    activity.finish();
+                }
+            }
+        }
+    }
+
     public void setOnTickListener(CountDownTimerController.TickListener tickListener){
         mTickListener = tickListener;
     }
 
     public void setOnFinishListener(CountDownTimerController.FinishListener finishListener){
         mFinishListener = finishListener;
+    }
+
+    public void setOnFinishMerchantListener(CountDownTimerController.FinishMerchantListener finishMerchantListener){
+        mFinishMerchantListener = finishMerchantListener;
+    }
+
+    public Boolean isTimerEnabled(Activity activity){
+        mTrackedActivities.add(activity);
+        return this.mMilliSeconds != null;
     }
 
     public Long getMilliSeconds(){

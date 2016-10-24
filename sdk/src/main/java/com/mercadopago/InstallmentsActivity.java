@@ -60,7 +60,7 @@ public class InstallmentsActivity extends ShowCardActivity {
     protected Token mToken;
 
     //TODO timer
-    private MPTextView mToolbarButton;
+    private MPTextView mToolbarTimerTextView;
 
 
     @Override
@@ -110,11 +110,18 @@ public class InstallmentsActivity extends ShowCardActivity {
 
     private void showCountDownTimer() {
         //TODO timer
-        if (CountDownTimerController.getInstance() != null && CountDownTimerController.getInstance().getMilliSeconds() != null){
+        if (CountDownTimerController.getInstance().isTimerEnabled(this.getActivity())){
             CountDownTimerController.getInstance().setOnTickListener(new CountDownTimerController.TickListener() {
                 @Override
                 public void onTick(long millisUntilFinished) {
-                    mToolbarButton.setText(CountDownTimerController.getInstance().displayText());
+                    mToolbarTimerTextView.setText(CountDownTimerController.getInstance().displayText());
+                }
+            });
+
+            CountDownTimerController.getInstance().setOnFinishListener(new CountDownTimerController.FinishListener() {
+                @Override
+                public void onFinish(){
+                    mToolbarTimerTextView.setText(CountDownTimerController.getInstance().displayText());
                 }
             });
         }
@@ -166,9 +173,8 @@ public class InstallmentsActivity extends ShowCardActivity {
         }
 
         //TODO timer
-        //mToolbarButton = (MPTextView) findViewById(R.id.mpsdkButtonTextTimer);
-        //mToolbarButton.setText("lalal");
-        //mToolbarButton.setVisibility(View.VISIBLE);
+        mToolbarTimerTextView = (MPTextView) findViewById(R.id.mpsdkButtonTextTimer);
+        mToolbarTimerTextView.setVisibility(View.VISIBLE);
     }
 
     protected void showPayerCosts() {

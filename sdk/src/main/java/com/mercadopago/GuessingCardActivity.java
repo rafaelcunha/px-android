@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -68,7 +67,6 @@ import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
 import com.mercadopago.util.LayoutUtil;
 import com.mercadopago.util.MPAnimationUtils;
-import com.mercadopago.customviews.CountDownTimerView;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -98,7 +96,8 @@ public class GuessingCardActivity extends FrontCardActivity {
     private Card mCard;
 
     // Input controls
-    private MPTextView mToolbarButton;
+    private MPTextView mToolbarTimerTextView;
+    private MPTextView mToolbarBankDealsButton;
     private MPEditText mCardHolderNameEditText;
     private MPEditText mCardNumberEditText;
     private MPEditText mCardExpiryDateEditText;
@@ -230,7 +229,16 @@ public class GuessingCardActivity extends FrontCardActivity {
     private void initializeToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.mpsdkToolbar);
 
-        mToolbarButton = (MPTextView) findViewById(R.id.mpsdkButtonTextTimer);
+        //TODO timer
+        mToolbarBankDealsButton = (MPTextView) findViewById(R.id.mpsdkButtonText);
+        mToolbarTimerTextView = (MPTextView) findViewById(R.id.mpsdkButtonTextTimer);
+
+        if (CountDownTimerController.getInstance().isTimerEnabled(this.getActivity())){
+            mToolbarTimerTextView.setVisibility(View.VISIBLE);
+        } else {
+            mToolbarBankDealsButton.setVisibility(View.VISIBLE);
+        }
+
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -258,7 +266,7 @@ public class GuessingCardActivity extends FrontCardActivity {
 
     private void decorateToolbar(Toolbar toolbar) {
         if (mDecorationPreference.isDarkFontEnabled()) {
-            mToolbarButton.setTextColor(mDecorationPreference.getDarkFontColor(this));
+            mToolbarTimerTextView.setTextColor(mDecorationPreference.getDarkFontColor(this));
             Drawable upArrow = toolbar.getNavigationIcon();
             if (upArrow != null) {
                 upArrow.setColorFilter(mDecorationPreference.getDarkFontColor(this), PorterDuff.Mode.SRC_ATOP);
@@ -427,6 +435,10 @@ public class GuessingCardActivity extends FrontCardActivity {
         setListeners();
         openKeyboard(mCardNumberEditText);
         mCurrentEditingEditText = CardInterface.CARD_NUMBER_INPUT;
+
+        if (!CountDownTimerController.getInstance().isTimerEnabled(this.getActivity())){
+            getBankDealsAsync();
+        }
 
         if (mPaymentMethodList == null) {
             getPaymentMethodsAsync();
@@ -1025,24 +1037,20 @@ public class GuessingCardActivity extends FrontCardActivity {
     //TODO timer
     protected void showCountDownTimer(){
         CountDownTimerController.getInstance().start();
-        mToolbarButton.setVisibility(View.VISIBLE);
         CountDownTimerController.getInstance().setOnTickListener(new CountDownTimerController.TickListener() {
             @Override
             public void onTick(long millisUntilFinished) {
-                mToolbarButton.setText(CountDownTimerController.getInstance().displayText());
+                mToolbarTimerTextView.setText(CountDownTimerController.getInstance().displayText());
             }
         });
-    }
 
-    private void setToolbarTime(final String text) {
-        runOnUiThread(new Runnable() {
+        CountDownTimerController.getInstance().setOnFinishListener(new CountDownTimerController.FinishListener() {
             @Override
-            public void run() {
-                mToolbarButton.setText(text);
+            public void onFinish(){
+                mToolbarTimerTextView.setText(CountDownTimerController.getInstance().displayText());
             }
         });
     }
-
 
     protected void getBankDealsAsync() {
         mMercadoPago.getBankDeals(new Callback<List<BankDeal>>() {
@@ -1050,12 +1058,12 @@ public class GuessingCardActivity extends FrontCardActivity {
             public void success(final List<BankDeal> bankDeals) {
                 if (bankDeals != null) {
                     if (bankDeals.isEmpty()) {
-                        mToolbarButton.setVisibility(View.GONE);
+                        mToolbarBankDealsButton.setVisibility(View.GONE);
                     } else if (bankDeals.size() >= 1) {
-                        mToolbarButton.setVisibility(View.VISIBLE);
-                        mToolbarButton.setText(getString(R.string.mpsdk_bank_deals_action));
-                        mToolbarButton.setFocusable(true);
-                        mToolbarButton.setOnClickListener(new View.OnClickListener() {
+                        mToolbarBankDealsButton.setVisibility(View.VISIBLE);
+                        mToolbarBankDealsButton.setText(getString(R.string.mpsdk_bank_deals_action));
+                        mToolbarBankDealsButton.setFocusable(true);
+                        mToolbarBankDealsButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 new MercadoPago.StartActivityBuilder()
@@ -1089,7 +1097,7 @@ public class GuessingCardActivity extends FrontCardActivity {
         initializeGuessingCardNumberController();
 
         //TODO timer
-        if (CountDownTimerController.getInstance() != null && CountDownTimerController.getInstance().getMilliSeconds() != null){
+        if (CountDownTimerController.getInstance().isTimerEnabled(this.getActivity())){
             showCountDownTimer();
         }
 
@@ -1239,7 +1247,7 @@ public class GuessingCardActivity extends FrontCardActivity {
                 mCardSideState = CARD_SIDE_FRONT;
             }
             if (showBankDeals) {
-                mToolbarButton.setVisibility(View.VISIBLE);
+                mToolbarBankDealsButton.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -1268,7 +1276,7 @@ public class GuessingCardActivity extends FrontCardActivity {
             getSupportFragmentManager().popBackStack();
             mCardSideState = CARD_SIDE_BACK;
             if (showBankDeals) {
-                mToolbarButton.setVisibility(View.VISIBLE);
+                mToolbarBankDealsButton.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -1287,10 +1295,10 @@ public class GuessingCardActivity extends FrontCardActivity {
 
         //TODO timer
         if (CountDownTimerController.getInstance() != null && CountDownTimerController.getInstance().getMilliSeconds() != null) {
-            mToolbarButton.setVisibility(View.VISIBLE);
+            mToolbarTimerTextView.setVisibility(View.VISIBLE);
 
         } else {
-            mToolbarButton.setVisibility(View.GONE);
+            mToolbarBankDealsButton.setVisibility(View.GONE);
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {

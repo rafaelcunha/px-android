@@ -11,7 +11,9 @@ import com.google.gson.reflect.TypeToken;
 import com.mercadopago.callbacks.Callback;
 import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.constants.PaymentTypes;
+import com.mercadopago.controllers.CountDownTimerController;
 import com.mercadopago.core.MercadoPago;
+import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
 import com.mercadopago.model.IdentificationType;
@@ -50,6 +52,9 @@ public class CardVaultActivity extends ShowCardActivity {
     protected MercadoPago mMercadoPago;
     protected Issuer mSelectedIssuer;
 
+    //TODO timer
+    private MPTextView mToolbarTimerTextView;
+
     @Override
     protected void initializeControls() {
         mCardBackground = findViewById(R.id.mpsdkCardBackground);
@@ -85,6 +90,24 @@ public class CardVaultActivity extends ShowCardActivity {
                 .build();
 
         startGuessingCardActivity();
+    }
+
+    //TODO timer mover más abajo
+    protected void showCountDownTimer(){
+        mToolbarTimerTextView.setVisibility(View.VISIBLE);
+        CountDownTimerController.getInstance().setOnTickListener(new CountDownTimerController.TickListener() {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mToolbarTimerTextView.setText(CountDownTimerController.getInstance().displayText());
+            }
+        });
+
+        CountDownTimerController.getInstance().setOnFinishListener(new CountDownTimerController.FinishListener() {
+            @Override
+            public void onFinish(){
+                mToolbarTimerTextView.setText(CountDownTimerController.getInstance().displayText());
+            }
+        });
     }
 
     @Override
@@ -140,6 +163,9 @@ public class CardVaultActivity extends ShowCardActivity {
         Toolbar toolbar;
         toolbar = (Toolbar) findViewById(R.id.mpsdkToolbar);
 
+        //TODO timer
+        mToolbarTimerTextView = (MPTextView) findViewById(R.id.mpsdkButtonTextTimer);
+
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -150,6 +176,9 @@ public class CardVaultActivity extends ShowCardActivity {
             toolbar.setBackgroundColor(mDecorationPreference.getLighterColor());
             decorateUpArrow(toolbar);
         }
+
+        //TODO timer
+        showCountDownTimer();
     }
 
     @Override
