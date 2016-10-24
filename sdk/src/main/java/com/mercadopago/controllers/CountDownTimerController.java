@@ -67,7 +67,7 @@ public class CountDownTimerController {
         if (isCountDownTimerOn){
             mCountDownTimer.cancel();
         }
-        
+
         isCountDownTimerOn = true;
         if (mCountDownTimer != null) {
             mCountDownTimer.start();
