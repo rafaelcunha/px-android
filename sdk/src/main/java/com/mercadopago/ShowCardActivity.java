@@ -4,7 +4,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.fragments.CardFrontFragment;

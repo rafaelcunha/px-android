@@ -1293,14 +1293,6 @@ public class GuessingCardActivity extends FrontCardActivity {
     private void startIdentificationFragment() {
         int container = R.id.mpsdkActivityNewCardContainerFront;
 
-        //TODO timer
-        if (CountDownTimerController.getInstance() != null && CountDownTimerController.getInstance().getMilliSeconds() != null) {
-            mToolbarTimerTextView.setVisibility(View.VISIBLE);
-
-        } else {
-            mToolbarBankDealsButton.setVisibility(View.GONE);
-        }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
             if (showingBack()) {
                 container = R.id.mpsdkActivityNewCardContainerBack;

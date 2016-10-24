@@ -114,22 +114,24 @@ public class CountDownTimerController {
     }
 
     public String displayText() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder stringBuilder = new StringBuilder();
 
         if (mShowHours){
-            buffer.append(getTwoDigitNumber(mHours));
-            buffer.append(":");
+            stringBuilder.append(getTwoDigitNumber(mHours));
+            stringBuilder.append(":");
         }
-        buffer.append(getTwoDigitNumber(mMinutes));
-        buffer.append(":");
-        buffer.append(getTwoDigitNumber(mSeconds));
+        stringBuilder.append(getTwoDigitNumber(mMinutes));
+        stringBuilder.append(":");
+        stringBuilder.append(getTwoDigitNumber(mSeconds));
 
-        return buffer.toString();
+        return stringBuilder.toString();
     }
 
     private String getTwoDigitNumber(long number) {
         if (number >= 0 && number < 10) {
-            return "0" + number;
+            String response = "0" + number;
+
+            return response;
         }
         return String.valueOf(number);
     }
