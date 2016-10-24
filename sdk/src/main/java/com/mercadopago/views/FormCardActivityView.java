@@ -23,6 +23,8 @@ public interface FormCardActivityView {
     void initializeIdentificationTypes(List<IdentificationType> identificationTypes);
     void setNextButtonListeners();
     void setBackButtonListeners();
+    void setIdentificationTypeListeners();
+    void setIdentificationNumberListeners();
     void hideSecurityCodeInput();
     void hideIdentificationInput();
     void showIdentificationInput();
@@ -30,4 +32,7 @@ public interface FormCardActivityView {
     void setCardholderNameListeners();
     void setExpiryDateListeners();
     void setSecurityCodeListeners();
+    void setIdentificationNumberRestrictions(String type);
+    void hideBankDeals();
+    void showBankDeals();
 }

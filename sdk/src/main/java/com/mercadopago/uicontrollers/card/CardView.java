@@ -20,6 +20,9 @@ import com.mercadopago.util.MPAnimationUtils;
 
 public class CardView {
 
+    public static final String CARD_SIDE_FRONT = "front";
+    public static final String CARD_SIDE_BACK = "back";
+
     private Context mContext;
     private String mSize;
     private View mView;
@@ -29,6 +32,8 @@ public class CardView {
 
     private FrontCardView mFrontCardView;
     private BackCardView mBackCardView;
+
+    private String mCardSideState;
 
     //Card Info
     private PaymentMethod mPaymentMethod;
@@ -64,6 +69,8 @@ public class CardView {
         mFrontCardView.initializeControls();
         mFrontCardView.draw();
 
+        mCardSideState = CARD_SIDE_FRONT;
+
         mBackCardView = new BackCardView(mContext);
         mBackCardView.setSize(mSize);
         mBackCardView.inflateInParent(mCardBackContainer, true);
@@ -90,7 +97,7 @@ public class CardView {
 
     public void setSecurityCodeLength(int securityCodeLength) {
         this.mSecurityCodeLength = securityCodeLength;
-        if (mSecurityCodeLocation == null || mSecurityCodeLocation.equals(FormCardPresenter.CARD_SIDE_BACK)) {
+        if (mSecurityCodeLocation == null || mSecurityCodeLocation.equals(CARD_SIDE_BACK)) {
             mBackCardView.setSecurityCodeLength(securityCodeLength);
         } else {
             mFrontCardView.setSecurityCodeLength(securityCodeLength);
@@ -131,7 +138,7 @@ public class CardView {
     }
 
     public void drawEditingSecurityCode(String securityCode) {
-        if (mSecurityCodeLocation == null || mSecurityCodeLocation.equals(FormCardPresenter.CARD_SIDE_BACK)) {
+        if (mSecurityCodeLocation == null || mSecurityCodeLocation.equals(CARD_SIDE_BACK)) {
             mBackCardView.drawEditingSecurityCode(securityCode);
         } else {
             mFrontCardView.drawEditingSecurityCode(securityCode);
@@ -163,6 +170,8 @@ public class CardView {
         }
         mBackCardView.draw();
         mBackCardView.drawEditingSecurityCode(securityCode);
+
+        mCardSideState = CARD_SIDE_BACK;
     }
 
     //SecurityCodeFront should be null if security code is in back
@@ -183,6 +192,27 @@ public class CardView {
             MPAnimationUtils.flipToFront(mContext, mFrontCardView, mBackCardView);
         }
         mFrontCardView.drawEditingCard(cardNumber, cardholderName, expiryMonth, expiryYear, securityCodeFront);
+
+        mCardSideState = CARD_SIDE_FRONT;
     }
 
+    public View getView() {
+        return mView;
+    }
+
+    public void hide() {
+        if (mCardSideState.equals(CARD_SIDE_FRONT)) {
+            mFrontCardView.hide();
+        } else if (mCardSideState.equals(CARD_SIDE_BACK)) {
+            mBackCardView.hide();
+        }
+    }
+
+    public void show() {
+        if (mCardSideState.equals(CARD_SIDE_FRONT)) {
+            mFrontCardView.show();
+        } else if (mCardSideState.equals(CARD_SIDE_BACK)) {
+            mBackCardView.show();
+        }
+    }
 }

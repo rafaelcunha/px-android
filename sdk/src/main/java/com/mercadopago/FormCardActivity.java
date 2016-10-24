@@ -3,28 +3,38 @@ package com.mercadopago;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
+import android.text.InputType;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.adapters.IdentificationTypesAdapter;
 import com.mercadopago.callbacks.card.CardExpiryDateEditTextCallback;
+import com.mercadopago.callbacks.card.CardIdentificationNumberEditTextCallback;
 import com.mercadopago.callbacks.card.CardNumberEditTextCallback;
 import com.mercadopago.callbacks.PaymentMethodSelectionCallback;
 import com.mercadopago.callbacks.card.CardSecurityCodeEditTextCallback;
 import com.mercadopago.callbacks.card.CardholderNameEditTextCallback;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
+import com.mercadopago.core.MercadoPago;
 import com.mercadopago.customviews.MPEditText;
 import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.listeners.card.CardExpiryDateTextWatcher;
+import com.mercadopago.listeners.card.CardIdentificationNumberTextWatcher;
 import com.mercadopago.listeners.card.CardNumberTextWatcher;
 import com.mercadopago.listeners.card.CardSecurityCodeTextWatcher;
 import com.mercadopago.listeners.card.CardholderNameTextWatcher;
@@ -41,10 +51,12 @@ import com.mercadopago.model.Token;
 import com.mercadopago.mptracker.MPTracker;
 import com.mercadopago.presenters.FormCardPresenter;
 import com.mercadopago.uicontrollers.card.CardView;
+import com.mercadopago.uicontrollers.card.IdentificationCardView;
 import com.mercadopago.util.ApiUtil;
 import com.mercadopago.util.ColorsUtil;
 import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
+import com.mercadopago.util.MPAnimationUtils;
 import com.mercadopago.util.MPCardMaskUtil;
 import com.mercadopago.util.ScaleUtil;
 import com.mercadopago.views.FormCardActivityView;
@@ -82,7 +94,9 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     private MPTextView mBankDealsTextView;
     private FrameLayout mCardBackground;
     private FrameLayout mCardViewContainer;
+    private FrameLayout mIdentificationCardContainer;
     private CardView mCardView;
+    private IdentificationCardView mIdentificationCardView;
 
     //Input Views
     private ProgressBar mProgressBar;
@@ -97,6 +111,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     private MPEditText mCardHolderNameEditText;
     private MPEditText mCardExpiryDateEditText;
     private MPEditText mSecurityCodeEditText;
+    private MPEditText mIdentificationNumberEditText;
     private LinearLayout mCardNumberInput;
     private LinearLayout mCardholderNameInput;
     private LinearLayout mCardExpiryDateInput;
@@ -203,6 +218,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         loadViews();
         decorate();
         mPresenter.loadPaymentMethods();
+        mPresenter.loadBankDeals();
     }
 
     private void initializeViews() {
@@ -214,8 +230,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             mNormalToolbar = (Toolbar) findViewById(R.id.mpsdkTransparentToolbar);
             mCardBackground = (FrameLayout) findViewById(R.id.mpsdkCardBackground);
             mCardViewContainer = (FrameLayout) findViewById(R.id.mpsdkCardViewContainer);
-//            mCardFrontContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardFrontContainer);
-//            mCardBackContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardBackContainer);
+            mIdentificationCardContainer = (FrameLayout) findViewById(R.id.mpsdkIdentificationCardContainer);
         }
         mIdentificationTypeContainer = (LinearLayout) findViewById(R.id.mpsdkCardIdentificationTypeContainer);
         mIdentificationTypeSpinner = (Spinner) findViewById(R.id.mpsdkCardIdentificationType);
@@ -224,6 +239,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mCardHolderNameEditText = (MPEditText) findViewById(R.id.mpsdkCardholderName);
         mCardExpiryDateEditText = (MPEditText) findViewById(R.id.mpsdkCardExpiryDate);
         mSecurityCodeEditText = (MPEditText) findViewById(R.id.mpsdkCardSecurityCode);
+        mIdentificationNumberEditText = (MPEditText) findViewById(R.id.mpsdkCardIdentificationNumber);
         mInputContainer = (LinearLayout) findViewById(R.id.mpsdkInputContainer);
         mProgressBar = (ProgressBar) findViewById(R.id.mpsdkProgressBar);
         mNextButton = (FrameLayout) findViewById(R.id.mpsdkNextButton);
@@ -235,6 +251,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mCardExpiryDateInput = (LinearLayout) findViewById(R.id.mpsdkExpiryDateInput);
         mCardIdentificationInput = (LinearLayout) findViewById(R.id.mpsdkCardIdentificationInput);
         mCardSecurityCodeInput = (LinearLayout) findViewById(R.id.mpsdkCardSecurityCodeContainer);
+        mBankDealsTextView.setVisibility(View.GONE);
         mInputContainer.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
@@ -271,7 +288,13 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mCardView = new CardView(mActivity);
         mCardView.inflateInParent(mCardViewContainer, true);
         mCardView.initializeControls();
-        mCardSideState = FormCardPresenter.CARD_SIDE_FRONT;
+        mCardSideState = CardView.CARD_SIDE_FRONT;
+
+        mIdentificationCardView = new IdentificationCardView(mActivity);
+        mIdentificationCardView.inflateInParent(mIdentificationCardContainer, true);
+        mIdentificationCardView.initializeControls();
+        mIdentificationCardView.hide();
+
     }
 
     private void loadToolbarArrow(Toolbar toolbar) {
@@ -315,11 +338,39 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         ColorsUtil.decorateTransparentToolbar(mNormalToolbar, mBankDealsTextView, mDecorationPreference,
                 getSupportActionBar(), this);
         mCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
+        mIdentificationCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
         mCardBackground.setBackgroundColor(mDecorationPreference.getLighterColor());
     }
 
     private String getCardNumberTextTrimmed() {
         return mCardNumberEditText.getText().toString().replaceAll("\\s", "");
+    }
+
+    @Override
+    public void showBankDeals() {
+        if (mPresenter.getBankDealsList() == null || mPresenter.getBankDealsList().size() == 0) {
+            hideBankDeals();
+        } else {
+            mBankDealsTextView.setVisibility(View.VISIBLE);
+            mBankDealsTextView.setText(getString(R.string.mpsdk_bank_deals_action));
+            mBankDealsTextView.setFocusable(true);
+            mBankDealsTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new MercadoPago.StartActivityBuilder()
+                            .setActivity(mActivity)
+                            .setPublicKey(mPresenter.getPublicKey())
+                            .setDecorationPreference(mDecorationPreference)
+                            .setBankDeals(mPresenter.getBankDealsList())
+                            .startBankDealsActivity();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void hideBankDeals() {
+        mBankDealsTextView.setVisibility(View.GONE);
     }
 
     @Override
@@ -535,6 +586,100 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     }
 
     @Override
+    public void setIdentificationTypeListeners() {
+        mIdentificationTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mPresenter.saveIdentificationType((IdentificationType) mIdentificationTypeSpinner.getSelectedItem());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        mIdentificationTypeSpinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (mCurrentEditingEditText.equals(CARD_SECURITYCODE_INPUT)) {
+                    return false;
+                }
+                checkTransitionCardToId();
+                openKeyboard(mIdentificationNumberEditText);
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void setIdentificationNumberListeners() {
+        mIdentificationNumberEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                if (isNextKey(actionId, event)) {
+                    validateCurrentEditText();
+                    return true;
+//                }
+//                return false;
+            }
+        });
+        mIdentificationNumberEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = MotionEventCompat.getActionMasked(event);
+                if (action == MotionEvent.ACTION_DOWN) {
+                    openKeyboard(mIdentificationNumberEditText);
+                }
+                return true;
+            }
+        });
+        mIdentificationNumberEditText.addTextChangedListener(new CardIdentificationNumberTextWatcher(new CardIdentificationNumberEditTextCallback() {
+            @Override
+            public void openKeyboard() {
+
+            }
+
+            @Override
+            public void saveIdentificationNumber(CharSequence s) {
+                mPresenter.saveIdentificationNumber(s.toString());
+                if (mPresenter.getIdentificationNumberMaxLength() == s.length()) {
+                    mPresenter.setIdentificationNumber(s.toString());
+                    mPresenter.validateIdentificationNumber();
+                }
+                if (cardViewsActive()) {
+                    mIdentificationCardView.setIdentificationNumber(s.toString());
+                    if (showingIdentification()) {
+                        mIdentificationCardView.draw();
+                    }
+                }
+            }
+
+            @Override
+            public void checkChangeErrorView() {
+
+            }
+
+            @Override
+            public void toggleLineColorOnError(boolean toggle) {
+
+            }
+        }));
+    }
+
+    @Override
+    public void setIdentificationNumberRestrictions(String type) {
+        setInputMaxLength(mIdentificationNumberEditText, mPresenter.getIdentificationNumberMaxLength());
+        if (type.equals("number")) {
+            mIdentificationNumberEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        } else {
+            mIdentificationNumberEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+        }
+        if (!mIdentificationNumberEditText.getText().toString().isEmpty()) {
+            mPresenter.validateIdentificationNumber();
+        }
+    }
+
+    @Override
     public void initializeIdentificationTypes(List<IdentificationType> identificationTypes) {
         mIdentificationTypeSpinner.setAdapter(new IdentificationTypesAdapter(this, identificationTypes));
         mIdentificationTypeContainer.setVisibility(View.VISIBLE);
@@ -542,7 +687,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
     @Override
     public void setSecurityCodeViewLocation(String location) {
-        if (location.equals(FormCardPresenter.CARD_SIDE_FRONT)) {
+        if (location.equals(CardView.CARD_SIDE_FRONT)) {
             if (cardViewsActive()) {
                 mCardView.hasToShowSecurityCodeInFront(true);
             }
@@ -621,7 +766,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         enableBackInputButton();
         mCurrentEditingEditText = CARD_EXPIRYDATE_INPUT;
         openKeyboard(mCardExpiryDateEditText);
-        checkFlipCardToFront(true);
+        checkFlipCardToFront();
         if (cardViewsActive()) {
             mCardView.drawEditingExpiryMonth(mPresenter.getExpiryMonth());
             mCardView.drawEditingExpiryYear(mPresenter.getExpiryYear());
@@ -640,10 +785,10 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             enableBackInputButton();
             mCurrentEditingEditText = CARD_SECURITYCODE_INPUT;
             openKeyboard(mSecurityCodeEditText);
-            if (mPresenter.getSecurityCodeLocation().equals(FormCardPresenter.CARD_SIDE_BACK)) {
-                checkFlipCardToBack(true);
+            if (mPresenter.getSecurityCodeLocation().equals(CardView.CARD_SIDE_BACK)) {
+                checkFlipCardToBack();
             } else {
-                checkFlipCardToFront(true);
+                checkFlipCardToFront();
             }
         }
     }
@@ -657,9 +802,8 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                 BuildConfig.VERSION_NAME, this);
         enableBackInputButton();
         mCurrentEditingEditText = CARD_IDENTIFICATION_INPUT;
-        openKeyboard(mCardNumberEditText);
-
-//        +        checkTransitionCardToId();
+        openKeyboard(mIdentificationNumberEditText);
+        checkTransitionCardToId();
     }
 
     private void disableBackInputButton() {
@@ -790,65 +934,45 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         }
     }
 
-    private void checkFlipCardToBack(boolean showBankDeals) {
+    private void checkFlipCardToBack() {
         if (showingFront()) {
             flipCardToBack();
         } else if (showingIdentification()) {
-//            getSupportFragmentManager().popBackStack();
-            mCardSideState = FormCardPresenter.CARD_SIDE_BACK;
-//            if (showBankDeals) {
-//                mToolbarButton.setVisibility(View.VISIBLE);
-//            }
+            MPAnimationUtils.transitionCardDissappear(this, mCardView, mIdentificationCardView);
+            mCardSideState = CardView.CARD_SIDE_BACK;
+            showBankDeals();
         }
     }
 
-    private void checkFlipCardToFront(boolean showBankDeals) {
+    private void checkFlipCardToFront() {
         if (showingBack() || showingIdentification()) {
             if (showingBack()) {
                 flipCardToFrontFromBack();
             } else if (showingIdentification()) {
-//                getSupportFragmentManager().popBackStack();
-                mCardSideState = FormCardPresenter.CARD_SIDE_FRONT;
+                MPAnimationUtils.transitionCardDissappear(this, mCardView, mIdentificationCardView);
+                mCardSideState = CardView.CARD_SIDE_FRONT;
             }
-            if (showBankDeals) {
-//                mToolbarButton.setVisibility(View.VISIBLE);
-            }
+            showBankDeals();
         }
     }
 
     private void transitionToIdentification() {
-//        mToolbarButton.setVisibility(View.GONE);
-
-//        int container = R.id.mpsdkActivityNewCardContainerFront;
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-//            if (showingBack()) {
-//                container = R.id.mpsdkActivityNewCardContainerBack;
-//            } else if (showingFront()) {
-//                container = R.id.mpsdkActivityNewCardContainerFront;
-//            }
-//        }
+        hideBankDeals();
         mCardSideState = CARD_IDENTIFICATION;
-
-//        getSupportFragmentManager()
-//                .beginTransaction()
-//                .setCustomAnimations(R.anim.mpsdk_appear_from_right, R.anim.mpsdk_dissapear_to_left,
-//                        R.anim.mpsdk_appear_from_left, R.anim.mpsdk_dissapear_to_right)
-//                .replace(container, mCardIdentificationFragment, IDENTIFICATION_FRAGMENT_TAG)
-//                .addToBackStack(null)
-//                .commit();
+        MPAnimationUtils.transitionCardAppear(this, mCardView, mIdentificationCardView);
+        mIdentificationCardView.draw();
     }
 
     private void flipCardToBack() {
         if (mLowResActive) return;
-        mCardSideState = FormCardPresenter.CARD_SIDE_BACK;
+        mCardSideState = CardView.CARD_SIDE_BACK;
         mCardView.flipCardToBack(mPresenter.getPaymentMethod(), mPresenter.getSecurityCodeLength(),
                 getWindow(), mCardBackground, mPresenter.getSecurityCode());
     }
 
     private void flipCardToFrontFromBack() {
         if (mLowResActive) return;
-        mCardSideState = FormCardPresenter.CARD_SIDE_FRONT;
+        mCardSideState = CardView.CARD_SIDE_FRONT;
         mCardView.flipCardToFrontFromBack(getWindow(), mCardBackground, mPresenter.getCardNumber(),
                 mPresenter.getCardholderName(), mPresenter.getExpiryMonth(), mPresenter.getExpiryYear(),
                 mPresenter.getSecurityCodeFront());
@@ -856,7 +980,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
     private void initCardState() {
         if (mCardSideState == null) {
-            mCardSideState = FormCardPresenter.CARD_SIDE_FRONT;
+            mCardSideState = CardView.CARD_SIDE_FRONT;
         }
     }
 
@@ -867,12 +991,12 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
     private boolean showingBack() {
         initCardState();
-        return mCardSideState.equals(FormCardPresenter.CARD_SIDE_BACK);
+        return mCardSideState.equals(CardView.CARD_SIDE_BACK);
     }
 
     private boolean showingFront() {
         initCardState();
-        return mCardSideState.equals(FormCardPresenter.CARD_SIDE_FRONT);
+        return mCardSideState.equals(CardView.CARD_SIDE_FRONT);
     }
 
     //TODO

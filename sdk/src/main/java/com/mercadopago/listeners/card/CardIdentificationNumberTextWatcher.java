@@ -4,6 +4,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 
+import com.mercadopago.GuessingCardActivity;
 import com.mercadopago.callbacks.card.CardExpiryDateEditTextCallback;
 import com.mercadopago.callbacks.card.CardIdentificationNumberEditTextCallback;
 import com.mercadopago.util.MPCardMaskUtil;
@@ -31,15 +32,15 @@ public class CardIdentificationNumberTextWatcher implements TextWatcher {
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         mEditTextCallback.openKeyboard();
-//        mEditTextCallback.saveCardholderName(s.toString().toUpperCase());
-
-
-
+        mEditTextCallback.saveIdentificationNumber(s);
     }
 
     @Override
     public void afterTextChanged(Editable s) {
         mEditTextCallback.checkChangeErrorView();
         mEditTextCallback.toggleLineColorOnError(false);
+        if (s.length() == 0) {
+            mEditTextCallback.saveIdentificationNumber("");
+        }
     }
 }

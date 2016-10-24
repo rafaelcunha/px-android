@@ -2,6 +2,7 @@ package com.mercadopago.presenters;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.mercadopago.R;
 import com.mercadopago.callbacks.Callback;
@@ -9,6 +10,7 @@ import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.model.ApiException;
+import com.mercadopago.model.BankDeal;
 import com.mercadopago.model.Card;
 import com.mercadopago.model.CardInformation;
 import com.mercadopago.model.Identification;
@@ -20,7 +22,9 @@ import com.mercadopago.model.PaymentRecovery;
 import com.mercadopago.model.SecurityCode;
 import com.mercadopago.model.Setting;
 import com.mercadopago.model.Token;
+import com.mercadopago.uicontrollers.card.CardView;
 import com.mercadopago.uicontrollers.card.FrontCardView;
+import com.mercadopago.util.ApiUtil;
 import com.mercadopago.views.FormCardActivityView;
 
 import java.util.List;
@@ -32,9 +36,7 @@ import java.util.List;
 public class FormCardPresenter {
 
     public static final int CARD_DEFAULT_SECURITY_CODE_LENGTH = 4;
-
-    public static final String CARD_SIDE_FRONT = "front";
-    public static final String CARD_SIDE_BACK = "back";
+    public static final int CARD_DEFAULT_IDENTIFICATION_NUMBER_LENGTH = 12;
 
     private FormCardActivityView mView;
     private Context mContext;
@@ -70,6 +72,9 @@ public class FormCardPresenter {
     private String mSecurityCode;
     private IdentificationType mIdentificationType;
     private String mIdentificationNumber;
+
+    //Extra info
+    private List<BankDeal> mBankDealsList;
 
     //Card controller
     protected PaymentMethodGuessingController mPaymentMethodGuessingController;
@@ -159,7 +164,7 @@ public class FormCardPresenter {
 
     private void clearCardSettings() {
         mSecurityCodeLength = CARD_DEFAULT_SECURITY_CODE_LENGTH;
-        mSecurityCodeLocation = CARD_SIDE_BACK;
+        mSecurityCodeLocation = CardView.CARD_SIDE_BACK;
         mIsSecurityCodeRequired = true;
         mBin = "";
     }
@@ -245,7 +250,7 @@ public class FormCardPresenter {
     }
 
     public String getSecurityCodeFront() {
-        if (mSecurityCodeLocation.equals(FormCardPresenter.CARD_SIDE_FRONT)) {
+        if (mSecurityCodeLocation.equals(CardView.CARD_SIDE_FRONT)) {
             return getSecurityCode();
         }
         return null;
@@ -281,12 +286,18 @@ public class FormCardPresenter {
         mView.setCardholderNameListeners();
         mView.setExpiryDateListeners();
         mView.setSecurityCodeListeners();
+        mView.setIdentificationTypeListeners();
+        mView.setIdentificationNumberListeners();
         mView.setNextButtonListeners();
         mView.setBackButtonListeners();
     }
 
     public void loadPaymentMethods() {
         getPaymentMethodsAsync();
+    }
+
+    public void loadBankDeals() {
+        getBankDealsAsync();
     }
 
     protected void getPaymentMethodsAsync() {
@@ -331,7 +342,7 @@ public class FormCardPresenter {
             SecurityCode securityCode = setting.getSecurityCode();
             if (securityCode == null) {
                 mSecurityCodeLength = CARD_DEFAULT_SECURITY_CODE_LENGTH;
-                mSecurityCodeLocation = CARD_SIDE_BACK;
+                mSecurityCodeLocation = CardView.CARD_SIDE_BACK;
             } else {
                 mSecurityCodeLength = securityCode.getLength();
                 mSecurityCodeLocation = securityCode.getCardLocation();
@@ -377,6 +388,36 @@ public class FormCardPresenter {
         });
     }
 
+    public List<BankDeal> getBankDealsList() {
+        return mBankDealsList;
+    }
+
+    private void getBankDealsAsync() {
+        mMercadoPago.getBankDeals(new Callback<List<BankDeal>>() {
+            @Override
+            public void success(final List<BankDeal> bankDeals) {
+                if (bankDeals != null) {
+                    if (bankDeals.isEmpty()) {
+                        mView.hideBankDeals();
+                    } else if (bankDeals.size() >= 1) {
+                        mBankDealsList = bankDeals;
+                        mView.showBankDeals();
+                    }
+                }
+            }
+
+            @Override
+            public void failure(ApiException apiException) {
+                setFailureRecovery(new FailureRecovery() {
+                    @Override
+                    public void recover() {
+                        getBankDealsAsync();
+                    }
+                });
+            }
+        });
+    }
+
     public void saveCardNumber(String cardNumber) {
         this.mCardNumber = cardNumber;
     }
@@ -401,6 +442,18 @@ public class FormCardPresenter {
         this.mIdentificationNumber = identificationNumber;
     }
 
+    public void saveIdentificationType(IdentificationType identificationType) {
+        this.mIdentificationType = identificationType;
+        if (identificationType != null) {
+            mIdentification.setType(identificationType.getId());
+            mView.setIdentificationNumberRestrictions(identificationType.getType());
+        }
+    }
+
+    public void setIdentificationNumber(String number) {
+        mIdentification.setNumber(number);
+    }
+
     public String getCardNumber() {
         return mCardNumber;
     }
@@ -423,6 +476,13 @@ public class FormCardPresenter {
 
     public String getIdentificationNumber() {
         return mIdentificationNumber;
+    }
+
+    public int getIdentificationNumberMaxLength() {
+        if (mIdentificationType != null) {
+            return mIdentificationType.getMaxLength();
+        }
+        return CARD_DEFAULT_IDENTIFICATION_NUMBER_LENGTH;
     }
 
     //TODO

@@ -18,7 +18,9 @@ import android.widget.ImageView;
 
 import com.mercadopago.R;
 import com.mercadopago.uicontrollers.card.BackCardView;
+import com.mercadopago.uicontrollers.card.CardView;
 import com.mercadopago.uicontrollers.card.FrontCardView;
+import com.mercadopago.uicontrollers.card.IdentificationCardView;
 
 /**
  * Created by vaserber on 6/22/16.
@@ -203,7 +205,9 @@ public class MPAnimationUtils {
             @Override
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
-                backCardView.show();
+                if (backCardView != null) {
+                    backCardView.show();
+                }
             }
 
             @Override
@@ -324,4 +328,61 @@ public class MPAnimationUtils {
         frontCardView.getView().startAnimation(animFront);
         frontCardView.show();
     }
+
+    public static void transitionCardAppear(Context context, final CardView cardView, IdentificationCardView identificationCardView) {
+
+        Animation animAppear = AnimationUtils.loadAnimation(context, R.anim.mpsdk_appear_from_right);
+        Animation animDisappear = AnimationUtils.loadAnimation(context, R.anim.mpsdk_dissapear_to_left);
+
+        cardView.getView().startAnimation(animDisappear);
+
+        animAppear.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                cardView.hide();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        identificationCardView.getView().startAnimation(animAppear);
+        identificationCardView.show();
+    }
+
+    public static void transitionCardDissappear(Context context, final CardView cardView, final IdentificationCardView identificationCardView) {
+
+        Animation animAppear = AnimationUtils.loadAnimation(context, R.anim.mpsdk_appear_from_left);
+        Animation animDisappear = AnimationUtils.loadAnimation(context, R.anim.mpsdk_dissapear_to_right);
+
+        identificationCardView.getView().startAnimation(animDisappear);
+
+        animAppear.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                identificationCardView.hide();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        cardView.getView().startAnimation(animAppear);
+        cardView.show();
+    }
+
 }
