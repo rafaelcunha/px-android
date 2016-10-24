@@ -19,6 +19,7 @@
         android:layout_gravity="start|center_vertical"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
+        android:textSize="18dp"
         tools:text="Tarjeta de crédito"
         style="@style/mpsdk_title_text"/>
 
@@ -29,7 +30,7 @@
         android:layout_gravity="end|center_vertical"
         android:layout_marginRight="16dp"
         android:layout_marginEnd="16dp"
-        android:textSize="16dp"
+        android:textSize="12dp"
         tools:text="Ver Promociones"
         style="@style/mpsdk_title_text"/>
 

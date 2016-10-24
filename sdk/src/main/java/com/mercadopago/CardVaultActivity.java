@@ -16,6 +16,7 @@ import com.google.gson.reflect.TypeToken;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
+import com.mercadopago.model.CardToken;
 import com.mercadopago.model.DecorationPreference;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PayerCost;
@@ -190,13 +191,15 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
     protected void resolveGuessingCardRequest(int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             PaymentMethod paymentMethod = JsonUtil.getInstance().fromJson(data.getStringExtra("paymentMethod"), PaymentMethod.class);
-            Token token = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
+//            Token token = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
+            CardToken cardToken = JsonUtil.getInstance().fromJson(data.getStringExtra("cardToken"), CardToken.class);
             Issuer issuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
             mPresenter.setPaymentMethod(paymentMethod);
-            mPresenter.setToken(token);
+//            mPresenter.setToken(token);
+            mPresenter.setCardToken(cardToken);
             mPresenter.setIssuer(issuer);
             mPresenter.setCardInformation();
-            mPresenter.checkStartInstallmentsActivity();
+//            mPresenter.checkStartInstallmentsActivity();
         } else if (resultCode == RESULT_CANCELED) {
             if (mPresenter.getSite() == null) {
                 MPTracker.getInstance().trackEvent("GUESSING_CARD", "CANCELED", 2, mPresenter.getPublicKey(),

@@ -42,6 +42,7 @@ import com.mercadopago.listeners.card.CardSecurityCodeTextWatcher;
 import com.mercadopago.listeners.card.CardholderNameTextWatcher;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
+import com.mercadopago.model.CardInfo;
 import com.mercadopago.model.DecorationPreference;
 import com.mercadopago.model.Identification;
 import com.mercadopago.model.IdentificationType;
@@ -149,19 +150,14 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         String publicKey = this.getIntent().getStringExtra("publicKey");
         PaymentRecovery paymentRecovery = JsonUtil.getInstance().fromJson(this.getIntent().getStringExtra("paymentRecovery"), PaymentRecovery.class);
         Token token = null;
-        Card card = null;
         PaymentMethod paymentMethod = null;
         Issuer issuer = null;
-        if (paymentRecovery == null) {
-            token = JsonUtil.getInstance().fromJson(this.getIntent().getStringExtra("token"), Token.class);
-            card = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("card"), Card.class);
-            if (card != null) {
-                paymentMethod = card.getPaymentMethod();
-            }
-        } else {
+        if (paymentRecovery != null) {
             issuer = paymentRecovery.getIssuer();
             token = paymentRecovery.getToken();
+            paymentMethod = paymentRecovery.getPaymentMethod();
         }
+
         List<PaymentMethod> paymentMethodList;
         try {
             Type listType = new TypeToken<List<PaymentMethod>>() {
@@ -183,7 +179,6 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mPresenter.setPublicKey(publicKey);
         mPresenter.setPaymentRecovery(paymentRecovery);
         mPresenter.setToken(token);
-        mPresenter.setCard(card);
         mPresenter.setPaymentMethod(paymentMethod);
         mPresenter.setIssuer(issuer);
         mPresenter.setPaymentMethodList(paymentMethodList);
@@ -227,6 +222,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         initializeViews();
         loadViews();
         decorate();
+        mErrorState = NORMAL_STATE;
         mPresenter.loadPaymentMethods();
         mPresenter.loadBankDeals();
     }
@@ -303,7 +299,6 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mCardView.inflateInParent(mCardViewContainer, true);
         mCardView.initializeControls();
         mCardSideState = CardView.CARD_SIDE_FRONT;
-        mErrorState = NORMAL_STATE;
 
         mIdentificationCardView = new IdentificationCardView(mActivity);
         mIdentificationCardView.inflateInParent(mIdentificationCardContainer, true);
@@ -366,8 +361,12 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         if (mPresenter.getBankDealsList() == null || mPresenter.getBankDealsList().size() == 0) {
             hideBankDeals();
         } else {
+            if (mLowResActive) {
+                mBankDealsTextView.setText(getString(R.string.mpsdk_bank_deals_lowres));
+            } else {
+                mBankDealsTextView.setText(getString(R.string.mpsdk_bank_deals_action));
+            }
             mBankDealsTextView.setVisibility(View.VISIBLE);
-            mBankDealsTextView.setText(getString(R.string.mpsdk_bank_deals_action));
             mBankDealsTextView.setFocusable(true);
             mBankDealsTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -832,6 +831,8 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         openKeyboard(mCardNumberEditText);
         if (cardViewsActive()) {
             mCardView.drawEditingCardNumber(mPresenter.getCardNumber());
+        } else {
+            mLowResTitleToolbar.setText(getResources().getString(R.string.mpsdk_form_card_title, "crédito"));
         }
     }
 
@@ -862,6 +863,8 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         if (cardViewsActive()) {
             mCardView.drawEditingExpiryMonth(mPresenter.getExpiryMonth());
             mCardView.drawEditingExpiryYear(mPresenter.getExpiryYear());
+        } else {
+            mLowResTitleToolbar.setText(getResources().getString(R.string.mpsdk_form_card_title, "crédito"));
         }
     }
 
@@ -882,6 +885,9 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             } else {
                 checkFlipCardToFront();
             }
+            if (mLowResActive) {
+                mLowResTitleToolbar.setText(getResources().getString(R.string.mpsdk_form_card_title, "crédito"));
+            }
         }
     }
 
@@ -896,6 +902,9 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         mCurrentEditingEditText = CARD_IDENTIFICATION_INPUT;
         openKeyboard(mIdentificationNumberEditText);
         checkTransitionCardToId();
+        if (mLowResActive) {
+            mLowResTitleToolbar.setText(getResources().getString(R.string.mpsdk_form_identification_title));
+        }
     }
 
     private void disableBackInputButton() {
@@ -984,7 +993,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     }
 
     private void checkChangeErrorView() {
-        if (mErrorState.equals(ERROR_STATE)) {
+        if (mErrorState != null && mErrorState.equals(ERROR_STATE)) {
             clearErrorView();
         }
     }
@@ -1091,7 +1100,9 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         if (showingFront()) {
             flipCardToBack();
         } else if (showingIdentification()) {
-            MPAnimationUtils.transitionCardDissappear(this, mCardView, mIdentificationCardView);
+            if (cardViewsActive()) {
+                MPAnimationUtils.transitionCardDissappear(this, mCardView, mIdentificationCardView);
+            }
             mCardSideState = CardView.CARD_SIDE_BACK;
             showBankDeals();
         }
@@ -1102,7 +1113,9 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             if (showingBack()) {
                 flipCardToFrontFromBack();
             } else if (showingIdentification()) {
-                MPAnimationUtils.transitionCardDissappear(this, mCardView, mIdentificationCardView);
+                if (cardViewsActive()) {
+                    MPAnimationUtils.transitionCardDissappear(this, mCardView, mIdentificationCardView);
+                }
                 mCardSideState = CardView.CARD_SIDE_FRONT;
             }
             showBankDeals();
@@ -1112,23 +1125,27 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     private void transitionToIdentification() {
         hideBankDeals();
         mCardSideState = CARD_IDENTIFICATION;
-        MPAnimationUtils.transitionCardAppear(this, mCardView, mIdentificationCardView);
-        mIdentificationCardView.draw();
+        if (cardViewsActive()) {
+            MPAnimationUtils.transitionCardAppear(this, mCardView, mIdentificationCardView);
+            mIdentificationCardView.draw();
+        }
     }
 
     private void flipCardToBack() {
-        if (mLowResActive) return;
         mCardSideState = CardView.CARD_SIDE_BACK;
-        mCardView.flipCardToBack(mPresenter.getPaymentMethod(), mPresenter.getSecurityCodeLength(),
-                getWindow(), mCardBackground, mPresenter.getSecurityCode());
+        if (cardViewsActive()) {
+            mCardView.flipCardToBack(mPresenter.getPaymentMethod(), mPresenter.getSecurityCodeLength(),
+                    getWindow(), mCardBackground, mPresenter.getSecurityCode());
+        }
     }
 
     private void flipCardToFrontFromBack() {
-        if (mLowResActive) return;
         mCardSideState = CardView.CARD_SIDE_FRONT;
-        mCardView.flipCardToFrontFromBack(getWindow(), mCardBackground, mPresenter.getCardNumber(),
-                mPresenter.getCardholderName(), mPresenter.getExpiryMonth(), mPresenter.getExpiryYear(),
-                mPresenter.getSecurityCodeFront());
+        if (cardViewsActive()) {
+            mCardView.flipCardToFrontFromBack(getWindow(), mCardBackground, mPresenter.getCardNumber(),
+                    mPresenter.getCardholderName(), mPresenter.getExpiryMonth(), mPresenter.getExpiryYear(),
+                    mPresenter.getSecurityCodeFront());
+        }
     }
 
     private void initCardState() {
@@ -1152,8 +1169,24 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         return mCardSideState.equals(CardView.CARD_SIDE_FRONT);
     }
 
-    //TODO
     private void finishWithCardToken() {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(mPresenter.getPaymentMethod()));
+        returnIntent.putExtra("issuer", JsonUtil.getInstance().toJson(mPresenter.getIssuer()));
+        returnIntent.putExtra("cardToken", JsonUtil.getInstance().toJson(mPresenter.getCardToken()));
+        setResult(RESULT_OK, returnIntent);
+        finish();
+        overridePendingTransition(R.anim.mpsdk_slide_right_to_left_in, R.anim.mpsdk_slide_right_to_left_out);
+    }
 
+    @Override
+    public void onBackPressed() {
+        checkFlipCardToFront();
+        MPTracker.getInstance().trackEvent("GUESSING_CARD", "BACK_PRESSED", 2, mPresenter.getPublicKey(),
+                BuildConfig.VERSION_NAME, this);
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("backButtonPressed", true);
+        setResult(RESULT_CANCELED, returnIntent);
+        finish();
     }
 }

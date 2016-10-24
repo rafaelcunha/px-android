@@ -50,8 +50,6 @@ public class FormCardPresenter {
     //Activity parameters
     private String mPublicKey;
     private PaymentRecovery mPaymentRecovery;
-    private Token mToken;
-    private Card mCard;
     private PaymentMethod mPaymentMethod;
     private Issuer mIssuer;
     private List<PaymentMethod> mPaymentMethodList;
@@ -75,7 +73,7 @@ public class FormCardPresenter {
     private IdentificationType mIdentificationType;
     private String mIdentificationNumber;
     private CardToken mCardToken;
-
+    private Token mToken;
 
     //Extra info
     private List<BankDeal> mBankDealsList;
@@ -127,22 +125,6 @@ public class FormCardPresenter {
         this.mPaymentRecovery = paymentRecovery;
     }
 
-    public Token getToken() {
-        return mToken;
-    }
-
-    public void setToken(Token token) {
-        this.mToken = token;
-    }
-
-    public Card getCard() {
-        return mCard;
-    }
-
-    public void setCard(Card card) {
-        this.mCard = card;
-    }
-
     public PaymentMethod getPaymentMethod() {
         return mPaymentMethod;
     }
@@ -188,6 +170,18 @@ public class FormCardPresenter {
         this.mIssuer = issuer;
     }
 
+    public void setToken(Token token) {
+        this.mToken = token;
+    }
+
+    public Token getToken() {
+        return mToken;
+    }
+
+    public CardToken getCardToken() {
+        return mCardToken;
+    }
+
     public List<PaymentMethod> getPaymentMethodList() {
         return mPaymentMethodList;
     }
@@ -224,11 +218,11 @@ public class FormCardPresenter {
     }
 
     public void setCardInformation() {
-        if (mCard == null && mToken != null) {
-            setCardInformation(mToken);
-        } else if (mCard != null) {
-            setCardInformation(mCard);
-        }
+//        if (mCard == null && mToken != null) {
+//            setCardInformation(mToken);
+//        } else if (mCard != null) {
+//            setCardInformation(mCard);
+//        }
     }
 
     private void setCardInformation(CardInformation cardInformation) {

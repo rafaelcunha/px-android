@@ -11,6 +11,7 @@ import com.mercadopago.core.MercadoPago;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
 import com.mercadopago.model.CardInformation;
+import com.mercadopago.model.CardToken;
 import com.mercadopago.model.Installment;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PayerCost;
@@ -52,6 +53,7 @@ public class CardVaultPresenter {
     protected PaymentMethod mPaymentMethod;
     protected PayerCost mPayerCost;
     protected Issuer mIssuer;
+    protected CardToken mCardToken;
 
     public CardVaultPresenter(Context context) {
         this.mContext = context;
@@ -155,6 +157,14 @@ public class CardVaultPresenter {
 
     public String getPublicKey() {
         return mPublicKey;
+    }
+
+    public CardToken getCardToken() {
+        return mCardToken;
+    }
+
+    public void setCardToken(CardToken mCardToken) {
+        this.mCardToken = mCardToken;
     }
 
     public void setCardInformation() {
