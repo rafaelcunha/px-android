@@ -559,12 +559,7 @@ Issuer issuer, PayerCost payerCost, Token token) {
                      We offer a component in our SDK that, depending on the payment type and state, shows a result screen with all the necessary information for the user to understand if the payment was approved, or why it's been rejected, or even what to do if it remains "pending".
                   </p>
                   <p>
-                     Among the rejection cases, there are payments that can be recovered and reach its approval.
-                  </p>
-                  <p>
-                     For payments that were rejected because the user entered wrong card data, this component offers a screen which communicates the wrong input to the user and presents the option to enter the data again. In this case you can request the card data input again but only the sensitive card data and thereby, recover the payment.
-                  </p>
-                     We also can recover a payment that was rejected because the user needed authorization from the card issuer to complete the payment. In these cases we offer the user the option to notify when the payment was authorized and then you can ask for only the security code input to complete the payment.
+                     Among the rejection cases, there are payments that can be recovered and reach its approval. This rejections happend because the user entered wrong card data or because the user needed authorization from the card issuer to complete the payment. For more information about the payment recovery go to the next section.
                   </p>
                   <p>
                      Also, when the user chooses another payment type, it will stay in a pending state. For these cases we offer in our component a screen with the steps that the user must complete to conclude the payment.
@@ -577,27 +572,29 @@ Issuer issuer, PayerCost payerCost, Token token) {
                         <code class="line-numbers language-java">
 public void startPaymentResultActivity(Payment payment, PaymentMethod paymentMethod) {
 
-     new MercadoPago.StartActivityBuilder()
-        .setPublicKey(TU_PUBLIC_KEY)
-        .setActivity(this)
-        .setPayment(payment)
-        .setPaymentMethod(paymentMethod)
-        .startPaymentResultActivity();
-  }
-
-  //Wait the result
-  @Override
-      protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MercadoPago.PAYMENT_RESULT_REQUEST_CODE) {
-          if (resultCode == RESULT_CANCELED && data != null) {
-                if (data.getStringExtra("nextAction").equals(PaymentResultAction.SELECT_OTHER_PAYMENT_METHOD)){
-                    //Show others payment methods
-                } data.getStringExtra("nextAction").equals(PaymentResultAction.RECOVER_PAYMENT)){
-                    //Start CardVault for recover payment
-                }
-        }
-    }
+  new MercadoPago.StartActivityBuilder()
+    .setPublicKey(TU_PUBLIC_KEY)
+    .setActivity(this)
+    .setPayment(payment)
+    .setPaymentMethod(paymentMethod)
+    .startPaymentResultActivity();
 }
+
+// Wait the result
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+  if (requestCode == MercadoPago.PAYMENT_RESULT_REQUEST_CODE) {
+    if (resultCode == RESULT_CANCELED && data != null) {
+      if (data.getStringExtra("nextAction").equals(PaymentResultAction.SELECT_OTHER_PAYMENT_METHOD)){
+        // Show others payment methods
+      } 
+      if (data.getStringExtra("nextAction").equals(PaymentResultAction.RECOVER_PAYMENT)){
+        // Go to next section to see how to recover a payment
+      }
+    }
+  }
+} 
+
                         </code>
                         <button class="copy-button">
                            <img src="./img/clippy.svg" width="13" alt="Copy to clipboard">
@@ -625,37 +622,36 @@ public void startPaymentResultActivity(Payment payment, PaymentMethod paymentMet
                      <pre class="snippet">
                         <code class="line-numbers language-java">
 public void startCardVaultActivity(PaymentRecovery paymentRecovery) {
-      PaymentRecovery paymentRecovery = new PaymentRecovery(token, payment, paymentMethod, payerCost, issuer);
+  PaymentRecovery paymentRecovery = new PaymentRecovery(token, payment, paymentMethod, payerCost, issuer);
 
-      new MercadoPago.StartActivityBuilder()
-                      .setActivity(this)
-                      .setPublicKey(TU_PUBLIC_KEY)
-                      .setAmount(MONTO_A_COBRAR)
-                      .setSite(Sites.ARGENTINA)
-                      .setInstallmentsEnabled(true)
-                      .setPaymentRecovery(paymentRecovery);
-                      .startCardVaultActivity();
+  new MercadoPago.StartActivityBuilder()
+    .setActivity(this)
+    .setPublicKey(TU_PUBLIC_KEY)
+    .setAmount(MONTO_A_COBRAR)
+    .setSite(Sites.ARGENTINA)
+    .setInstallmentsEnabled(true)
+    .setPaymentRecovery(paymentRecovery);
+    .startCardVaultActivity();
 }
 
-//Wait both results
+// Wait the result
 protected void onActivityResult(int resultCode, Intent data){
-    if(requestCode == MercadoPago.CARD_VAULT_REQUEST_CODE) {
-        if (resultCode == RESULT_OK) {
-                mSelectedIssuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
-                mSelectedPayerCost = JsonUtil.getInstance().fromJson(data.getStringExtra("payerCost"), PayerCost.class);
-                mCreatedToken = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
-                mSelectedPaymentMethod = JsonUtil.getInstance().fromJson(data.getStringExtra("paymentMethod"), PaymentMethod.class);
+  if(requestCode == MercadoPago.CARD_VAULT_REQUEST_CODE) {
+    if (resultCode == RESULT_OK) {
+      mSelectedIssuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
+      mSelectedPayerCost = JsonUtil.getInstance().fromJson(data.getStringExtra("payerCost"), PayerCost.class);
+      mCreatedToken = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
+      mSelectedPaymentMethod = JsonUtil.getInstance().fromJson(data.getStringExtra("paymentMethod"), PaymentMethod.class);
 
-                // Done! Send this information to your server!
-            }
-        } else {
-            if (data != null && data.getStringExtra("mpException") != null) {
-                Intent returnIntent = new Intent();
-                setResult(RESULT_CANCELED, returnIntent);
-                finish();
-            }
-        }  
-    }
+      // Done! Send this information to your server!
+    } else {
+      if (data != null && data.getStringExtra("mpException") != null) {
+        Intent returnIntent = new Intent();
+        setResult(RESULT_CANCELED, returnIntent);
+        finish();
+      }
+    }  
+  }
 }
                         </code>
                         <button class="copy-button">
