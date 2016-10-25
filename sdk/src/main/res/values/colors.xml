@@ -18,9 +18,9 @@
     <color name="mpsdk_call_for_authorize_color_dark">#C7E6F5</color>
     <color name="mpsdk_rejection_color_light">#F8E9E9</color>
     <color name="mpsdk_rejection_color_dark">#F8DADA</color>
-    <color name="mpsdk_process_color_dark">#30AFE2</color>
-    <color name="mpsdk_colorPrimary">#5ABEE7</color>
-    <color name="mpsdk_icon_image_color">#1D9FDE</color>
+    <color name="mpsdk_process_color_dark">#008FC7</color>
+    <color name="mpsdk_colorPrimary">#009EE3</color>
+    <color name="mpsdk_icon_image_color">#009EE3</color>
     <color name="mpsdk_warm_grey">#b7999999</color>
     <color name="mpsdk_shopping_cart_background">#ce76cdf1</color>
     <color name="mpsdk_transparent">#00000000</color>
@@ -117,5 +117,7 @@
     <color name="mpsdk_font_redlink">#B3333333</color>
     <color name="mpsdk_font_bapropagos">#B3333333</color>
     <color name="mpsdk_font_cargavirtual">#B3333333</color>
+
+    <color name="mpsdk_background_blue">#009EE3</color>
 
 </resources>

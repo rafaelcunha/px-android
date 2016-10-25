@@ -52,6 +52,7 @@ import com.mercadopago.util.MercadoPagoUtil;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -327,13 +328,22 @@ public class CheckoutActivity extends MercadoPagoActivity {
     }
 
     protected void startPaymentVaultActivity() {
+
+        List<String> excluded = new ArrayList<>();
+        excluded.add("bapropagos");
+        excluded.add("rapipago");
+        excluded.add("cargavirtual");
+        excluded.add("amex");
+        PaymentPreference paymentPreference = new PaymentPreference();
+        paymentPreference.setExcludedPaymentMethodIds(excluded);
+
         new MercadoPago.StartActivityBuilder()
                 .setActivity(this)
                 .setPublicKey(mMerchantPublicKey)
                 .setSite(mSite)
                 .setAmount(mCheckoutPreference.getAmount())
-                .setPaymentMethodSearch(mPaymentMethodSearch)
-                .setPaymentPreference(mCheckoutPreference.getPaymentPreference())
+                //.setPaymentMethodSearch(mPaymentMethodSearch)
+                .setPaymentPreference(paymentPreference)
                 .setDecorationPreference(mDecorationPreference)
                 .setCards(mSavedCards)
                 .startPaymentVaultActivity();

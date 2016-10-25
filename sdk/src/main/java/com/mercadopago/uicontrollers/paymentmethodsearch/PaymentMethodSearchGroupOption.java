@@ -15,38 +15,34 @@ import com.mercadopago.util.MercadoPagoUtil;
 /**
  * Created by mreverter on 29/4/16.
  */
-public class PaymentMethodSearchSmallRow extends PaymentMethodSearchRow {
+public class PaymentMethodSearchGroupOption extends PaymentMethodSearchOption {
 
     private DecorationPreference mDecorationPreference;
 
-    public PaymentMethodSearchSmallRow(Context context) {
-        super(context);
-    }
-
-    public PaymentMethodSearchSmallRow(Context context, DecorationPreference decorationPreference) {
-        super(context);
+    public PaymentMethodSearchGroupOption(Context context, PaymentMethodSearchItem item, DecorationPreference decorationPreference) {
+        super(context, item);
         mDecorationPreference = decorationPreference;
     }
 
     @Override
-    public void drawPaymentMethod(PaymentMethodSearchItem item) {
-        if (item.hasDescription()) {
-            mDescription.setText(item.getDescription());
+    public void draw() {
+        if (mItem.hasDescription()) {
+            mDescription.setText(mItem.getDescription());
         }
-        if (item.hasComment()) {
-            mComment.setText(item.getComment());
+        if (mItem.hasComment()) {
+            mComment.setText(mItem.getComment());
         } else {
             mComment.setVisibility(View.GONE);
         }
         int resourceId = 0;
 
-        if (item.isIconRecommended()) {
-            resourceId = MercadoPagoUtil.getPaymentMethodSearchItemIcon(mContext, item.getId());
+        if (mItem.isIconRecommended()) {
+            resourceId = MercadoPagoUtil.getPaymentMethodSearchItemIcon(mContext, mItem.getId());
         }
 
         if (resourceId != 0) {
             mIcon.setImageResource(resourceId);
-            if (itemNeedsTint(item)) {
+            if (itemNeedsTint(mItem)) {
                 setTintColor(mContext, mIcon);
             }
         } else {
@@ -58,6 +54,9 @@ public class PaymentMethodSearchSmallRow extends PaymentMethodSearchRow {
     public View inflateInParent(ViewGroup parent, boolean attachToRoot) {
         mView = LayoutInflater.from(mContext)
                 .inflate(R.layout.mpsdk_row_pm_search_item, parent, attachToRoot);
+        if(mListener != null) {
+            mView.setOnClickListener(mListener);
+        }
         return mView;
     }
 

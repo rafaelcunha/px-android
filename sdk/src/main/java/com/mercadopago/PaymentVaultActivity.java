@@ -4,19 +4,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.AppBarLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mercadopago.adapters.CustomPaymentMethodOptionsAdapter;
 import com.mercadopago.adapters.PaymentMethodSearchItemAdapter;
 import com.mercadopago.callbacks.OnSelectedCallback;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.customviews.MPTextView;
+import com.mercadopago.decorations.GridSpacingItemDecoration;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
@@ -31,10 +31,14 @@ import com.mercadopago.model.Site;
 import com.mercadopago.model.Token;
 import com.mercadopago.mptracker.MPTracker;
 import com.mercadopago.presenters.PaymentVaultPresenter;
+import com.mercadopago.uicontrollers.ViewControllerFactory;
+import com.mercadopago.uicontrollers.paymentmethodsearch.CustomPaymentMethodCustomOption;
+import com.mercadopago.uicontrollers.paymentmethodsearch.PaymentMethodSearchViewController;
 import com.mercadopago.util.ApiUtil;
 import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
 import com.mercadopago.util.LayoutUtil;
+import com.mercadopago.util.ScaleUtil;
 import com.mercadopago.views.PaymentVaultView;
 
 import java.lang.reflect.Type;
@@ -57,11 +61,10 @@ public class PaymentVaultActivity extends MercadoPagoActivity implements Payment
     protected MPTextView mActivityTitle;
     protected View mSearchItemsContainer;
     protected RecyclerView mSearchItemsRecyclerView;
-    protected View mSavedCardsContainer;
-    protected RecyclerView mSavedCardsRecyclerView;
     protected AppBarLayout mAppBar;
 
     protected PaymentVaultPresenter mPaymentVaultPresenter;
+    private CollapsingToolbarLayout mAppBarLayout;
 
     @Override
     protected void setContentView() {
@@ -120,11 +123,9 @@ public class PaymentVaultActivity extends MercadoPagoActivity implements Payment
 
     @Override
     protected void initializeControls() {
-        initializeGroupRecyclerView();
-        initializeSavedCardsRecyclerView();
+        initializePaymentOptionsRecyclerView();
         mSearchItemsContainer = findViewById(R.id.mpsdkSearchItemsContainer);
-        mSavedCardsContainer = findViewById(R.id.mpsdkSavedCardsContainer);
-        mActivityTitle = (MPTextView) findViewById(R.id.mpsdkTitle);
+//        mActivityTitle = (MPTextView) findViewById(R.id.mpsdkTitle);
         mAppBar = (AppBarLayout) findViewById(R.id.mpsdkAppBar);
         initializeToolbar();
     }
@@ -155,32 +156,65 @@ public class PaymentVaultActivity extends MercadoPagoActivity implements Payment
             }
         });
 
-        TextView toolbarTitle = (TextView) findViewById(R.id.mpsdkTitle);
+//        TextView toolbarTitle = (TextView) findViewById(R.id.mpsdkTitle);
+//
+//        decorate(toolbar);
+//        decorateFont(toolbarTitle);
+        mAppBarLayout = (CollapsingToolbarLayout) this.getActivity().findViewById(R.id.mpsdkCollapsingToolbar);
 
-        decorate(toolbar);
-        decorateFont(toolbarTitle);
     }
 
-    protected void initializeGroupRecyclerView() {
+    protected void initializePaymentOptionsRecyclerView() {
+        int columns = 2;
         mSearchItemsRecyclerView = (RecyclerView) findViewById(R.id.mpsdkGroupsList);
-        mSearchItemsRecyclerView.setHasFixedSize(true);
-        mSearchItemsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    protected void initializeSavedCardsRecyclerView() {
-        mSavedCardsRecyclerView = (RecyclerView) findViewById(R.id.mpsdkSavedCards);
-        mSavedCardsRecyclerView.setHasFixedSize(true);
-        mSavedCardsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    protected void populateSearchList(List<PaymentMethodSearchItem> items, OnSelectedCallback<PaymentMethodSearchItem> onSelectedCallback) {
-        PaymentMethodSearchItemAdapter groupsAdapter = new PaymentMethodSearchItemAdapter(this, items, onSelectedCallback, mDecorationPreference);
+        mSearchItemsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columns));
+        mSearchItemsRecyclerView.addItemDecoration(new GridSpacingItemDecoration(columns, ScaleUtil.getPxFromDp(20, getContext()), true));
+        PaymentMethodSearchItemAdapter groupsAdapter = new PaymentMethodSearchItemAdapter();
         mSearchItemsRecyclerView.setAdapter(groupsAdapter);
     }
 
+    protected void populateSearchList(List<PaymentMethodSearchItem> items, OnSelectedCallback<PaymentMethodSearchItem> onSelectedCallback) {
+        PaymentMethodSearchItemAdapter adapter = (PaymentMethodSearchItemAdapter) mSearchItemsRecyclerView.getAdapter();
+        List<PaymentMethodSearchViewController> customViewControllers = createItemsViewControllers(items, onSelectedCallback);
+        adapter.addItems(customViewControllers);
+        adapter.notifyItemInserted();
+    }
+
     private void populateCustomOptionsList(List<CustomSearchItem> customSearchItems, OnSelectedCallback<CustomSearchItem> onSelectedCallback) {
-        CustomPaymentMethodOptionsAdapter customPaymentMethodOptionsAdapter = new CustomPaymentMethodOptionsAdapter(this, customSearchItems, onSelectedCallback);
-        mSavedCardsRecyclerView.setAdapter(customPaymentMethodOptionsAdapter);
+        PaymentMethodSearchItemAdapter adapter = (PaymentMethodSearchItemAdapter) mSearchItemsRecyclerView.getAdapter();
+        List<PaymentMethodSearchViewController> customViewControllers = createViewControllers(customSearchItems, onSelectedCallback);
+        adapter.addItems(customViewControllers);
+        adapter.notifyItemInserted();
+    }
+
+    private List<PaymentMethodSearchViewController> createItemsViewControllers(List<PaymentMethodSearchItem> items, final OnSelectedCallback<PaymentMethodSearchItem> onSelectedCallback) {
+        List<PaymentMethodSearchViewController> customViewControllers = new ArrayList<>();
+        for(final PaymentMethodSearchItem item : items) {
+            PaymentMethodSearchViewController viewController = ViewControllerFactory.getPaymentMethodSelectionViewController(item, mDecorationPreference, this);
+            viewController.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onSelectedCallback.onSelected(item);
+                }
+            });
+            customViewControllers.add(viewController);
+        }
+        return customViewControllers;
+    }
+
+    private List<PaymentMethodSearchViewController> createViewControllers(List<CustomSearchItem> customSearchItems, final OnSelectedCallback<CustomSearchItem> onSelectedCallback) {
+        List<PaymentMethodSearchViewController> customViewControllers = new ArrayList<>();
+        for(final CustomSearchItem item : customSearchItems) {
+            CustomPaymentMethodCustomOption viewController = new CustomPaymentMethodCustomOption(this, item);
+            viewController.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onSelectedCallback.onSelected(item);
+                }
+            });
+            customViewControllers.add(viewController);
+        }
+        return customViewControllers;
     }
 
     @Override
@@ -316,7 +350,9 @@ public class PaymentVaultActivity extends MercadoPagoActivity implements Payment
 
     @Override
     public void setTitle(String title) {
-        mActivityTitle.setText(title);
+        if (mAppBarLayout != null) {
+            mAppBarLayout.setTitle(title);
+        }
     }
 
     @Override
@@ -353,7 +389,7 @@ public class PaymentVaultActivity extends MercadoPagoActivity implements Payment
 
     @Override
     public void showCustomOptions(List<CustomSearchItem> customSearchItems, OnSelectedCallback<CustomSearchItem> customSearchItemOnSelectedCallback) {
-        mSavedCardsContainer.setVisibility(View.VISIBLE);
+        //mSavedCardsContainer.setVisibility(View.VISIBLE);
         populateCustomOptionsList(customSearchItems, customSearchItemOnSelectedCallback);
     }
 

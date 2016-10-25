@@ -11,8 +11,8 @@ import com.mercadopago.uicontrollers.payercosts.PayerCostViewController;
 import com.mercadopago.uicontrollers.paymentmethods.PaymentMethodOffEditableRow;
 import com.mercadopago.uicontrollers.paymentmethods.PaymentMethodViewController;
 import com.mercadopago.uicontrollers.paymentmethods.card.PaymentMethodOnEditableRow;
-import com.mercadopago.uicontrollers.paymentmethodsearch.PaymentMethodSearchRow;
-import com.mercadopago.uicontrollers.paymentmethodsearch.PaymentMethodSearchSmallRow;
+import com.mercadopago.uicontrollers.paymentmethodsearch.PaymentMethodSearchOption;
+import com.mercadopago.uicontrollers.paymentmethodsearch.PaymentMethodSearchGroupOption;
 import com.mercadopago.uicontrollers.paymentmethodsearch.PaymentMethodSearchViewController;
 
 /**
@@ -24,9 +24,9 @@ public class ViewControllerFactory {
 
         PaymentMethodSearchViewController row;
         if (item.hasComment() && !item.isPaymentType()) {
-            row = new PaymentMethodSearchRow(context);
+            row = new PaymentMethodSearchOption(context, item);
         } else {
-            row = new PaymentMethodSearchSmallRow(context, mDecorationPreference);
+            row = new PaymentMethodSearchGroupOption(context, item, mDecorationPreference);
         }
         return row;
     }

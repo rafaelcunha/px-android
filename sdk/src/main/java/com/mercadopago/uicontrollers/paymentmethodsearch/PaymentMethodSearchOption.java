@@ -14,22 +14,27 @@ import com.mercadopago.util.MercadoPagoUtil;
 /**
  * Created by mreverter on 29/4/16.
  */
-public class PaymentMethodSearchRow implements PaymentMethodSearchViewController {
+public class PaymentMethodSearchOption implements PaymentMethodSearchViewController {
 
+    protected PaymentMethodSearchItem mItem;
     protected Context mContext;
     protected View mView;
-    protected View mSeparator;
     protected MPTextView mDescription;
     protected MPTextView mComment;
     protected ImageView mIcon;
+    protected View.OnClickListener mListener;
 
-    public PaymentMethodSearchRow(Context context) {
+    public PaymentMethodSearchOption(Context context, PaymentMethodSearchItem item) {
         mContext = context;
+        mItem = item;
     }
 
     public View inflateInParent(ViewGroup parent, boolean attachToRoot) {
         mView = LayoutInflater.from(mContext)
-                .inflate(R.layout.mpsdk_row_pm_search_item_large, parent, attachToRoot);
+                .inflate(R.layout.mpsdk_row_pm_search_item, parent, attachToRoot);
+        if(mListener != null) {
+            mView.setOnClickListener(mListener);
+        }
         return mView;
     }
 
@@ -42,22 +47,23 @@ public class PaymentMethodSearchRow implements PaymentMethodSearchViewController
         mDescription = (MPTextView) mView.findViewById(R.id.mpsdkDescription);
         mComment = (MPTextView) mView.findViewById(R.id.mpsdkComment);
         mIcon = (ImageView) mView.findViewById(R.id.mpsdkImage);
-        mSeparator = mView.findViewById(R.id.mpsdkSeparator);
 
-        mSeparator.setVisibility(View.GONE);
     }
 
-    public void drawPaymentMethod(PaymentMethodSearchItem item) {
-        if (item.hasDescription()) {
-            mDescription.setText(item.getDescription());
+    public void draw() {
+        if (mItem.hasDescription()) {
+            mDescription.setVisibility(View.VISIBLE);
+            mDescription.setText(mItem.getDescription());
+        } else {
+            mDescription.setVisibility(View.GONE);
         }
-        if (item.hasComment()) {
-            mComment.setText(item.getComment());
+        if (mItem.hasComment()) {
+            mComment.setText(mItem.getComment());
         }
         int resourceId = 0;
 
-        if (item.isIconRecommended()) {
-            resourceId = MercadoPagoUtil.getPaymentMethodSearchItemIcon(mContext, item.getId());
+        if (mItem.isIconRecommended()) {
+            resourceId = MercadoPagoUtil.getPaymentMethodSearchItemIcon(mContext, mItem.getId());
         }
 
         if (resourceId != 0) {
@@ -68,12 +74,10 @@ public class PaymentMethodSearchRow implements PaymentMethodSearchViewController
     }
 
     @Override
-    public void showSeparator() {
-        mSeparator.setVisibility(View.VISIBLE);
-    }
-
-    @Override
     public void setOnClickListener(View.OnClickListener listener) {
-        mView.setOnClickListener(listener);
+        mListener = listener;
+        if(mView != null) {
+            mView.setOnClickListener(listener);
+        }
     }
 }

@@ -188,13 +188,15 @@ public class PaymentVaultPresenter {
     }
 
     private void showAvailableOptions() {
-        if (searchItemsAvailable()) {
-            mPaymentVaultView.showSearchItems(mPaymentMethodSearch.getGroups(), getPaymentMethodSearchItemSelectionCallback());
-        }
 
         if (customSearchItemsAvailable()) {
             mPaymentVaultView.showCustomOptions(mCustomSearchItems, getCustomOptionCallback());
         }
+
+        if (searchItemsAvailable()) {
+            mPaymentVaultView.showSearchItems(mPaymentMethodSearch.getGroups(), getPaymentMethodSearchItemSelectionCallback());
+        }
+
         mPaymentVaultView.hideProgress();
     }
 

@@ -82,7 +82,7 @@ public class ComponentsExampleActivity extends AppCompatActivity {
         new MercadoPago.StartActivityBuilder()
                 .setActivity(this)
                 .setPublicKey(mPublicKey)
-                .setSite(Sites.ARGENTINA)
+                .setSite(Sites.MEXICO)
                 .setAmount(mAmount)
                 .setPaymentPreference(paymentPreference) //Optional
                 .setDecorationPreference(decorationPreference) //Optional
@@ -340,6 +340,8 @@ public class ComponentsExampleActivity extends AppCompatActivity {
         if (mVisaExcluded.isChecked()) {
             paymentPreference.setExcludedPaymentMethodIds(new ArrayList<String>() {{
                 add(PaymentMethods.ARGENTINA.VISA);
+                add(PaymentMethods.ARGENTINA.AMEX);
+                add(PaymentMethods.ARGENTINA.TARSHOP);
             }});
         }
         return paymentPreference;
