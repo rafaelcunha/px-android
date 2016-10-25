@@ -31,6 +31,8 @@
     <color name="mpsdk_active_button">#3383FA</color>
     <color name="mpsdk_inactive_button">#84b4fc</color>
 
+    <color name="mpsdk_color_background_title_instruction">#FFA15A</color>
+
     <color name="mpsdk_color_congrats_background">#3BC280</color>
     <color name="mpsdk_color_congrats_installments">#009FDE</color>
     <color name="mpsdk_color_congrats_interest">#43B000</color>
