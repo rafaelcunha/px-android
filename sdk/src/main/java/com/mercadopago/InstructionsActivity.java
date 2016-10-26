@@ -1,11 +1,13 @@
 package com.mercadopago;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -226,8 +228,9 @@ public class InstructionsActivity extends MercadoPagoActivity {
             if (reference.hasValue()) {
 
                 if (reference.hasLabel()) {
-                    currentTitleTextView.setText(reference.getLabel().toUpperCase());
+                    currentTitleTextView.setText(reference.getLabel());
                     currentTitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.mpsdk_smaller_text));
+                    currentTitleTextView.setGravity(Gravity.CENTER_HORIZONTAL);
                     mReferencesLayout.addView(currentTitleTextView);
                 }
 
@@ -237,8 +240,11 @@ public class InstructionsActivity extends MercadoPagoActivity {
                 currentValueTextView.setText(formattedReference);
                 currentValueTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, referenceSize);
 
-                marginParams.setMargins(0, marginTop, 0, marginBottom);
+                marginParams.setMargins(190, marginTop, 190, marginBottom);
                 currentValueTextView.setLayoutParams(marginParams);
+
+                currentValueTextView.setGravity(Gravity.CENTER_HORIZONTAL);
+                currentValueTextView.setTextColor(Color.BLACK);
                 mReferencesLayout.addView(currentValueTextView);
             }
         }

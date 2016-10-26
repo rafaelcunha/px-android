@@ -176,6 +176,11 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
+    <style name="Theme.InstructionsMercadoPagoTheme.NoActionbar" parent="Theme.MercadoPagoTheme.NoActionBar">
+        <item name="android:statusBarColor">@color/mpsdk_color_instructions_status_bar</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
     <style name="Theme.CallForAuthorizeMercadoPagoTheme.NoActionbar" parent="Theme.MercadoPagoTheme.NoActionBar">
         <item name="android:statusBarColor">@color/mpsdk_call_for_authorize_color_dark</item>
         <item name="android:windowLightStatusBar">true</item>

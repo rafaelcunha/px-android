@@ -20,14 +20,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/mpsdk_color_background_title_instruction">
+            android:background="@color/mpsdk_color_instructions_background_title">
 
             <ImageView
                 android:id="@+id/mpsdkImageCashSign"
                 android:layout_centerHorizontal="true"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="50dp"
                 android:layout_marginBottom="18dp"
                 android:layout_gravity="center"
                 android:src="@drawable/icon_cash"
@@ -37,12 +37,15 @@
                 android:id="@+id/mpsdkTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingRight="40dp"
+                android:paddingLeft="40dp"
+                android:gravity="center"
                 android:textSize="20dp"
                 android:textColor="@color/mpsdk_white"
-                android:gravity="center"
                 android:layout_marginBottom="50dp"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/mpsdkImageCashSign"
+                app:fontStyle="regular"
                 tools:text="Listo, solo te falta pagar $ 1.550 en tu Home Banking adherido a Red Link"/>
         </LinearLayout>
 
@@ -52,29 +55,46 @@
             android:orientation="vertical"
             android:background="@color/mpsdk_white">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:background="@drawable/mpsdk_drop_shadow">
-            </View>
-
             <com.mercadopago.customviews.MPTextView
+                android:id="@+id/mpsdkPayWithThisData"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="35dp"
-                android:layout_marginBottom="30dp"
-                android:textSize="18dp"
-                tools:text="Paga con estos datos"
-                style="@style/mpsdk_small_dark_light"/>
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="25dp"
+                android:textSize="21dp"
+                android:text="Paga con estos datos"
+                app:fontStyle="regular"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/mpsdk_drop_shadow">
+            </View>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
             android:background="@color/mpsdk_color_light_grey"
             android:orientation="vertical">
 
+            <com.mercadopago.customviews.MPTextView
+                android:id="@+id/mpsdkPrimaryInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="15dp"
+                tools:text="Info primaria"
+                app:fontStyle="regular"
+                style="@style/mpsdk_small_dark_light"/>
+            <LinearLayout
+                android:id="@+id/mpsdkReferencesLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:orientation="vertical"/>
             <com.mercadopago.customviews.MPButton
                 android:id="@+id/mpsdkActionButton"
                 android:layout_marginTop="15dp"
@@ -90,32 +110,15 @@
                 style="@style/mpsdk_instructions_button_text"/>
 
             <com.mercadopago.customviews.MPTextView
-                android:id="@+id/mpsdkPrimaryInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                tools:text="Info primaria"
-                android:layout_marginBottom="10dp"
-                style="@style/mpsdk_small_dark_light"/>
-
-            <com.mercadopago.customviews.MPTextView
-                android:id="@+id/mpsdkSecondaryInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                tools:text="Info secundaria"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="10dp"
-                style="@style/mpsdk_small_dark_light"/>
-
-            <com.mercadopago.customviews.MPTextView
                 android:id="@+id/mpsdkTertiaryInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
                 android:layout_gravity="center_horizontal"
                 tools:text="Info terciaria"
-                android:layout_marginBottom="10dp"
-                style="@style/mpsdk_small_grey_light"/>
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -135,43 +138,39 @@
                     android:layout_centerVertical="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:tint="@color/mpsdk_color_instructions_font"/>
+                    android:tint="@color/mpsdk_warm_grey"/>
                 <com.mercadopago.customviews.MPTextView
                     android:id="@+id/mpsdkAccreditationMessage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="Se acreditara en X horas"
-                    style="@style/mpsdk_small_golden_light"
                     android:layout_centerVertical="true"
                     android:layout_alignTop="@id/mpsdkAccreditationImage"
-                    android:layout_alignBottom="@id/mpsdkAccreditationImage"
-                    android:layout_toRightOf="@+id/mpsdkAccreditationImage"
-                    android:layout_toEndOf="@+id/mpsdkAccreditationImage" />
+                    android:layout_toRightOf="@+id/mpsdkAccreditationImage" />
             </RelativeLayout>
 
             <View
-                android:id="@+id/mpsdkTopCodeSeparator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/mpsdk_separator"
-                android:layout_gravity="center_horizontal|bottom" />
+                android:background="@drawable/mpsdk_drop_shadow">
+            </View>
         </LinearLayout>
 
         <com.mercadopago.customviews.MPTextView
+            android:id="@+id/mpsdkSecondaryInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:text="También enviamos el código a tu email"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            tools:text="Info secundaria"
             style="@style/mpsdk_small_dark_light"/>
 
         <View
-            android:id="@+id/mpsdkBottomCodeSeparator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/mpsdk_separator"
-            android:layout_gravity="center_horizontal|bottom" />
+            android:background="@drawable/mpsdk_drop_shadow">
+        </View>
 
         <com.mercadopago.customviews.MPTextView
             android:id="@+id/mpsdkExitInstructions"
@@ -179,6 +178,7 @@
             android:paddingRight="40dp"
             android:paddingTop="20dp"
             android:paddingBottom="20dp"
+            android:layout_marginTop="20dp"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
