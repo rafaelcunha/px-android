@@ -93,6 +93,9 @@
         <activity
             android:name=".PaymentResultActivity"
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
+        <activity android:name=".SecurityCodeActivity"
+            android:screenOrientation="behind"
+            android:theme="@style/Theme.ProcessMercadoPagoTheme.NoActionbar" />
         <activity android:name=".PaymentTypesActivity"
             android:screenOrientation="behind"
             android:theme="@style/Theme.ProcessMercadoPagoTheme.NoActionbar" />

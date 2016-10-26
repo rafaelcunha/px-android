@@ -24,6 +24,7 @@ import com.mercadopago.PaymentTypesActivity;
 import com.mercadopago.PaymentVaultActivity;
 import com.mercadopago.PendingActivity;
 import com.mercadopago.RejectionActivity;
+import com.mercadopago.SecurityCodeActivity;
 import com.mercadopago.VaultActivity;
 import com.mercadopago.adapters.ErrorHandlingCallAdapter;
 import com.mercadopago.callbacks.Callback;
@@ -88,6 +89,7 @@ public class MercadoPago {
     public static final int CARD_VAULT_REQUEST_CODE = 15;
     public static final int CONGRATS_REQUEST_CODE = 16;
     public static final int PAYMENT_TYPES_REQUEST_CODE = 17;
+    public static final int SECURITY_CODE_REQUEST_CODE = 18;
 
 
     public static final int BIN_LENGTH = 6;
@@ -412,6 +414,22 @@ public class MercadoPago {
         intent.putExtra("cardInfo", JsonUtil.getInstance().toJson(cardInfo));
         activity.startActivityForResult(intent, ISSUERS_REQUEST_CODE);
 
+    }
+
+    private static void startSecurityCodeActivity(Activity activity, String publicKey,
+                                             PaymentMethod paymentMethod, Token token, Card card,
+                                             List<Issuer> issuers, DecorationPreference decorationPreference,
+                                             CardInfo cardInfo) {
+
+        Intent intent = new Intent(activity, SecurityCodeActivity.class);
+        intent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
+        intent.putExtra("token", JsonUtil.getInstance().toJson(token));
+        intent.putExtra("card", JsonUtil.getInstance().toJson(card));
+        intent.putExtra("publicKey", publicKey);
+        intent.putExtra("issuers", JsonUtil.getInstance().toJson(issuers));
+        intent.putExtra("decorationPreference", JsonUtil.getInstance().toJson(decorationPreference));
+        intent.putExtra("cardInfo", JsonUtil.getInstance().toJson(cardInfo));
+        activity.startActivityForResult(intent, SECURITY_CODE_REQUEST_CODE);
     }
 
     private static void startPaymentTypesActivity(Activity activity, String publicKey,
@@ -999,6 +1017,17 @@ public class MercadoPago {
                 throw new IllegalStateException("payment method is null");
 
             MercadoPago.startIssuersActivity(this.mActivity, this.mKey, this.mPaymentMethod,
+                    this.mToken, this.mCard, this.mIssuers, this.mDecorationPreference, this.mCardInfo);
+
+        }
+
+        public void startSecurityCodeActivity() {
+            if (this.mActivity == null) throw new IllegalStateException("activity is null");
+            if (this.mKey == null) throw new IllegalStateException("key is null");
+            if (this.mPaymentMethod == null)
+                throw new IllegalStateException("payment method is null");
+
+            MercadoPago.startSecurityCodeActivity(this.mActivity, this.mKey, this.mPaymentMethod,
                     this.mToken, this.mCard, this.mIssuers, this.mDecorationPreference, this.mCardInfo);
 
         }

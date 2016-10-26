@@ -11,7 +11,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/mpsdkIssuersAppBar"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="170dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
         android:background="@color/mpsdk_background_blue"
         android:fitsSystemWindows="true">

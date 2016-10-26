@@ -5,4 +5,5 @@ package com.mercadopago.views;
  */
 
 public interface SecurityCodeActivityView {
+    void onValidStart();
 }

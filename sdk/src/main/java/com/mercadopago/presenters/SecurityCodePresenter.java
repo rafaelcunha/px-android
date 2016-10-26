@@ -132,7 +132,7 @@ public class SecurityCodePresenter {
 //            if (mPublicKey == null) {
 //                mView.onInvalidStart("public key not set");
 //            } else {
-//                mView.onValidStart();
+                mView.onValidStart();
 //            }
 //        } else {
 //            mView.onValidStart();

@@ -123,7 +123,11 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
     public void onValidStart() {
         mPresenter.initializeMercadoPago();
         initializeViews();
-        startGuessingCardActivity();
+        if (mPresenter.getCardInfo().getCard() == null) {
+            startGuessingCardActivity();
+        } else {
+            startSecurityCodeActivity();
+        }
     }
 
     @Override
@@ -136,6 +140,18 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
     private void initializeViews() {
         mProgressBar = (ProgressBar) findViewById(R.id.mpsdkProgressLayout);
         mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void startSecurityCodeActivity() {
+        new MercadoPago.StartActivityBuilder()
+                .setActivity(mActivity)
+                .setPublicKey(mPresenter.getPublicKey())
+                .setPaymentMethod(mPresenter.getPaymentMethod())
+                .setCardInfo(mPresenter.getCardInfo())
+//                .setToken(mPresenter.getToken())
+                .setDecorationPreference(mDecorationPreference)
+                .startSecurityCodeActivity();
+        overridePendingTransition(R.anim.mpsdk_slide_right_to_left_in, R.anim.mpsdk_slide_right_to_left_out);
     }
 
     private void startGuessingCardActivity() {

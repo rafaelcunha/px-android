@@ -184,6 +184,9 @@ public class CardVaultPresenter {
         } else {
             mBin = mCardInfo.getFirstSixDigits();
         }
+        if (mCardInfo.getCard() != null) {
+            setPaymentMethod(mCardInfo.getCard().getPaymentMethod());
+        }
     }
 
 //    private void setCardInformation(CardInformation cardInformation) {
