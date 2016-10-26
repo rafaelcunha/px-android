@@ -81,8 +81,9 @@
                 android:layout_height="@dimen/mpsdk_button_height"
                 android:layout_marginTop="15dp"
                 android:text="@string/card_with_installments"
-                android:onClick="onCardWithInstallmentsClicked"
+                android:onClick="ontest"
                 style="@style/mpsdk_button_normal"/>
+            <!--android:onClick="onCardWithInstallmentsClicked"-->
 
             <com.mercadopago.customviews.MPButton
                 android:layout_width="match_parent"

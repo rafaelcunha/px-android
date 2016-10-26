@@ -18,6 +18,7 @@ import com.mercadopago.constants.Sites;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.core.MercadoPagoUI;
 import com.mercadopago.core.MerchantServer;
+import com.mercadopago.examples.CardActivity;
 import com.mercadopago.examples.R;
 import com.mercadopago.examples.utils.ColorPickerDialog;
 import com.mercadopago.examples.utils.ExamplesUtils;
@@ -118,6 +119,11 @@ public class ComponentsExampleActivity extends AppCompatActivity {
                 .setPaymentPreference(paymentPreference) //Optional
                 .setDecorationPreference(decorationPreference) //Optional
                 .startCardVaultActivity();
+    }
+
+    public void ontest(View view) {
+        Intent intent = new Intent(this, CardActivity.class);
+        startActivity(intent);
     }
 
     public void onPaymentMethodsSelectionClicked(View view) {
