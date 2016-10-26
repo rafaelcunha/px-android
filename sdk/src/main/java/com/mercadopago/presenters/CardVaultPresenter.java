@@ -10,6 +10,7 @@ import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.Card;
+import com.mercadopago.model.CardInfo;
 import com.mercadopago.model.CardInformation;
 import com.mercadopago.model.CardToken;
 import com.mercadopago.model.Installment;
@@ -43,10 +44,11 @@ public class CardVaultPresenter {
     protected List<PaymentMethod> mPaymentMethodList;
     protected Site mSite;
     protected Boolean mInstallmentsEnabled;
-    protected Card mCard;
+//    protected Card mCard;
     protected String mPublicKey;
     protected BigDecimal mAmount;
-    protected CardInformation mCardInfo;
+//    protected CardInformation mCardInfo;
+    protected CardInfo mCardInfo;
 
     //Activity result
     protected Token mToken;
@@ -83,9 +85,9 @@ public class CardVaultPresenter {
         this.mInstallmentsEnabled = installmentsEnabled;
     }
 
-    public void setCard(Card card) {
-        this.mCard = card;
-    }
+//    public void setCard(Card card) {
+//        this.mCard = card;
+//    }
 
     public void setPublicKey(String publicKey) {
         this.mPublicKey = publicKey;
@@ -151,9 +153,9 @@ public class CardVaultPresenter {
         return mSite;
     }
 
-    public Card getCard() {
-        return mCard;
-    }
+//    public Card getCard() {
+//        return mCard;
+//    }
 
     public String getPublicKey() {
         return mPublicKey;
@@ -167,16 +169,16 @@ public class CardVaultPresenter {
         this.mCardToken = mCardToken;
     }
 
-    public void setCardInformation() {
-        if(mCard == null && mToken != null) {
-            setCardInformation(mToken);
-        } else if (mCard != null) {
-            setCardInformation(mCard);
-        }
-    }
+//    public void setCardInformation() {
+//        if(mCard == null && mToken != null) {
+//            setCardInformation(mToken);
+//        } else if (mCard != null) {
+//            setCardInformation(mCard);
+//        }
+//    }
 
-    private void setCardInformation(CardInformation cardInformation) {
-        this.mCardInfo = cardInformation;
+    public void setCardInfo(CardInfo cardInfo) {
+        this.mCardInfo = cardInfo;
         if (mCardInfo == null) {
             mBin = "";
         } else {
@@ -184,7 +186,16 @@ public class CardVaultPresenter {
         }
     }
 
-    public CardInformation getCardInformation() {
+//    private void setCardInformation(CardInformation cardInformation) {
+//        this.mCardInfo = cardInformation;
+//        if (mCardInfo == null) {
+//            mBin = "";
+//        } else {
+//            mBin = mCardInfo.getFirstSixDigits();
+//        }
+//    }
+
+    public CardInfo getCardInfo() {
         return mCardInfo;
     }
 
@@ -197,6 +208,14 @@ public class CardVaultPresenter {
             mView.startInstallmentsActivity();
         } else {
             mView.finishWithResult();
+        }
+    }
+
+    public void checkStartIssuersActivity() {
+        if (mIssuer == null) {
+            mView.startIssuersActivity();
+        } else {
+            checkStartInstallmentsActivity();
         }
     }
 

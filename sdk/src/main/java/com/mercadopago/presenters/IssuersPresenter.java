@@ -8,6 +8,7 @@ import com.mercadopago.callbacks.FailureRecovery;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.model.ApiException;
+import com.mercadopago.model.CardInfo;
 import com.mercadopago.model.CardInformation;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PaymentMethod;
@@ -38,10 +39,11 @@ public class IssuersPresenter {
     //Activity parameters
     private String mPublicKey;
     private PaymentMethod mPaymentMethod;
-    private Token mToken;
+//    private Token mToken;
     private List<Issuer> mIssuers;
     private PaymentPreference mPaymentPreference;
-    protected CardInformation mCardInfo;
+//    protected CardInformation mCardInfo;
+    protected CardInfo mCardInfo;
 
     public IssuersPresenter(Context context) {
         this.mContext = context;
@@ -59,22 +61,35 @@ public class IssuersPresenter {
         this.mPublicKey = publicKey;
     }
 
-    public void setToken(Token token) {
-        this.mToken = token;
-    }
+//    public void setToken(Token token) {
+//        this.mToken = token;
+//    }
 
-    public void setCardInformation() {
-        setCardInformation(mToken);
-    }
+//    public void setCardInformation() {
+//        setCardInformation(mToken);
+//    }
 
-    private void setCardInformation(CardInformation cardInformation) {
-        this.mCardInfo = cardInformation;
+    public void setCardInfo(CardInfo cardInfo) {
+        this.mCardInfo = cardInfo;
         if (mCardInfo == null) {
             mBin = "";
         } else {
             mBin = mCardInfo.getFirstSixDigits();
         }
     }
+
+    public CardInfo getCardInfo() {
+        return mCardInfo;
+    }
+
+//    private void setCardInformation(CardInformation cardInformation) {
+//        this.mCardInfo = cardInformation;
+//        if (mCardInfo == null) {
+//            mBin = "";
+//        } else {
+//            mBin = mCardInfo.getFirstSixDigits();
+//        }
+//    }
 
     public void setIssuers(List<Issuer> issuers) {
         this.mIssuers = issuers;
@@ -100,14 +115,14 @@ public class IssuersPresenter {
         return this.mPaymentMethod;
     }
 
-    public Token getToken() {
-        return this.mToken;
-    }
-
-    public CardInformation getCardInformation() {
-        return this.mCardInfo;
-    }
-
+//    public Token getToken() {
+//        return this.mToken;
+//    }
+//
+//    public CardInformation getCardInformation() {
+//        return this.mCardInfo;
+//    }
+//
     public Integer getCardNumberLength() {
         return PaymentMethodGuessingController.getCardNumberLength(mPaymentMethod, mBin);
     }
@@ -182,6 +197,7 @@ public class IssuersPresenter {
         } else if (mIssuers.size() == 1) {
             mView.finishWithResult(issuers.get(0));
         } else {
+            mView.showHeader();
             mView.initializeIssuers(issuers);
         }
     }

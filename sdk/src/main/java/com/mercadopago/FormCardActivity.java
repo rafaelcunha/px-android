@@ -3,7 +3,6 @@ package com.mercadopago;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +30,7 @@ import com.mercadopago.callbacks.card.CardNumberEditTextCallback;
 import com.mercadopago.callbacks.PaymentMethodSelectionCallback;
 import com.mercadopago.callbacks.card.CardSecurityCodeEditTextCallback;
 import com.mercadopago.callbacks.card.CardholderNameEditTextCallback;
+import com.mercadopago.constants.PaymentTypes;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.core.MercadoPago;
 import com.mercadopago.customviews.MPEditText;
@@ -41,7 +41,6 @@ import com.mercadopago.listeners.card.CardNumberTextWatcher;
 import com.mercadopago.listeners.card.CardSecurityCodeTextWatcher;
 import com.mercadopago.listeners.card.CardholderNameTextWatcher;
 import com.mercadopago.model.ApiException;
-import com.mercadopago.model.Card;
 import com.mercadopago.model.CardInfo;
 import com.mercadopago.model.DecorationPreference;
 import com.mercadopago.model.Identification;
@@ -50,6 +49,7 @@ import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.PaymentPreference;
 import com.mercadopago.model.PaymentRecovery;
+import com.mercadopago.model.PaymentType;
 import com.mercadopago.model.Token;
 import com.mercadopago.mptracker.MPTracker;
 import com.mercadopago.presenters.FormCardPresenter;
@@ -65,7 +65,6 @@ import com.mercadopago.util.ScaleUtil;
 import com.mercadopago.views.FormCardActivityView;
 
 import java.lang.reflect.Type;
-import java.security.Key;
 import java.util.List;
 
 /**
@@ -289,7 +288,6 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     private void loadLowResViews() {
         loadToolbarArrow(mLowResToolbar);
         //TODO poner el payment type, y cambiar el titulo en documento
-        mLowResTitleToolbar.setText(getString(R.string.mpsdk_form_card_title, "Crédito"));
     }
 
     private void loadNormalViews() {
@@ -357,6 +355,24 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     }
 
     @Override
+    public void initializeTitle() {
+        if (mLowResActive) {
+            String paymentTypeId = mPresenter.getPaymentTypeId();
+            String paymentTypeText = getString(R.string.mpsdk_form_card_title);
+            if (paymentTypeId != null) {
+                if (paymentTypeId.equals(PaymentTypes.CREDIT_CARD)) {
+                    paymentTypeText = getString(R.string.mpsdk_form_card_title_payment_type, getString(R.string.mpsdk_credit_payment_type));
+                } else if (paymentTypeId.equals(PaymentTypes.DEBIT_CARD)) {
+                    paymentTypeText = getString(R.string.mpsdk_form_card_title_payment_type, getString(R.string.mpsdk_debit_payment_type));
+                } else if (paymentTypeId.equals(PaymentTypes.PREPAID_CARD)) {
+                    paymentTypeText = getString(R.string.mpsdk_form_card_title_payment_type_prepaid);
+                }
+            }
+            mLowResTitleToolbar.setText(paymentTypeText);
+        }
+    }
+
+    @Override
     public void showBankDeals() {
         if (mPresenter.getBankDealsList() == null || mPresenter.getBankDealsList().size() == 0) {
             hideBankDeals();
@@ -407,29 +423,20 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             new PaymentMethodSelectionCallback() {
                 @Override
                 public void onPaymentMethodListSet(List<PaymentMethod> paymentMethodList) {
-                    if (paymentMethodList.size() == 0 || paymentMethodList.size() > 1) {
+                    if (paymentMethodList.size() == 0) {
                         setInputMaxLength(mCardNumberEditText, MercadoPago.BIN_LENGTH);
                         setErrorView(getString(R.string.mpsdk_invalid_payment_method));
-                    } else {
+                    } else if (paymentMethodList.size() == 1){
                         onPaymentMethodSet(paymentMethodList.get(0));
+                    } else {
+                        mPresenter.enablePaymentTypeSelection(paymentMethodList);
+                        setPaymentMethod(paymentMethodList.get(0));
                     }
                 }
 
                 @Override
                 public void onPaymentMethodSet(PaymentMethod paymentMethod) {
-                    if (mPresenter.getPaymentMethod() == null) {
-                        mPresenter.setPaymentMethod(paymentMethod);
-                        mPresenter.configureWithSettings();
-                        mPresenter.loadIdentificationTypes();
-                        if (cardViewsActive()) {
-                            mCardView.setPaymentMethod(paymentMethod);
-                            mCardView.setCardNumberLength(mPresenter.getCardNumberLength());
-                            mCardView.setSecurityCodeLength(mPresenter.getSecurityCodeLength());
-                            mCardView.setSecurityCodeLocation(mPresenter.getSecurityCodeLocation());
-                            mCardView.updateCardNumberMask(getCardNumberTextTrimmed());
-                            mCardView.transitionPaymentMethodSet();
-                        }
-                    }
+                    setPaymentMethod(paymentMethod);
                 }
 
                 @Override
@@ -442,6 +449,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                     mPresenter.initializeCardToken();
                     mPresenter.setIdentificationNumberRequired(true);
                     mPresenter.setSecurityCodeRequired(true);
+                    mPresenter.disablePaymentTypeSelection();
                     if (cardViewsActive()) {
                         mCardView.clearPaymentMethod();
                     }
@@ -485,6 +493,22 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                     mCardNumberEditText.toggleLineColorOnError(toggle);
                 }
             }));
+    }
+
+    private void setPaymentMethod(PaymentMethod paymentMethod) {
+        if (mPresenter.getPaymentMethod() == null) {
+            mPresenter.setPaymentMethod(paymentMethod);
+            mPresenter.configureWithSettings();
+            mPresenter.loadIdentificationTypes();
+            if (cardViewsActive()) {
+                mCardView.setPaymentMethod(paymentMethod);
+                mCardView.setCardNumberLength(mPresenter.getCardNumberLength());
+                mCardView.setSecurityCodeLength(mPresenter.getSecurityCodeLength());
+                mCardView.setSecurityCodeLocation(mPresenter.getSecurityCodeLocation());
+                mCardView.updateCardNumberMask(getCardNumberTextTrimmed());
+                mCardView.transitionPaymentMethodSet();
+            }
+        }
     }
 
     @Override
@@ -832,7 +856,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
         if (cardViewsActive()) {
             mCardView.drawEditingCardNumber(mPresenter.getCardNumber());
         } else {
-            mLowResTitleToolbar.setText(getResources().getString(R.string.mpsdk_form_card_title, "crédito"));
+            initializeTitle();
         }
     }
 
@@ -864,7 +888,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             mCardView.drawEditingExpiryMonth(mPresenter.getExpiryMonth());
             mCardView.drawEditingExpiryYear(mPresenter.getExpiryYear());
         } else {
-            mLowResTitleToolbar.setText(getResources().getString(R.string.mpsdk_form_card_title, "crédito"));
+            initializeTitle();
         }
     }
 
@@ -885,9 +909,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
             } else {
                 checkFlipCardToFront();
             }
-            if (mLowResActive) {
-                mLowResTitleToolbar.setText(getResources().getString(R.string.mpsdk_form_card_title, "crédito"));
-            }
+            initializeTitle();
         }
     }
 
@@ -1022,7 +1044,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                     } else if (mPresenter.isIdentificationNumberRequired()) {
                         requestIdentificationFocus();
                     } else {
-                        finishWithCardToken();
+                        checkFinishWithCardToken();
                     }
                     return true;
                 }
@@ -1033,14 +1055,14 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
                     if (mPresenter.isIdentificationNumberRequired()) {
                         requestIdentificationFocus();
                     } else {
-                        finishWithCardToken();
+                        checkFinishWithCardToken();
                     }
                     return true;
                 }
                 return false;
             case CARD_IDENTIFICATION_INPUT:
                 if (mPresenter.validateIdentificationNumber()) {
-                    finishWithCardToken();
+                    checkFinishWithCardToken();
                     return true;
                 }
                 return false;
@@ -1167,6 +1189,47 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
     private boolean showingFront() {
         initCardState();
         return mCardSideState.equals(CardView.CARD_SIDE_FRONT);
+    }
+
+    private void checkFinishWithCardToken() {
+        if (mPresenter.hasToShowPaymentTypes() && mPresenter.getGuessedPaymentMethods() != null) {
+            List<PaymentMethod> paymentMethods = mPresenter.getGuessedPaymentMethods();
+            List<PaymentType> paymentTypes = mPresenter.getPaymentTypes();
+            new MercadoPago.StartActivityBuilder()
+                    .setActivity(mActivity)
+                    .setPublicKey(mPresenter.getPublicKey())
+                    .setSupportedPaymentMethods(paymentMethods)
+                    .setPaymentTypesList(paymentTypes)
+                    .setCardInfo(new CardInfo(mPresenter.getCardToken()))
+                    .setDecorationPreference(mDecorationPreference)
+                    .startPaymentTypesActivity();
+            overridePendingTransition(R.anim.mpsdk_slide_right_to_left_in, R.anim.mpsdk_slide_right_to_left_out);
+
+        } else {
+            finishWithCardToken();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MercadoPago.PAYMENT_TYPES_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Bundle bundle = data.getExtras();
+                PaymentType paymentType = JsonUtil.getInstance().fromJson(bundle.getString("paymentType"), PaymentType.class);
+                mPresenter.setSelectedPaymentType(paymentType);
+                finishWithCardToken();
+            } else if (resultCode == RESULT_CANCELED) {
+                finish();
+            }
+        } else if (requestCode == ErrorUtil.ERROR_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                mPresenter.recoverFromFailure();
+            } else {
+                setResult(resultCode, data);
+                finish();
+            }
+        }
     }
 
     private void finishWithCardToken() {

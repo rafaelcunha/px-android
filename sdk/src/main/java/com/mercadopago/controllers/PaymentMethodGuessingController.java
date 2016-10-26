@@ -30,6 +30,10 @@ public class PaymentMethodGuessingController {
         return mPaymentTypeId;
     }
 
+    public List<PaymentMethod> getGuessedPaymentMethods() {
+        return mGuessedPaymentMethods;
+    }
+
     public List<PaymentMethod> guessPaymentMethodsByBin(String bin) {
         if (mSavedBin.equals(bin) && mGuessedPaymentMethods != null) {
             return mGuessedPaymentMethods;

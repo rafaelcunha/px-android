@@ -14,22 +14,17 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import com.google.gson.reflect.TypeToken;
-import com.mercadopago.adapters.PayerCostsAdapter;
+import com.mercadopago.adapters.PaymentTypesAdapter;
 import com.mercadopago.callbacks.OnSelectedCallback;
 import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.listeners.RecyclerItemClickListener;
 import com.mercadopago.model.ApiException;
-import com.mercadopago.model.Card;
 import com.mercadopago.model.CardInfo;
 import com.mercadopago.model.DecorationPreference;
-import com.mercadopago.model.Issuer;
-import com.mercadopago.model.PayerCost;
 import com.mercadopago.model.PaymentMethod;
-import com.mercadopago.model.PaymentPreference;
-import com.mercadopago.model.Site;
-import com.mercadopago.model.Token;
+import com.mercadopago.model.PaymentType;
 import com.mercadopago.mptracker.MPTracker;
-import com.mercadopago.presenters.InstallmentsPresenter;
+import com.mercadopago.presenters.PaymentTypesPresenter;
 import com.mercadopago.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.uicontrollers.card.FrontCardView;
 import com.mercadopago.util.ApiUtil;
@@ -37,24 +32,23 @@ import com.mercadopago.util.ColorsUtil;
 import com.mercadopago.util.ErrorUtil;
 import com.mercadopago.util.JsonUtil;
 import com.mercadopago.util.ScaleUtil;
-import com.mercadopago.views.InstallmentsActivityView;
+import com.mercadopago.views.PaymentTypesActivityView;
 
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Created by vaserber on 9/29/16.
+ * Created by vaserber on 10/25/16.
  */
 
-public class InstallmentsActivity extends AppCompatActivity implements InstallmentsActivityView {
+public class PaymentTypesActivity extends AppCompatActivity implements PaymentTypesActivityView {
 
-    protected InstallmentsPresenter mPresenter;
+    protected PaymentTypesPresenter mPresenter;
     private Activity mActivity;
 
     //View controls
-    private PayerCostsAdapter mPayerCostsAdapter;
-    private RecyclerView mInstallmentsRecyclerView;
+    private PaymentTypesAdapter mPaymentTypesAdapter;
+    private RecyclerView mPaymentTypesRecyclerView;
     private ProgressBar mProgressBar;
     private DecorationPreference mDecorationPreference;
     //ViewMode
@@ -73,7 +67,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (mPresenter == null) {
-            mPresenter = new InstallmentsPresenter(getBaseContext());
+            mPresenter = new PaymentTypesPresenter(getBaseContext());
         }
         mPresenter.setView(this);
         mActivity = this;
@@ -82,55 +76,35 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         setContentView();
         mPresenter.validateActivityParameters();
     }
-    
+
     private void getActivityParameters() {
-        PaymentMethod paymentMethod = JsonUtil.getInstance().fromJson(
-                this.getIntent().getStringExtra("paymentMethod"), PaymentMethod.class);
-        String publicKey = getIntent().getStringExtra("publicKey");
-//        Token token = JsonUtil.getInstance().fromJson(
-//                this.getIntent().getStringExtra("token"), Token.class);
-//        Card card = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("card"), Card.class);
-        CardInfo cardInfo = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("cardInfo"), CardInfo.class);
-        Issuer issuer = JsonUtil.getInstance().fromJson(this.getIntent().getStringExtra("issuer"), Issuer.class);
-        BigDecimal amount = null;
-        if (this.getIntent().getStringExtra("amount") != null) {
-            amount = new BigDecimal(this.getIntent().getStringExtra("amount"));
+        List<PaymentMethod> paymentMethods;
+        try {
+            Type listType = new TypeToken<List<PaymentMethod>>() {
+            }.getType();
+            paymentMethods = JsonUtil.getInstance().getGson().fromJson(this.getIntent().getStringExtra("paymentMethods"), listType);
+        } catch (Exception ex) {
+            paymentMethods = null;
         }
 
-        Site site = JsonUtil.getInstance().fromJson(this.getIntent().getStringExtra("site"), Site.class);
-        List<PayerCost> payerCosts;
+        List<PaymentType> paymentTypes;
         try {
-            Type listType = new TypeToken<List<PayerCost>>() {
+            Type listType = new TypeToken<List<PaymentType>>() {
             }.getType();
-            payerCosts = JsonUtil.getInstance().getGson().fromJson(this.getIntent().getStringExtra("payerCosts"), listType);
+            paymentTypes = JsonUtil.getInstance().getGson().fromJson(this.getIntent().getStringExtra("paymentTypes"), listType);
         } catch (Exception ex) {
-            payerCosts = null;
+            paymentTypes = null;
         }
-        PaymentPreference paymentPreference = JsonUtil.getInstance().fromJson(this.getIntent().getStringExtra("paymentPreference"), PaymentPreference.class);
-        if (paymentPreference == null) {
-            paymentPreference = new PaymentPreference();
-        }
+        String publicKey = getIntent().getStringExtra("publicKey");
+        CardInfo cardInfo = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("cardInfo"), CardInfo.class);
         mDecorationPreference = null;
         if (getIntent().getStringExtra("decorationPreference") != null) {
             mDecorationPreference = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("decorationPreference"), DecorationPreference.class);
         }
-
-        mPresenter.setPaymentMethod(paymentMethod);
+        mPresenter.setPaymentMethodList(paymentMethods);
+        mPresenter.setPaymentTypesList(paymentTypes);
         mPresenter.setPublicKey(publicKey);
-//        mPresenter.setToken(token);
-//        mPresenter.setCard(card);
-        mPresenter.setIssuer(issuer);
-        mPresenter.setAmount(amount);
-        mPresenter.setSite(site);
-        mPresenter.setPayerCosts(payerCosts);
-        mPresenter.setPaymentPreference(paymentPreference);
-//        mPresenter.setCardInformation();
         mPresenter.setCardInfo(cardInfo);
-
-    }
-
-    private boolean isDecorationEnabled() {
-        return mDecorationPreference != null && mDecorationPreference.hasColors();
     }
 
     public void analizeLowRes() {
@@ -141,17 +115,9 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         }
     }
 
-    public void loadViews() {
-        if (mLowResActive) {
-            loadLowResViews();
-        } else {
-            loadNormalViews();
-        }
-    }
-
     public void setContentView() {
-        MPTracker.getInstance().trackScreen("CARD_INSTALLMENTS", 2, mPresenter.getPublicKey(),
-                mPresenter.getSite().getId(), BuildConfig.VERSION_NAME, this);
+        MPTracker.getInstance().trackScreen("CARD_PAYMENT_TYPES", 2, mPresenter.getPublicKey(),
+                BuildConfig.VERSION_NAME, this);
         if (mLowResActive) {
             setContentViewLowRes();
         } else {
@@ -159,23 +125,14 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         }
     }
 
-    public void setContentViewLowRes() {
-        setContentView(R.layout.mpsdk_activity_installments_lowres);
-    }
-
-    public void setContentViewNormal() {
-        setContentView(R.layout.mpsdk_activity_installments_normal);
-    }
-
     @Override
     public void onValidStart() {
-        mPresenter.initializeMercadoPago();
+        mPresenter.initializePaymentMethod();
         initializeViews();
         loadViews();
-        hideHeader();
         decorate();
         initializeAdapter();
-        mPresenter.loadPayerCosts();
+        mPresenter.loadPaymentTypes();
     }
 
     @Override
@@ -185,8 +142,16 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         finish();
     }
 
+    private void setContentViewLowRes() {
+        setContentView(R.layout.mpsdk_activity_payment_types_lowres);
+    }
+
+    private void setContentViewNormal() {
+        setContentView(R.layout.mpsdk_activity_payment_types_normal);
+    }
+
     private void initializeViews() {
-        mInstallmentsRecyclerView = (RecyclerView) findViewById(R.id.mpsdkActivityInstallmentsView);
+        mPaymentTypesRecyclerView = (RecyclerView) findViewById(R.id.mpsdkActivityPaymentTypesRecyclerView);
         mProgressBar = (ProgressBar) findViewById(R.id.mpsdkProgressBar);
         if (mLowResActive) {
             mLowResToolbar = (Toolbar) findViewById(R.id.mpsdkRegularToolbar);
@@ -194,7 +159,7 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
             mLowResToolbar.setVisibility(View.VISIBLE);
         } else {
             mCollapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.mpsdkCollapsingToolbar);
-            mAppBar = (AppBarLayout) findViewById(R.id.mpsdkInstallmentesAppBar);
+            mAppBar = (AppBarLayout) findViewById(R.id.mpsdkPaymentTypesAppBar);
             mCardContainer = (FrameLayout) findViewById(R.id.mpsdkActivityCardContainer);
             mNormalToolbar = (Toolbar) findViewById(R.id.mpsdkRegularToolbar);
             mNormalToolbar.setVisibility(View.VISIBLE);
@@ -202,23 +167,68 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mProgressBar.setVisibility(View.GONE);
     }
 
-    public void loadLowResViews() {
-        loadToolbarArrow(mLowResToolbar);
-        mLowResTitleToolbar.setText(getString(R.string.mpsdk_card_installments_title));
+    private void loadViews() {
+        if (mLowResActive) {
+            loadLowResViews();
+        } else {
+            loadNormalViews();
+        }
     }
 
-    public void loadNormalViews() {
+    private void initializeAdapter() {
+        mPaymentTypesAdapter = new PaymentTypesAdapter(this, getDpadSelectionCallback());
+        initializeAdapterListener(mPaymentTypesAdapter, mPaymentTypesRecyclerView);
+    }
+
+    protected OnSelectedCallback<Integer> getDpadSelectionCallback() {
+        return new OnSelectedCallback<Integer>() {
+            @Override
+            public void onSelected(Integer position) {
+                mPresenter.onItemSelected(position);
+            }
+        };
+    }
+
+    private void initializeAdapterListener(RecyclerView.Adapter adapter, RecyclerView view) {
+        view.setAdapter(adapter);
+        view.setLayoutManager(new LinearLayoutManager(this));
+        view.addOnItemTouchListener(new RecyclerItemClickListener(this,
+                new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        mPresenter.onItemSelected(position);
+                    }
+                }));
+    }
+
+    @Override
+    public void initializePaymentTypes(List<PaymentType> paymentTypes) {
+        mPaymentTypesAdapter.addResults(paymentTypes);
+    }
+
+    @Override
+    public void showApiExceptionError(ApiException exception) {
+        ApiUtil.showApiExceptionError(mActivity, exception);
+    }
+
+    @Override
+    public void startErrorView(String message, String errorDetail) {
+        ErrorUtil.startErrorActivity(mActivity, message, errorDetail, false);
+    }
+
+    private void loadLowResViews() {
+        loadToolbarArrow(mLowResToolbar);
+        mLowResTitleToolbar.setText(getString(R.string.mpsdk_payment_types_title));
+    }
+
+    private void loadNormalViews() {
         loadToolbarArrow(mNormalToolbar);
-        mNormalToolbar.setTitle(getString(R.string.mpsdk_card_installments_title));
+        mNormalToolbar.setTitle(getString(R.string.mpsdk_payment_types_title));
         mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);
         mFrontCardView.setSize(CardRepresentationModes.MEDIUM_SIZE);
         mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
-//        if (mPresenter.getCardInformation() != null) {
-//            mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
-//            mFrontCardView.setLastFourDigits(mPresenter.getCardInformation().getLastFourDigits());
-//        }
-        if (mPresenter.getCardInfo() != null) {
-            mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
+        if (mPresenter.isCardInfoAvailable()) {
+            mFrontCardView.setCardNumberLength(mPresenter.getCardInfo().getCardNumberLength());
             mFrontCardView.setLastFourDigits(mPresenter.getCardInfo().getLastFourDigits());
         }
         mFrontCardView.inflateInParent(mCardContainer, true);
@@ -243,23 +253,6 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         }
     }
 
-    private void hideHeader() {
-        if (mLowResActive) {
-            mLowResToolbar.setVisibility(View.GONE);
-        } else {
-            mNormalToolbar.setTitle("");
-        }
-    }
-
-    @Override
-    public void showHeader() {
-        if (mLowResActive) {
-            mLowResToolbar.setVisibility(View.VISIBLE);
-        } else {
-            mNormalToolbar.setTitle(getString(R.string.mpsdk_card_installments_title));
-        }
-    }
-
     private void decorate() {
         if (isDecorationEnabled()) {
             if (mLowResActive) {
@@ -268,6 +261,10 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
                 decorateNormal();
             }
         }
+    }
+
+    private boolean isDecorationEnabled() {
+        return mDecorationPreference != null && mDecorationPreference.hasColors();
     }
 
     private void decorateLowRes() {
@@ -281,37 +278,6 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
         mFrontCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
     }
 
-    private void initializeAdapter() {
-        mPayerCostsAdapter = new PayerCostsAdapter(this, mPresenter.getSite().getCurrencyId(), getDpadSelectionCallback());
-        initializeAdapterListener(mPayerCostsAdapter, mInstallmentsRecyclerView);
-    }
-
-    private void initializeAdapterListener(RecyclerView.Adapter adapter, RecyclerView view) {
-        view.setAdapter(adapter);
-        view.setLayoutManager(new LinearLayoutManager(this));
-        view.addOnItemTouchListener(new RecyclerItemClickListener(this,
-            new RecyclerItemClickListener.OnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    mPresenter.onItemSelected(position);
-                }
-            }));
-    }
-
-    protected OnSelectedCallback<Integer> getDpadSelectionCallback() {
-        return new OnSelectedCallback<Integer>() {
-            @Override
-            public void onSelected(Integer position) {
-                mPresenter.onItemSelected(position);
-            }
-        };
-    }
-
-    @Override
-    public void initializeInstallments(List<PayerCost> payerCostList) {
-        mPayerCostsAdapter.addResults(payerCostList);
-    }
-
     @Override
     public void showLoadingView() {
         mProgressBar.setVisibility(View.VISIBLE);
@@ -323,27 +289,18 @@ public class InstallmentsActivity extends AppCompatActivity implements Installme
     }
 
     @Override
-    public void startErrorView(String message, String errorDetail) {
-        ErrorUtil.startErrorActivity(mActivity, message, errorDetail, false);
-    }
-
-    @Override
-    public void showApiExceptionError(ApiException exception) {
-        ApiUtil.showApiExceptionError(mActivity, exception);
-    }
-
-    @Override
-    public void finishWithResult(PayerCost payerCost) {
+    public void finishWithResult(PaymentType paymentType) {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(payerCost));
+        returnIntent.putExtra("paymentType", JsonUtil.getInstance().toJson(paymentType));
         setResult(RESULT_OK, returnIntent);
         finish();
+        overridePendingTransition(R.anim.mpsdk_hold, R.anim.mpsdk_hold);
     }
 
     @Override
     public void onBackPressed() {
-        MPTracker.getInstance().trackEvent("CARD_INSTALLMENTS", "BACK_PRESSED", 2,
-                mPresenter.getPublicKey(), mPresenter.getSite().getId(), BuildConfig.VERSION_NAME, this);
+        MPTracker.getInstance().trackEvent("CARD_PAYMENT_TYPES", "BACK_PRESSED", 2, mPresenter.getPublicKey(),
+                BuildConfig.VERSION_NAME, this);
         Intent returnIntent = new Intent();
         returnIntent.putExtra("backButtonPressed", true);
         setResult(RESULT_CANCELED, returnIntent);

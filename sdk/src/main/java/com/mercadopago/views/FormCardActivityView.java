@@ -3,6 +3,7 @@ package com.mercadopago.views;
 import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.model.ApiException;
 import com.mercadopago.model.IdentificationType;
+import com.mercadopago.model.PaymentMethod;
 
 import java.util.List;
 
@@ -43,4 +44,5 @@ public interface FormCardActivityView {
     void setErrorSecurityCode();
     void setErrorIdentificationNumber();
     void clearErrorIdentificationNumber();
+    void initializeTitle();
 }

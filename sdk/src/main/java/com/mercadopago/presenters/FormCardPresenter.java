@@ -21,6 +21,7 @@ import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PaymentMethod;
 import com.mercadopago.model.PaymentPreference;
 import com.mercadopago.model.PaymentRecovery;
+import com.mercadopago.model.PaymentType;
 import com.mercadopago.model.SecurityCode;
 import com.mercadopago.model.Setting;
 import com.mercadopago.model.Token;
@@ -29,6 +30,7 @@ import com.mercadopago.uicontrollers.card.FrontCardView;
 import com.mercadopago.util.ApiUtil;
 import com.mercadopago.views.FormCardActivityView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,9 +76,12 @@ public class FormCardPresenter {
     private String mIdentificationNumber;
     private CardToken mCardToken;
     private Token mToken;
+    private PaymentType mPaymentType;
 
     //Extra info
     private List<BankDeal> mBankDealsList;
+    private boolean hasToShowPaymentTypes;
+    private List<PaymentType> mPaymentTypesList;
 
     //Card controller
     protected PaymentMethodGuessingController mPaymentMethodGuessingController;
@@ -134,6 +139,10 @@ public class FormCardPresenter {
         if (paymentMethod == null) {
             clearCardSettings();
         }
+    }
+
+    public boolean hasToShowPaymentTypes() {
+        return hasToShowPaymentTypes;
     }
 
     public boolean isSecurityCodeRequired() {
@@ -283,6 +292,7 @@ public class FormCardPresenter {
 
     protected void startGuessingForm() {
         initializeGuessingCardNumberController();
+        mView.initializeTitle();
         mView.setCardNumberListeners(mPaymentMethodGuessingController);
         mView.setCardholderNameListeners();
         mView.setExpiryDateListeners();
@@ -291,6 +301,14 @@ public class FormCardPresenter {
         mView.setIdentificationNumberListeners();
         mView.setNextButtonListeners();
         mView.setBackButtonListeners();
+    }
+
+    public String getPaymentTypeId() {
+        if (mPaymentMethodGuessingController == null) {
+            return null;
+        } else {
+            return mPaymentMethodGuessingController.getPaymentTypeId();
+        }
     }
 
     public void loadPaymentMethods() {
@@ -321,6 +339,17 @@ public class FormCardPresenter {
                 });
             }
         });
+    }
+
+    public void setSelectedPaymentType(PaymentType paymentType) {
+        if (mPaymentMethodGuessingController == null) {
+            return;
+        }
+        for (PaymentMethod paymentMethod: mPaymentMethodGuessingController.getGuessedPaymentMethods()) {
+            if (paymentMethod.getPaymentTypeId().equals(paymentType.getId())) {
+                setPaymentMethod(paymentMethod);
+            }
+        }
     }
 
     public void configureWithSettings() {
@@ -417,6 +446,34 @@ public class FormCardPresenter {
                 });
             }
         });
+    }
+
+    public void enablePaymentTypeSelection(List<PaymentMethod> paymentMethodList) {
+        List<PaymentType> paymentTypesList = new ArrayList<>();
+        for (PaymentMethod pm: paymentMethodList) {
+            PaymentType type = new PaymentType(pm.getPaymentTypeId());
+            paymentTypesList.add(type);
+        }
+        mPaymentTypesList = paymentTypesList;
+        mPaymentType = paymentTypesList.get(0);
+        hasToShowPaymentTypes = true;
+    }
+
+    public void disablePaymentTypeSelection() {
+        mPaymentType = null;
+        hasToShowPaymentTypes = false;
+        mPaymentTypesList = null;
+    }
+
+    public List<PaymentMethod> getGuessedPaymentMethods() {
+        if (mPaymentMethodGuessingController == null) {
+            return null;
+        }
+        return mPaymentMethodGuessingController.getGuessedPaymentMethods();
+    }
+
+    public List<PaymentType> getPaymentTypes() {
+        return mPaymentTypesList;
     }
 
     public void saveCardNumber(String cardNumber) {
@@ -591,6 +648,12 @@ public class FormCardPresenter {
 
     public boolean checkIsEmptyOrValidIdentificationNumber() {
         return TextUtils.isEmpty(mIdentificationNumber) || validateIdentificationNumber();
+    }
+
+    public void recoverFromFailure() {
+        if (mFailureRecovery != null) {
+            mFailureRecovery.recover();
+        }
     }
 
 }

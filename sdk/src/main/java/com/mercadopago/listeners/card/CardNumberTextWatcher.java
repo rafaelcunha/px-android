@@ -55,7 +55,7 @@ public class CardNumberTextWatcher implements TextWatcher {
         String number = s.toString().replaceAll("\\s", "");
         if (number.length() == MercadoPago.BIN_LENGTH - 1) {
             mPaymentSelectionCallback.onPaymentMethodCleared();
-        } else if (number.length() >= MercadoPago.BIN_LENGTH) {
+        } else if (number.length() == MercadoPago.BIN_LENGTH) {
             mBin = number.subSequence(0, MercadoPago.BIN_LENGTH).toString();
             List<PaymentMethod> list = mController.guessPaymentMethodsByBin(mBin);
             mPaymentSelectionCallback.onPaymentMethodListSet(list);

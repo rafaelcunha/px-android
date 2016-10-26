@@ -21,6 +21,7 @@ import com.mercadopago.callbacks.OnSelectedCallback;
 import com.mercadopago.customviews.MPTextView;
 import com.mercadopago.listeners.RecyclerItemClickListener;
 import com.mercadopago.model.ApiException;
+import com.mercadopago.model.CardInfo;
 import com.mercadopago.model.DecorationPreference;
 import com.mercadopago.model.Issuer;
 import com.mercadopago.model.PaymentMethod;
@@ -85,8 +86,9 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
         PaymentMethod paymentMethod = JsonUtil.getInstance().fromJson(
                 this.getIntent().getStringExtra("paymentMethod"), PaymentMethod.class);
         String publicKey = getIntent().getStringExtra("publicKey");
-        Token token = JsonUtil.getInstance().fromJson(
-                this.getIntent().getStringExtra("token"), Token.class);
+//        Token token = JsonUtil.getInstance().fromJson(
+//                this.getIntent().getStringExtra("token"), Token.class);
+        CardInfo cardInfo = JsonUtil.getInstance().fromJson(this.getIntent().getStringExtra("cardInfo"), CardInfo.class);
         List<Issuer> issuers;
         try {
             Type listType = new TypeToken<List<Issuer>>() {
@@ -106,10 +108,11 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
 
         mPresenter.setPaymentMethod(paymentMethod);
         mPresenter.setPublicKey(publicKey);
-        mPresenter.setToken(token);
+//        mPresenter.setToken(token);
+        mPresenter.setCardInfo(cardInfo);
         mPresenter.setIssuers(issuers);
         mPresenter.setPaymentPreference(paymentPreference);
-        mPresenter.setCardInformation();
+//        mPresenter.setCardInformation();
     }
 
     public void analizeLowRes() {
@@ -135,6 +138,7 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
         mPresenter.initializeMercadoPago();
         initializeViews();
         loadViews();
+        hideHeader();
         decorate();
         initializeAdapter();
         mPresenter.loadIssuers();
@@ -232,9 +236,13 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
         mFrontCardView = new FrontCardView(mActivity, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);
         mFrontCardView.setSize(CardRepresentationModes.MEDIUM_SIZE);
         mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
-        if (mPresenter.getCardInformation() != null) {
-            mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
-            mFrontCardView.setLastFourDigits(mPresenter.getCardInformation().getLastFourDigits());
+//        if (mPresenter.getCardInformation() != null) {
+//            mFrontCardView.setCardNumberLength(mPresenter.getCardNumberLength());
+//            mFrontCardView.setLastFourDigits(mPresenter.getCardInformation().getLastFourDigits());
+//        }
+        if (mPresenter.getCardInfo() != null) {
+            mFrontCardView.setCardNumberLength(mPresenter.getCardInfo().getCardNumberLength());
+            mFrontCardView.setLastFourDigits(mPresenter.getCardInfo().getLastFourDigits());
         }
         mFrontCardView.inflateInParent(mCardContainer, true);
         mFrontCardView.initializeControls();
@@ -281,6 +289,23 @@ public class IssuersActivity extends AppCompatActivity implements IssuersActivit
         ColorsUtil.decorateNormalToolbar(mNormalToolbar, mDecorationPreference, mAppBar,
                 mCollapsingToolbar, getSupportActionBar(), this);
         mFrontCardView.decorateCardBorder(mDecorationPreference.getLighterColor());
+    }
+
+    @Override
+    public void showHeader() {
+        if (mLowResActive) {
+            mLowResToolbar.setVisibility(View.VISIBLE);
+        } else {
+            mNormalToolbar.setTitle(getString(R.string.mpsdk_card_issuers_title));
+        }
+    }
+
+    private void hideHeader() {
+        if (mLowResActive) {
+            mLowResToolbar.setVisibility(View.GONE);
+        } else {
+            mNormalToolbar.setTitle("");
+        }
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.mercadopago.controllers.PaymentMethodGuessingController;
 import com.mercadopago.model.Card;
+import com.mercadopago.model.CardInfo;
 import com.mercadopago.model.CardInformation;
 import com.mercadopago.views.InstallmentsActivityView;
 import com.mercadopago.R;
@@ -47,9 +48,10 @@ public class InstallmentsPresenter {
     private Site mSite;
     private List<PayerCost> mPayerCosts;
     private PaymentPreference mPaymentPreference;
-    private CardInformation mCardInfo;
-    private Card mCard;
-    private Token mToken;
+//    private CardInformation mCardInfo;
+//    private Card mCard;
+//    private Token mToken;
+    private CardInfo mCardInfo;
 
     public InstallmentsPresenter(Context context) {
         this.mContext = context;
@@ -67,16 +69,16 @@ public class InstallmentsPresenter {
         this.mPaymentMethod = paymentMethod;
     }
 
-    public void setCardInformation() {
-        if(mCard == null && mToken != null) {
-            setCardInformation(mToken);
-        } else if (mCard != null) {
-            setCardInformation(mCard);
-        }
-    }
+//    public void setCardInformation() {
+//        if(mCard == null && mToken != null) {
+//            setCardInformation(mToken);
+//        } else if (mCard != null) {
+//            setCardInformation(mCard);
+//        }
+//    }
 
-    private void setCardInformation(CardInformation cardInformation) {
-        this.mCardInfo = cardInformation;
+    public void setCardInfo(CardInfo cardInfo) {
+        this.mCardInfo = cardInfo;
         if (mCardInfo == null) {
             mBin = "";
         } else {
@@ -84,13 +86,26 @@ public class InstallmentsPresenter {
         }
     }
 
-    public void setToken(Token token) {
-        this.mToken = token;
+//    private void setCardInformation(CardInformation cardInformation) {
+//        this.mCardInfo = cardInformation;
+//        if (mCardInfo == null) {
+//            mBin = "";
+//        } else {
+//            mBin = mCardInfo.getFirstSixDigits();
+//        }
+//    }
+
+    public CardInfo getCardInfo() {
+        return mCardInfo;
     }
 
-    public void setCard(Card card) {
-        this.mCard = card;
-    }
+//    public void setToken(Token token) {
+//        this.mToken = token;
+//    }
+//
+//    public void setCard(Card card) {
+//        this.mCard = card;
+//    }
 
     public void setIssuer(Issuer issuer) {
         this.mIssuer = issuer;
@@ -127,9 +142,9 @@ public class InstallmentsPresenter {
         return this.mPaymentMethod;
     }
 
-    public Token getToken() {
-        return this.mToken;
-    }
+//    public Token getToken() {
+//        return this.mToken;
+//    }
 
     public Site getSite() {
         return mSite;
@@ -151,9 +166,9 @@ public class InstallmentsPresenter {
         return mIssuer;
     }
 
-    public CardInformation getCardInformation() {
-        return mCardInfo;
-    }
+//    public CardInformation getCardInformation() {
+//        return mCardInfo;
+//    }
 
     public void validateActivityParameters() throws IllegalStateException {
         if (mAmount == null || mSite == null) {
