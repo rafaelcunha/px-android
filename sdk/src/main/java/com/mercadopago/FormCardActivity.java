@@ -1234,6 +1234,7 @@ public class FormCardActivity extends AppCompatActivity implements FormCardActiv
 
     private void finishWithCardToken() {
         Intent returnIntent = new Intent();
+        //sacar el issuer
         returnIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(mPresenter.getPaymentMethod()));
         returnIntent.putExtra("issuer", JsonUtil.getInstance().toJson(mPresenter.getIssuer()));
         returnIntent.putExtra("cardToken", JsonUtil.getInstance().toJson(mPresenter.getCardToken()));

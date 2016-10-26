@@ -463,6 +463,8 @@ public class GuessingCardActivity extends FrontCardActivity {
                         mFrontFragment.populateViews();
 
                     } else {
+
+                        //tarjetas guardadas
                         setSecurityCodeFormSettings(mCard);
                         setSecurityCodeFormData(mCard);
                         mFrontFragment.populateViews();

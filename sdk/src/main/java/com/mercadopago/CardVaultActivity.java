@@ -123,6 +123,23 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultAct
     public void onValidStart() {
         mPresenter.initializeMercadoPago();
         initializeViews();
+        //if is recoverable token || card != null
+        //start security code activity(paymentrecovery, cardinfo)
+        //adentro de la activity darle prioridad al recupero
+
+
+        //si en card vault me setean payment recovery y card al mismo tiempo, llamo a invalid start
+
+
+
+        //security code ac devuelve un token
+
+
+        //form card activity
+        //si security code no es required, no lo pide, y devuelve un cardtoken sin security code
+
+
+
         if (mPresenter.getCardInfo().getCard() == null) {
             startGuessingCardActivity();
         } else {

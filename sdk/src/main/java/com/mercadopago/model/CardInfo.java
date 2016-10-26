@@ -9,13 +9,19 @@ public class CardInfo {
     private CardToken cardToken;
     private Token token;
     private Card card;
+    //saco los objetos y guardo las varibale sde longitud etc, entonces en cardvault si tengo que guardar
+    //los objetos de arriba. (excepto el token porque esta adentro del payment recovery)
+
+    private int cardNumberLength;
 
     public CardInfo(CardToken cardToken) {
         this.cardToken = cardToken;
     }
 
+    //en el constructor guardar las longitudes etc etc
     public CardInfo(Token token) {
         this.token = token;
+        //cardNumberLength = ...
     }
 
     public CardInfo(Card card) {
